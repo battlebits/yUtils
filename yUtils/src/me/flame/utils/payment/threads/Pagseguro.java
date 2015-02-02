@@ -1,7 +1,5 @@
 package me.flame.utils.payment.threads;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -9,7 +7,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import me.flame.utils.Main;
+import me.flame.utils.payment.BuyManager;
+import me.flame.utils.permissions.enums.Group;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -19,20 +18,22 @@ import br.com.uol.pagseguro.domain.Transaction;
 import br.com.uol.pagseguro.service.TransactionSearchService;
 
 public class Pagseguro extends Thread {
-	private Main plugin;
+	private BuyManager manager;
 	private String transactionCode = "";
 	Transaction transaction = null;
 	CommandSender sender = null;
 
-	public Pagseguro(Main plugin, String transactionCode, CommandSender cmds) {
-		this.plugin = plugin;
+	public Pagseguro(BuyManager manager, String transactionCode, CommandSender cmds) {
+		this.manager = manager;
 		this.transactionCode = transactionCode.toUpperCase();
 		sender = cmds;
 	}
 
 	public void run() {
 		try {
-			transaction = TransactionSearchService.searchByCode(new AccountCredentials(plugin.getConfig().getString("pagseguro.email"), plugin.getConfig().getString("pagseguro.token")), transactionCode);
+			// TODO Colocar AccountCredentials
+			// TODO Colocar Token
+			transaction = TransactionSearchService.searchByCode(new AccountCredentials("", ""), transactionCode);
 		} catch (Exception e) {
 			sender.sendMessage(ChatColor.YELLOW + "---------------------------BATTLEBITS------------------------------");
 			sender.sendMessage("");
@@ -59,8 +60,8 @@ public class Pagseguro extends Thread {
 		}
 		for (String item2 : itens) {
 			boolean achou = false;
-			for (String gName : plugin.getConfig().getStringList("vip_groups"))
-				if (gName.trim().equalsIgnoreCase(item2.split("id: vz:")[1].split(",")[0]))
+			for (Group group : Group.values())
+				if (group.toString().trim().equalsIgnoreCase(item2.split("id: vz:")[1].split(",")[0]))
 					achou = true;
 			if (!achou) {
 				break;
@@ -74,11 +75,9 @@ public class Pagseguro extends Thread {
 		Calendar now = Calendar.getInstance();
 		SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
 		try {
-			Connection con = DriverManager.getConnection(plugin.mysql_url, plugin.mysql_user, plugin.mysql_pass);
-			PreparedStatement addlog = con.prepareStatement("INSERT INTO `vipzero_pagseguro` (`key`,`nome`,`data`) VALUES ('" + transactionCode + "','" + sender.getName() + "','" + fmt.format(now.getTime()) + "');");
+			PreparedStatement addlog = manager.getMySQL().prepareStatement("INSERT INTO `vipzero_pagseguro` (`key`,`nome`,`data`) VALUES ('" + transactionCode + "','" + sender.getName() + "','" + fmt.format(now.getTime()) + "');");
 			addlog.execute();
 			addlog.close();
-			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -86,12 +85,12 @@ public class Pagseguro extends Thread {
 		for (String item3 : itens)
 			for (int i = 0; i < Integer.parseInt(item3.split("quantity: ")[1].split(",")[0]); i++) {
 				String grupo = "";
-				for (String gName : plugin.getConfig().getStringList("vip_groups"))
-					if (gName.trim().equalsIgnoreCase(item3.split("id: vz:")[1].split(",")[0])) {
-						grupo = gName.trim();
+				for (Group group : Group.values())
+					if (group.toString().trim().equalsIgnoreCase(item3.split("id: vz:")[1].split(",")[0])) {
+						grupo = group.toString().toLowerCase().trim();
 						break;
 					}
-				plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "darvip " + sender.getName() + " " + grupo + " " + item3.split("id: vz:")[1].split(",")[1]);
+				manager.getServer().dispatchCommand(manager.getServer().getConsoleSender(), "darvip " + sender.getName() + " " + grupo + " " + item3.split("id: vz:")[1].split(",")[1]);
 			}
 	}
 

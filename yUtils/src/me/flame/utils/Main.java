@@ -1,17 +1,38 @@
 package me.flame.utils;
 
+import java.sql.Connection;
+
+import me.flame.utils.mysql.Connect;
 import me.flame.utils.permissions.PermissionManager;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
-	public String mysql_url = "localhost";
-	public String mysql_user = "pagseguro";
-	public String mysql_pass = "password";
+	
+	/**
+	 * 
+	 * MySQL
+	 * 
+	 */
+	public boolean sql = false;
+	public Connect connect;
+	public Connection mainConnection;
+	
+	/**
+	 * 
+	 * Managers
+	 * 
+	 */
+	public PermissionManager permissionManager;
 
 	@Override
 	public void onEnable() {
-		new PermissionManager().onEnable(this);
+		connect = new Connect(this);
+		mainConnection = connect.trySQLConnection("", "", "", "", "");
+		
+		
+		permissionManager = new PermissionManager(this);
+		permissionManager.onEnable();
 	}
 
 }

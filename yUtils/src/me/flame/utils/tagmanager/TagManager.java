@@ -5,8 +5,12 @@ import me.flame.utils.Management;
 
 public class TagManager extends Management {
 
+	public TagManager(Main main) {
+		super(main);
+	}
+
 	@Override
-	public void onEnable(Main main) {
+	public void onEnable() {
 
 	}
 

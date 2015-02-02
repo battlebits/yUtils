@@ -11,9 +11,13 @@ import org.bukkit.permissions.Permission;
 
 public class PermissionManager extends Management {
 
+	public PermissionManager(Main main) {
+		super(main);
+	}
+
 	@Override
-	public void onEnable(Main main) {
-		main.getServer().getPluginManager().registerEvents(new LoginListener(main), main);
+	public void onEnable() {
+		getServer().getPluginManager().registerEvents(new LoginListener(getPlugin()), getPlugin());
 	}
 
 	public void addChildren(Main main, String name, List<String> permList) {

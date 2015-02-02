@@ -1,6 +1,27 @@
 package me.flame.utils;
 
-public abstract class Management {
+import java.sql.Connection;
 
-	public abstract void onEnable(Main main);
+import org.bukkit.Server;
+
+public abstract class Management {
+	private Main main;
+
+	public Management(Main main) {
+		this.main = main;
+	}
+
+	public abstract void onEnable();
+
+	public Server getServer() {
+		return main.getServer();
+	}
+
+	public Main getPlugin() {
+		return main;
+	}
+
+	public Connection getMySQL() {
+		return main.mainConnection;
+	}
 }
