@@ -7,6 +7,7 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import me.flame.utils.Main;
 import me.flame.utils.Management;
+import me.flame.utils.scoreboard.listeners.QuitListener;
 
 public class ScoreboardManager extends Management {
 	private HashMap<String, Scoreboard> boards;
@@ -18,6 +19,7 @@ public class ScoreboardManager extends Management {
 	@Override
 	public void onEnable() {
 		this.boards = new HashMap<>();
+		getServer().getPluginManager().registerEvents(new QuitListener(this), getPlugin());
 	}
 
 	public Scoreboard getPlayerScoreboard(Player player) {
