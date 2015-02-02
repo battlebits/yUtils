@@ -2,6 +2,7 @@ package me.flame.utils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 import org.bukkit.Server;
 
@@ -14,12 +15,18 @@ public abstract class Management {
 
 	public abstract void onEnable();
 
+	public abstract void onDisable();
+
 	public Server getServer() {
 		return main.getServer();
 	}
 
 	public Main getPlugin() {
 		return main;
+	}
+
+	public Logger getLogger() {
+		return main.getLogger();
 	}
 
 	public Connection getMySQL() {

@@ -14,4 +14,9 @@ public class BuyManager extends Management {
 
 	}
 
+	@Override
+	public void onDisable() {
+
+	}
+
 }

@@ -10,10 +10,7 @@ public class Dono extends MainGroup {
 	@Override
 	public List<String> getPermissions() {
 		List<String> permissions = new ArrayList<>();
-		permissions.add("minecraft.*");
-		permissions.add("bukkit.*");
-		permissions.add("minecraft.command.*");
-		permissions.add("minecraft.command.tp");
+		permissions.add("*");
 		switch (PermissionManager.getServerType()) {
 		case HUNGERGAMES:
 			break;
@@ -22,7 +19,6 @@ public class Dono extends MainGroup {
 		case LOBBY:
 			break;
 		case PVP:
-			permissions.add("flame.admin");
 			break;
 		default:
 			break;

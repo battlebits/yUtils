@@ -48,4 +48,9 @@ public class BanManagement extends Management {
 		UUID uuid = player.getUniqueId();
 		return mutados.get(uuid);
 	}
+
+	@Override
+	public void onDisable() {
+
+	}
 }

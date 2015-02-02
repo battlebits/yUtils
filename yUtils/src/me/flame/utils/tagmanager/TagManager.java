@@ -83,4 +83,9 @@ public class TagManager extends Management {
 			}
 		}
 	}
+
+	@Override
+	public void onDisable() {
+		
+	}
 }

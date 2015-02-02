@@ -37,4 +37,9 @@ public class ScoreboardManager extends Management {
 		}
 	}
 
+	@Override
+	public void onDisable() {
+		
+	}
+
 }

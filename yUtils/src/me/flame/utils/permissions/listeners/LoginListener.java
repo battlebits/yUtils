@@ -1,16 +1,12 @@
 package me.flame.utils.permissions.listeners;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.UUID;
 
 import me.flame.utils.Main;
 import me.flame.utils.permissions.enums.Group;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,9 +21,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class LoginListener implements Listener {
 	private Main main;
-	private final Map<UUID, PermissionAttachment> attachments = new HashMap<>();
+	private final Map<UUID, PermissionAttachment> attachments;
 
 	public LoginListener(Main main) {
+		attachments = new HashMap<>();
 		this.main = main;
 		new BukkitRunnable() {
 			@Override
@@ -57,34 +54,9 @@ public class LoginListener implements Listener {
 		for (String perm : group.getGroup().getPermissions()) {
 			if (!playerPerm.getChildren().containsKey(perm)) {
 				playerPerm.getChildren().put(perm, true);
-				if (perm.endsWith(".*")) {
-					perm = perm.replace(".*", "");
-					System.out.println(perm);
-					List<String> childPerms = new ArrayList<String>();
-					addChildren(perm, childPerms);
-					for (String str : childPerms) {
-						playerPerm.getChildren().put(str, true);
-					}
-				}
 			}
 		}
 		player.recalculatePermissions();
-	}
-
-	private void addChildren(String name, List<String> permList) {
-		for (Permission perm : Bukkit.getPluginManager().getPermissions()) {
-			System.out.println(perm.getName());
-			if(!perm.getName().startsWith(name))
-				continue;
-			if (!permList.contains(perm.getName())) {
-				permList.add(perm.getName());
-			}
-			for (Entry<String, Boolean> child : perm.getChildren().entrySet()) {
-				if (!permList.contains(child.getKey())) {
-					addChildren(child.getKey(), permList);
-				}
-			}
-		}
 	}
 
 	private Permission getCreateWrapper(Player player, String name) {

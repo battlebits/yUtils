@@ -61,6 +61,11 @@ public class Main extends JavaPlugin {
 		tagManager = new TagManager(this);
 		tagManager.onEnable();
 	}
+	
+	@Override
+	public void onDisable() {
+		
+	}
 
 	public ScoreboardManager getScoreboardManager() {
 		return scoreboardManager;
