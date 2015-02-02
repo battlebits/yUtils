@@ -5,13 +5,14 @@ import java.util.UUID;
 
 public class Mute {
 	private UUID mutedUuid;
-	private String playerName;
+	private String bannedBy;
 	private String reason;
 	private Date muteTime;
 	private Date duration;
 
-	public Mute(UUID mutedUuid, String reason, Date muteTime, Date duration) {
+	public Mute(UUID mutedUuid, String bannedBy, String reason, Date muteTime, Date duration) {
 		this.mutedUuid = mutedUuid;
+		this.bannedBy = bannedBy;
 		this.reason = reason;
 		this.muteTime = muteTime;
 		this.duration = duration;
@@ -20,9 +21,9 @@ public class Mute {
 	public UUID getMutedUuid() {
 		return mutedUuid;
 	}
-	
-	public String getPlayerName() {
-		return playerName;
+
+	public String getBannedBy() {
+		return bannedBy;
 	}
 
 	public String getReason() {

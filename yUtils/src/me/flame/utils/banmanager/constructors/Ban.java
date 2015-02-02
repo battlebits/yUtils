@@ -5,13 +5,14 @@ import java.util.UUID;
 
 public class Ban {
 	private UUID bannedUuid;
-	private String playerName;
 	private String reason;
+	private String bannedBy;
 	private Date banTime;
 	private Date duration;
 
-	public Ban(UUID bannedUuid, String reason, Date banTime, Date duration) {
+	public Ban(UUID bannedUuid, String bannedBy, String reason, Date banTime, Date duration) {
 		this.bannedUuid = bannedUuid;
+		this.bannedBy = bannedBy;
 		this.reason = reason;
 		this.banTime = banTime;
 		this.duration = duration;
@@ -21,8 +22,8 @@ public class Ban {
 		return bannedUuid;
 	}
 
-	public String getPlayerName() {
-		return playerName;
+	public String getBannedBy() {
+		return bannedBy;
 	}
 
 	public String getReason() {
