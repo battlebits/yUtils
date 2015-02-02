@@ -1,6 +1,7 @@
 package me.flame.utils;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.bukkit.Server;
 
@@ -22,6 +23,12 @@ public abstract class Management {
 	}
 
 	public Connection getMySQL() {
+		try {
+			if (main.mainConnection.isClosed())
+				main.mainConnection = main.connect.trySQLConnection("", "", "", "", "");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return main.mainConnection;
 	}
 }

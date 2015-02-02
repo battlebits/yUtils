@@ -31,7 +31,6 @@ public class ScoreboardManager extends Management {
 		return board;
 	}
 
-	// TODO Colocar quando o player sair do jogo
 	public void removeScoreboard(Player player) {
 		if (boards.containsKey(player.getName())) {
 			boards.remove(player.getName());

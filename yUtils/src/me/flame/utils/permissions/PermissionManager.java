@@ -23,7 +23,7 @@ public class PermissionManager extends Management {
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(new LoginListener(getPlugin()), getPlugin());
-		// Load playerGroups
+		//TODO Load playerGroups
 		playerGroups = new HashMap<>();
 	}
 
