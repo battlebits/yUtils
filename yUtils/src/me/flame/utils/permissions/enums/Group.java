@@ -1,25 +1,23 @@
 package me.flame.utils.permissions.enums;
 
+import me.flame.utils.permissions.groups.*;
+
 public enum Group {
-	NORMAL, 
-	LIGHT("flame.vip.light"), 
-	PREMIUM("flame.vip.premium"), 
-	ULTIMATE("flame.vip.ultimate"), 
-	YOUTUBER("flame.vip.youtuber"), 
-	HELPER("flame.mod.helper"), 
-	STAFF("flame.mod.staff"), 
-	TRIAL("flame.mod.trial"), 
-	MOD("flame.mod.full"), 
-	ADMIN("flame.mod.admin"), 
-	DONO("flame.dono");
+	NORMAL(Normal.class), LIGHT(Light.class), PREMIUM(Premium.class), ULTIMATE(Ultimate.class), YOUTUBER(Youtuber.class), HELPER(Helper.class), STAFF(Staff.class), TRIAL(Trial.class), MOD(Moderator.class), ADMIN(Administrator.class), DONO(Dono.class);
 
-	private String[] permissions;
+	private Class<? extends MainGroup> group;
 
-	private Group(String... permissions) {
-		this.permissions = permissions;
+	private Group(Class<? extends MainGroup> classe) {
+		this.group = classe;
 	}
 
-	public String[] getPermissions() {
-		return permissions;
+	public MainGroup getGroup() {
+		MainGroup groupe = null;
+		try {
+			groupe = group.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return groupe;
 	}
 }

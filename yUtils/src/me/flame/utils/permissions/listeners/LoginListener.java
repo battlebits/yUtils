@@ -54,7 +54,7 @@ public class LoginListener implements Listener {
 			attach.setPermission(playerPerm, true);
 		}
 		playerPerm.getChildren().clear();
-		for (String perm : group.getPermissions()) {
+		for (String perm : group.getGroup().getPermissions()) {
 			if (!playerPerm.getChildren().containsKey(perm)) {
 				playerPerm.getChildren().put(perm, true);
 				if (perm.endsWith(".*")) {
