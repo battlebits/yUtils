@@ -64,8 +64,12 @@ public class TagManager extends Management {
 
 	public void removePlayerTag(Player player) {
 		Scoreboard board = getPlugin().getScoreboardManager().getPlayerScoreboard(player);
+		if (!tags.containsKey(player))
+			return;
 		Team t = board.getPlayerTeam(player);
-		t.removePlayer(player);
+		if (t != null)
+			t.removePlayer(player);
+		System.out.println(t.getName().substring(1, t.getName().length()));
 		Tag tag = Tag.valueOf(t.getName().substring(1, 0));
 		List<Player> playerList = tags.get(tag);
 		playerList.remove(player);

@@ -8,7 +8,6 @@ public class Normal extends MainGroup{
 	@Override
 	public List<String> getPermissions() {
 		List<String> permissions = new ArrayList<>();
-		permissions.add("");
 		return permissions;
 	}
 

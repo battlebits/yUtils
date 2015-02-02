@@ -10,6 +10,7 @@ import java.util.UUID;
 import me.flame.utils.Main;
 import me.flame.utils.permissions.enums.Group;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -36,10 +37,9 @@ public class LoginListener implements Listener {
 				}
 			}
 		}.runTaskLater(main, 5);
-
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onLogin(PlayerLoginEvent event) {
 		Player player = event.getPlayer();
 		updateAttachment(player, Group.DONO);
@@ -72,16 +72,17 @@ public class LoginListener implements Listener {
 	}
 
 	private void addChildren(String name, List<String> permList) {
-		Permission perm = main.getServer().getPluginManager().getPermission(name);
-		if (perm == null)
-			return;
-
-		if (!permList.contains(perm.getName())) {
-			permList.add(perm.getName());
-		}
-		for (Entry<String, Boolean> child : perm.getChildren().entrySet()) {
-			if (!permList.contains(child.getKey())) {
-				addChildren(child.getKey(), permList);
+		for (Permission perm : Bukkit.getPluginManager().getPermissions()) {
+			System.out.println(perm.getName());
+			if(!perm.getName().startsWith(name))
+				continue;
+			if (!permList.contains(perm.getName())) {
+				permList.add(perm.getName());
+			}
+			for (Entry<String, Boolean> child : perm.getChildren().entrySet()) {
+				if (!permList.contains(child.getKey())) {
+					addChildren(child.getKey(), permList);
+				}
 			}
 		}
 	}

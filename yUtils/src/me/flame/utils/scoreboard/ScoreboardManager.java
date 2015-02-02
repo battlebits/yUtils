@@ -34,7 +34,6 @@ public class ScoreboardManager extends Management {
 	public void removeScoreboard(Player player) {
 		if (boards.containsKey(player.getName())) {
 			boards.remove(player.getName());
-			player.setScoreboard(null);
 		}
 	}
 
