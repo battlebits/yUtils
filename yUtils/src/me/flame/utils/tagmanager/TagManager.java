@@ -14,6 +14,8 @@ import org.bukkit.scoreboard.Team;
 import me.flame.utils.Main;
 import me.flame.utils.Management;
 import me.flame.utils.tagmanager.enums.Tag;
+import me.flame.utils.tagmanager.listeners.JoinListener;
+import me.flame.utils.tagmanager.listeners.QuitListener;
 
 public class TagManager extends Management {
 	private HashMap<Tag, List<Player>> tags;
@@ -25,6 +27,8 @@ public class TagManager extends Management {
 	@Override
 	public void onEnable() {
 		tags = new HashMap<>();
+		getServer().getPluginManager().registerEvents(new JoinListener(this), getPlugin());
+		getServer().getPluginManager().registerEvents(new QuitListener(this), getPlugin());
 	}
 
 	public void addPlayerTag(Player player, Tag tag) {
@@ -50,10 +54,28 @@ public class TagManager extends Management {
 				if (team != null) {
 					team.addPlayer(participante);
 				}
-				Scoreboard playerBoard = getPlugin().getScoreboardManager().getPlayerScoreboard(player);
+				Scoreboard playerBoard = getPlugin().getScoreboardManager().getPlayerScoreboard(participante);
 				Team playerTeam = playerBoard.getTeam(tag.getTeamName());
 				if (playerTeam != null)
 					playerTeam.addPlayer(player);
+			}
+		}
+	}
+
+	public void removePlayerTag(Player player) {
+		Scoreboard board = getPlugin().getScoreboardManager().getPlayerScoreboard(player);
+		Team t = board.getPlayerTeam(player);
+		t.removePlayer(player);
+		Tag tag = Tag.valueOf(t.getName().substring(1, 0));
+		List<Player> playerList = tags.get(tag);
+		playerList.remove(player);
+		for (Entry<Tag, List<Player>> entry : tags.entrySet()) {
+			List<Player> players = entry.getValue();
+			for (Player participante : players) {
+				Scoreboard playerBoard = getPlugin().getScoreboardManager().getPlayerScoreboard(participante);
+				Team playerTeam = playerBoard.getTeam(tag.getTeamName());
+				if (playerTeam != null)
+					playerTeam.removePlayer(player);
 			}
 		}
 	}
