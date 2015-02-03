@@ -61,10 +61,10 @@ public class Main extends JavaPlugin {
 		tagManager = new TagManager(this);
 		tagManager.onEnable();
 	}
-	
+
 	@Override
 	public void onDisable() {
-		
+		Connect.SQLdisconnect(mainConnection);
 	}
 
 	public ScoreboardManager getScoreboardManager() {

@@ -51,9 +51,10 @@ public class TagManager extends Management {
 			List<Player> players = entry.getValue();
 			Team team = board.getTeam(tagteam.getTeamName());
 			for (Player participante : players) {
-				if (team != null) {
+				if (team != null)
 					team.addPlayer(participante);
-				}
+				if (participante == player)
+					continue;
 				Scoreboard playerBoard = getPlugin().getScoreboardManager().getPlayerScoreboard(participante);
 				Team playerTeam = playerBoard.getTeam(tag.getTeamName());
 				if (playerTeam != null)
@@ -86,6 +87,6 @@ public class TagManager extends Management {
 
 	@Override
 	public void onDisable() {
-		
+
 	}
 }

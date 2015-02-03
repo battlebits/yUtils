@@ -27,6 +27,7 @@ public class ScoreboardManager extends Management {
 		if (board == null) {
 			board = getServer().getScoreboardManager().getNewScoreboard();
 			boards.put(player.getName(), board);
+			player.setScoreboard(boards.get(player.getName()));
 		}
 		return board;
 	}
@@ -39,7 +40,7 @@ public class ScoreboardManager extends Management {
 
 	@Override
 	public void onDisable() {
-		
+
 	}
 
 }

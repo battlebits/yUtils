@@ -39,7 +39,8 @@ public class LoginListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onLogin(PlayerLoginEvent event) {
 		Player player = event.getPlayer();
-		updateAttachment(player, Group.DONO);
+		main.getPermissionManager().setPlayerGroup(player, Group.YOUTUBER);
+		updateAttachment(player, main.getPermissionManager().getPlayerGroup(player));
 	}
 
 	protected void updateAttachment(Player player, Group group) {

@@ -1,5 +1,7 @@
 package me.flame.utils.permissions;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -20,6 +22,7 @@ public class PermissionManager extends Management {
 	private RegexPermissions regexPerms;
 	protected PermissionMatcher matcher = new RegExpMatcher();
 	protected LoginListener superms;
+
 	public PermissionManager(Main main, ServerType typea) {
 		super(main);
 		type = typea;
@@ -57,6 +60,32 @@ public class PermissionManager extends Management {
 
 	public PermissionMatcher getPermissionMatcher() {
 		return this.matcher;
+	}
+
+	public void setPlayerGroup(Player player, Group group) {
+		UUID uuid = player.getUniqueId();
+		if (playerGroups.containsKey(uuid))
+			playerGroups.remove(uuid);
+		playerGroups.put(uuid, group);
+	}
+
+	public Group getPlayerGroup(Player player) {
+		return playerGroups.get(player.getUniqueId());
+	}
+
+	public void loadPlayerGroup(Player player) {
+		UUID uuid = player.getUniqueId();
+		try {
+			PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Staff-Battlecraft` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
+			ResultSet result = stmt.executeQuery();
+			if (result.next()) {
+				setPlayerGroup(player, Group.valueOf(result.getString("rank").toUpperCase()));
+			} else {
+				setPlayerGroup(player, Group.NORMAL);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
