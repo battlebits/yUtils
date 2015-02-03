@@ -2,3 +2,9 @@ name: yUtils
 version: 1.0
 main: me.flame.utils.Main
 author: flame_tuner
+description: Plugin feito para gerenciar Permissions, Compras, Banimentos, Tags e Scoreboards
+commands:
+  groupset:
+    description: Comando utilizado para mudar o grupo de pessoas
+  giveyoutuber:
+    description: Comando utilizado por admins para dar youtuber

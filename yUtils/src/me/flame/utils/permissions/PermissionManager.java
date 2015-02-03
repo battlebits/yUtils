@@ -7,6 +7,9 @@ import java.util.UUID;
 
 import me.flame.utils.Main;
 import me.flame.utils.Management;
+import me.flame.utils.events.AccountLoadEvent;
+import me.flame.utils.permissions.commands.GiveYoutuber;
+import me.flame.utils.permissions.commands.GroupSet;
 import me.flame.utils.permissions.enums.Group;
 import me.flame.utils.permissions.enums.ServerType;
 import me.flame.utils.permissions.injector.PermissionMatcher;
@@ -32,6 +35,8 @@ public class PermissionManager extends Management {
 	public void onEnable() {
 		superms = new LoginListener(getPlugin());
 		getServer().getPluginManager().registerEvents(superms, getPlugin());
+		getPlugin().getCommand("giveyoutuber").setExecutor(new GiveYoutuber(this));
+		getPlugin().getCommand("groupset").setExecutor(new GroupSet(this));
 		// TODO Load playerGroups
 		regexPerms = new RegexPermissions(this);
 		playerGroups = new HashMap<>();
@@ -67,12 +72,62 @@ public class PermissionManager extends Management {
 		if (playerGroups.containsKey(uuid))
 			removePlayerGroup(player);
 		playerGroups.put(uuid, group);
+		getServer().getPluginManager().callEvent(new AccountLoadEvent(player.getUniqueId(), group));
+	}
+
+	public void savePlayerGroup(UUID uuid, Group group) {
+		try {
+			if (group.ordinal() >= Group.HELPER.ordinal()) {
+				PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Staff-" + getServerName(getServerType().toString()) + "` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
+				ResultSet result = stmt.executeQuery();
+				if (result.next()) {
+					stmt.execute("UPDATE `Staff-" + getServerName(getServerType().toString()) + "` SET `rank`=" + "' WHERE (`uuid`='" + uuid.toString().replace("-", "") + "');");
+				} else {
+					stmt.execute("INSERT INTO `Staff-" + getServerName(getServerType().toString()) + "`(`uuid`, `rank`) VALUES ('" + uuid.toString().replace("-", "") + "', '" + group.toString().toLowerCase() + "');");
+				}
+				result.close();
+				stmt.close();
+			} else {
+				PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Ranks` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
+				ResultSet result = stmt.executeQuery();
+				if (result.next()) {
+					stmt.execute("UPDATE `Ranks` SET `rank`=" + "' WHERE (`uuid`='" + uuid.toString().replace("-", "") + "');");
+				} else {
+					stmt.execute("INSERT INTO `Ranks`(`uuid`, `rank`) VALUES ('" + uuid.toString().replace("-", "") + "', '" + group.toString().toLowerCase() + "');");
+				}
+				result.close();
+				stmt.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void removePlayer(UUID uuid) {
+		try {
+			PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Staff-" + getServerName(getServerType().toString()) + "` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
+			ResultSet result = stmt.executeQuery();
+			if (result.next()) {
+				stmt.execute("DELETE * FROM `Staff-" + getServerName(getServerType().toString()) + "` WHERE (`uuid`='" + uuid.toString().replace("-", "") + "');");
+			} else {
+				stmt = getMySQL().prepareStatement("SELECT * FROM `Ranks` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
+				result = stmt.executeQuery();
+				if (result.next()) {
+					stmt.execute("DELETE * FROM `Ranks` WHERE (`uuid`='" + uuid.toString().replace("-", "") + "');");
+				}
+			}
+			result.close();
+			stmt.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void setPlayerGroup(UUID uuid, Group group) {
 		if (playerGroups.containsKey(uuid))
 			removePlayerGroup(uuid);
 		playerGroups.put(uuid, group);
+		getServer().getPluginManager().callEvent(new AccountLoadEvent(uuid, group));
 	}
 
 	public void removePlayerGroup(Player player) {

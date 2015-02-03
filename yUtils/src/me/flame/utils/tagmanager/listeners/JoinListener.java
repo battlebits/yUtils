@@ -19,10 +19,11 @@ public class JoinListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onJoin(AccountLoadEvent event) {
-		Player p = event.getPlayer();
-		manager.addPlayerTag(p, getPlayerDefaultTag(p));
+		Player p = manager.getServer().getPlayer(event.getUUID());
+		if (p != null)
+			manager.addPlayerTag(p, getPlayerDefaultTag(p));
 	}
-	
+
 	private Tag getPlayerDefaultTag(Player p) {
 		PermissionManager man = manager.getPlugin().getPermissionManager();
 		return Tag.valueOf(man.getPlayerGroup(p).toString());

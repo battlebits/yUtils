@@ -45,11 +45,17 @@ public class LoginListener implements Listener {
 			@Override
 			public void run() {
 				main.getPermissionManager().loadPlayerGroup(player.getUniqueId());
-				Group group = main.getPermissionManager().getPlayerGroup(player);
-				updateAttachment(player, group);
-				main.getServer().getPluginManager().callEvent(new AccountLoadEvent(player, player.getUniqueId(), group));
 			}
 		}.runTaskAsynchronously(main);
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onAccountLoad(AccountLoadEvent event) {
+		Player player = main.getServer().getPlayer(event.getUUID());
+		if (player != null) {
+			Group group = main.getPermissionManager().getPlayerGroup(player);
+			updateAttachment(player, group);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
