@@ -65,27 +65,64 @@ public class PermissionManager extends Management {
 	public void setPlayerGroup(Player player, Group group) {
 		UUID uuid = player.getUniqueId();
 		if (playerGroups.containsKey(uuid))
-			playerGroups.remove(uuid);
+			removePlayerGroup(player);
 		playerGroups.put(uuid, group);
+	}
+
+	public void setPlayerGroup(UUID uuid, Group group) {
+		if (playerGroups.containsKey(uuid))
+			removePlayerGroup(uuid);
+		playerGroups.put(uuid, group);
+	}
+
+	public void removePlayerGroup(Player player) {
+		playerGroups.remove(player.getUniqueId());
+	}
+
+	public void removePlayerGroup(UUID uuid) {
+		playerGroups.remove(uuid);
 	}
 
 	public Group getPlayerGroup(Player player) {
 		return playerGroups.get(player.getUniqueId());
 	}
 
-	public void loadPlayerGroup(Player player) {
-		UUID uuid = player.getUniqueId();
+	public Group getPlayerGroup(UUID uuid) {
+		return playerGroups.get(uuid);
+	}
+
+	public void loadPlayerGroup(UUID uuid) {
 		try {
-			PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Staff-Battlecraft` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
+			PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Staff-" + getServerName(getServerType().toString()) + "` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
 			ResultSet result = stmt.executeQuery();
 			if (result.next()) {
-				setPlayerGroup(player, Group.valueOf(result.getString("rank").toUpperCase()));
+				Group grupo = Group.valueOf(result.getString("rank").toUpperCase());
+				System.out.println(grupo.toString());
+				setPlayerGroup(uuid, grupo);
 			} else {
-				setPlayerGroup(player, Group.NORMAL);
+				stmt = getMySQL().prepareStatement("SELECT * FROM `Ranks` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
+				result = stmt.executeQuery();
+				if (result.next()) {
+					Group grupo = Group.valueOf(result.getString("rank").toUpperCase());
+					System.out.println(grupo.toString());
+					setPlayerGroup(uuid, grupo);
+				} else {
+					setPlayerGroup(uuid, Group.NORMAL);
+				}
 			}
+			result.close();
+			stmt.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static String getServerName(String server) {
+		String serverName = server;
+		char[] stringArray = serverName.toCharArray();
+		stringArray[0] = Character.toUpperCase(stringArray[0]);
+		serverName = new String(stringArray);
+		return serverName;
 	}
 
 	@Override

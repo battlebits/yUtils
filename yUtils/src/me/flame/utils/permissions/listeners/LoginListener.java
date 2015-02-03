@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import me.flame.utils.Main;
+import me.flame.utils.events.AccountLoadEvent;
 import me.flame.utils.permissions.enums.Group;
 
 import org.bukkit.entity.Player;
@@ -13,6 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
@@ -39,8 +41,21 @@ public class LoginListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onLogin(PlayerLoginEvent event) {
 		Player player = event.getPlayer();
-		main.getPermissionManager().setPlayerGroup(player, Group.YOUTUBER);
-		updateAttachment(player, main.getPermissionManager().getPlayerGroup(player));
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				main.getPermissionManager().loadPlayerGroup(player.getUniqueId());
+				Group group = main.getPermissionManager().getPlayerGroup(player);
+				updateAttachment(player, group);
+				main.getServer().getPluginManager().callEvent(new AccountLoadEvent(player, player.getUniqueId(), group));
+			}
+		}.runTaskAsynchronously(main);
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onMonitorLogin(PlayerLoginEvent event) {
+		if (event.getResult() != Result.ALLOWED)
+			removeAttachment(event.getPlayer());
 	}
 
 	protected void updateAttachment(Player player, Group group) {
@@ -84,6 +99,7 @@ public class LoginListener implements Listener {
 		if (attach != null) {
 			attach.remove();
 		}
+		main.getPermissionManager().removePlayerGroup(player);
 		this.main.getServer().getPluginManager().removePermission(player.getUniqueId().toString());
 	}
 

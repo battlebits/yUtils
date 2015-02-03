@@ -17,7 +17,7 @@ public class Main extends JavaPlugin {
 	 * MySQL
 	 * 
 	 */
-	public boolean sql = false;
+	public boolean sql = true;
 	public Connect connect;
 	public Connection mainConnection;
 
@@ -34,9 +34,10 @@ public class Main extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		saveDefaultConfig();
 		instance = this;
 		connect = new Connect(this);
-		mainConnection = connect.trySQLConnection("", "", "", "", "");
+		mainConnection = connect.trySQLConnection("localhost", "3306", "utils", "root", "saobestanime");
 		ServerType type = null;
 		switch (getConfig().getString("serverType")) {
 		case "hungergames":
