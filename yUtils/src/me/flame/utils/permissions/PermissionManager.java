@@ -19,7 +19,7 @@ public class PermissionManager extends Management {
 	private static ServerType type = ServerType.NONE;
 	private RegexPermissions regexPerms;
 	protected PermissionMatcher matcher = new RegExpMatcher();
-
+	protected LoginListener superms;
 	public PermissionManager(Main main, ServerType typea) {
 		super(main);
 		type = typea;
@@ -27,7 +27,8 @@ public class PermissionManager extends Management {
 
 	@Override
 	public void onEnable() {
-		getServer().getPluginManager().registerEvents(new LoginListener(getPlugin()), getPlugin());
+		superms = new LoginListener(getPlugin());
+		getServer().getPluginManager().registerEvents(superms, getPlugin());
 		// TODO Load playerGroups
 		regexPerms = new RegexPermissions(this);
 		playerGroups = new HashMap<>();
@@ -60,6 +61,13 @@ public class PermissionManager extends Management {
 
 	@Override
 	public void onDisable() {
-		
+		if (this.regexPerms != null) {
+			this.regexPerms.onDisable();
+			this.regexPerms = null;
+		}
+		if (this.superms != null) {
+			this.superms.onDisable();
+			this.superms = null;
+		}
 	}
 }

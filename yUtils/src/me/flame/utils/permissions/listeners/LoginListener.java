@@ -86,4 +86,10 @@ public class LoginListener implements Listener {
 		this.main.getServer().getPluginManager().removePermission(player.getUniqueId().toString());
 	}
 
+	public void onDisable() {
+		for (PermissionAttachment attach : attachments.values()) {
+			attach.remove();
+		}
+		attachments.clear();
+	}
 }
