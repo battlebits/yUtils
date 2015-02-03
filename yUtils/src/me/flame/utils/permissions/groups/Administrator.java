@@ -17,7 +17,7 @@ public class Administrator extends MainGroup {
 			break;
 		case LOBBY:
 			break;
-		case PVP:
+		case BATTLECRAFT:
 			permissions.add("flame.cmd.say");
 			permissions.add("flame.adminless");
 			permissions.add("minecraft.command.tp");

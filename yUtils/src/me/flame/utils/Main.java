@@ -43,8 +43,8 @@ public class Main extends JavaPlugin {
 		case "hungergames":
 			type = ServerType.HUNGERGAMES;
 			break;
-		case "pvp":
-			type = ServerType.PVP;
+		case "battlecraft":
+			type = ServerType.BATTLECRAFT;
 			break;
 		case "lobby":
 			type = ServerType.LOBBY;

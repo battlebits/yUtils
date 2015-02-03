@@ -17,7 +17,7 @@ public class Moderator extends MainGroup {
 			break;
 		case LOBBY:
 			break;
-		case PVP:
+		case BATTLECRAFT:
 			permissions.add("minecraft.command.tp");
 			permissions.add("flame.cmd.say");
 			permissions.add("knohax.forcecheck");

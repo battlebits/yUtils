@@ -17,7 +17,7 @@ public class Trial extends MainGroup {
 			break;
 		case LOBBY:
 			break;
-		case PVP:
+		case BATTLECRAFT:
 			permissions.add("minecraft.command.tp");
 			permissions.add("knohax.forcecheck");
 			permissions.add("nohax.viewalerts");

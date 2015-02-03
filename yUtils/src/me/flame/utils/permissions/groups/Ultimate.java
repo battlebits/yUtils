@@ -17,7 +17,7 @@ public class Ultimate extends MainGroup {
 			break;
 		case LOBBY:
 			break;
-		case PVP:
+		case BATTLECRAFT:
 			permissions.add("flame.vip.pro");
 			break;
 		default:
