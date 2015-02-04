@@ -1,16 +1,13 @@
 package me.flame.utils.scoreboard;
 
-import java.util.HashMap;
-
-import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
-
 import me.flame.utils.Main;
 import me.flame.utils.Management;
 import me.flame.utils.scoreboard.listeners.QuitListener;
 
+import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
+
 public class ScoreboardManager extends Management {
-	private HashMap<String, Scoreboard> boards;
 
 	public ScoreboardManager(Main main) {
 		super(main);
@@ -18,29 +15,27 @@ public class ScoreboardManager extends Management {
 
 	@Override
 	public void onEnable() {
-		this.boards = new HashMap<>();
 		getServer().getPluginManager().registerEvents(new QuitListener(this), getPlugin());
 	}
 
 	public Scoreboard getPlayerScoreboard(Player player) {
-		Scoreboard board = boards.get(player);
+		Scoreboard board = player.getScoreboard();
 		if (board == null) {
 			board = getServer().getScoreboardManager().getNewScoreboard();
-			boards.put(player.getName(), board);
-			player.setScoreboard(boards.get(player.getName()));
+			player.setScoreboard(board);
 		}
 		return board;
 	}
 
 	public void removeScoreboard(Player player) {
-		if (boards.containsKey(player.getName())) {
-			boards.remove(player.getName());
-		}
+		player.setScoreboard(getServer().getScoreboardManager().getNewScoreboard());
 	}
 
 	@Override
 	public void onDisable() {
-
+		for (Player player : getServer().getOnlinePlayers()) {
+			removeScoreboard(player);
+		}
 	}
 
 }

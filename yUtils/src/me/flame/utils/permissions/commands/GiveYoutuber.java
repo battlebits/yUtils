@@ -5,8 +5,8 @@ import java.util.UUID;
 import me.flame.utils.permissions.PermissionManager;
 import me.flame.utils.permissions.enums.Group;
 import me.flame.utils.utils.UUIDFetcher;
-import net.md_5.bungee.api.ChatColor;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

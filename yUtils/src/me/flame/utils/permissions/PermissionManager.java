@@ -52,7 +52,7 @@ public class PermissionManager extends Management {
 		if (!playerGroups.containsKey(player.getUniqueId()))
 			return false;
 		Group playerGroup = playerGroups.get(player.getUniqueId());
-		return playerGroup.ordinal() > group.ordinal();
+		return playerGroup.ordinal() >= group.ordinal();
 	}
 
 	public static ServerType getServerType() {
@@ -78,12 +78,12 @@ public class PermissionManager extends Management {
 	public void savePlayerGroup(UUID uuid, Group group) {
 		try {
 			if (group.ordinal() >= Group.HELPER.ordinal()) {
-				PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Staff-" + getServerName(getServerType().toString()) + "` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
+				PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Staff-" + getServerType().toString() + "` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
 				ResultSet result = stmt.executeQuery();
 				if (result.next()) {
-					stmt.execute("UPDATE `Staff-" + getServerName(getServerType().toString()) + "` SET `rank`=" + "' WHERE (`uuid`='" + uuid.toString().replace("-", "") + "');");
+					stmt.execute("UPDATE `Staff-" + getServerType().toString() + "` SET rank='" + group.toString().toLowerCase() + "' WHERE uuid='" + uuid.toString().replace("-", "") + "';");
 				} else {
-					stmt.execute("INSERT INTO `Staff-" + getServerName(getServerType().toString()) + "`(`uuid`, `rank`) VALUES ('" + uuid.toString().replace("-", "") + "', '" + group.toString().toLowerCase() + "');");
+					stmt.execute("INSERT INTO `Staff-" + getServerType().toString() + "`(`uuid`, `rank`) VALUES ('" + uuid.toString().replace("-", "") + "', '" + group.toString().toLowerCase() + "');");
 				}
 				result.close();
 				stmt.close();
@@ -91,7 +91,7 @@ public class PermissionManager extends Management {
 				PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Ranks` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
 				ResultSet result = stmt.executeQuery();
 				if (result.next()) {
-					stmt.execute("UPDATE `Ranks` SET `rank`=" + "' WHERE (`uuid`='" + uuid.toString().replace("-", "") + "');");
+					stmt.execute("UPDATE `Ranks` SET `rank`='" + group.toString().toLowerCase() + "' WHERE uuid='" + uuid.toString().replace("-", "") + "';");
 				} else {
 					stmt.execute("INSERT INTO `Ranks`(`uuid`, `rank`) VALUES ('" + uuid.toString().replace("-", "") + "', '" + group.toString().toLowerCase() + "');");
 				}
@@ -105,16 +105,15 @@ public class PermissionManager extends Management {
 
 	public void removePlayer(UUID uuid) {
 		try {
-			PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Staff-" + getServerName(getServerType().toString()) + "` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
+			PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Staff-" + getServerType().toString() + "` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
 			ResultSet result = stmt.executeQuery();
 			if (result.next()) {
-				stmt.execute("DELETE * FROM `Staff-" + getServerName(getServerType().toString()) + "` WHERE (`uuid`='" + uuid.toString().replace("-", "") + "');");
-			} else {
-				stmt = getMySQL().prepareStatement("SELECT * FROM `Ranks` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
-				result = stmt.executeQuery();
-				if (result.next()) {
-					stmt.execute("DELETE * FROM `Ranks` WHERE (`uuid`='" + uuid.toString().replace("-", "") + "');");
-				}
+				stmt.execute("DELETE FROM `Staff-" + getServerType().toString() + "` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
+			}
+			stmt = getMySQL().prepareStatement("SELECT * FROM `Ranks` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
+			result = stmt.executeQuery();
+			if (result.next()) {
+				stmt.execute("DELETE FROM `Ranks` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
 			}
 			result.close();
 			stmt.close();
@@ -148,7 +147,7 @@ public class PermissionManager extends Management {
 
 	public void loadPlayerGroup(UUID uuid) {
 		try {
-			PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Staff-" + getServerName(getServerType().toString()) + "` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
+			PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Staff-" + getServerType().toString() + "` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
 			ResultSet result = stmt.executeQuery();
 			if (result.next()) {
 				Group grupo = Group.valueOf(result.getString("rank").toUpperCase());
@@ -170,14 +169,6 @@ public class PermissionManager extends Management {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public static String getServerName(String server) {
-		String serverName = server;
-		char[] stringArray = serverName.toCharArray();
-		stringArray[0] = Character.toUpperCase(stringArray[0]);
-		serverName = new String(stringArray);
-		return serverName;
 	}
 
 	@Override

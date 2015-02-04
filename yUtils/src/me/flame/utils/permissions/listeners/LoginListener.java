@@ -32,7 +32,12 @@ public class LoginListener implements Listener {
 			@Override
 			public void run() {
 				for (Player player : main.getServer().getOnlinePlayers()) {
-					updateAttachment(player, Group.DONO);
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							main.getPermissionManager().loadPlayerGroup(player.getUniqueId());
+						}
+					}.runTaskAsynchronously(main);
 				}
 			}
 		}.runTaskLater(main, 5);

@@ -8,7 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class QuitListener implements Listener{
+public class QuitListener implements Listener {
 	private ScoreboardManager manager;
 
 	public QuitListener(ScoreboardManager manager) {

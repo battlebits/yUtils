@@ -1,14 +1,14 @@
 package me.flame.utils.permissions.commands;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import me.flame.utils.permissions.PermissionManager;
 import me.flame.utils.permissions.enums.Group;
 import me.flame.utils.utils.UUIDFetcher;
-import net.md_5.bungee.api.ChatColor;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -29,11 +29,23 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 			return null;
 		Player player = (Player) sender;
 		if (cmd.getName().equalsIgnoreCase("groupset")) {
-			if (!manager.hasGroupPermission(player, Group.DONO)) {
-				return null;
-			}
-			if (args.length == 2) {
-				return (List<String>) Arrays.asList(Group.values().toString());
+			if (manager.hasGroupPermission(player, Group.DONO)) {
+				if (args.length == 2) {
+					List<String> str = new ArrayList<String>();
+					for (Group group : Group.values()) {
+						str.add(group.toString());
+					}
+					return str;
+				}
+			} else if (manager.hasGroupPermission(player, Group.ADMIN)) {
+				if (args.length == 2) {
+					List<String> str = new ArrayList<String>();
+					str.add(Group.MOD.toString());
+					str.add(Group.TRIAL.toString());
+					str.add(Group.HELPER.toString());
+					str.add(Group.NORMAL.toString());
+					return str;
+				}
 			}
 		}
 		return null;
@@ -59,15 +71,18 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 			}
 			@SuppressWarnings("deprecation")
 			Player target = manager.getServer().getPlayer(args[0]);
-			Group group = Group.valueOf(args[1].toUpperCase());
-			if (group == null) {
+			Group groupo = null;
+			try {
+				groupo = Group.valueOf(args[1].toUpperCase());
+			} catch (Exception e) {
 				sender.sendMessage(ChatColor.RED + "Este grupo nao existe!");
 				return true;
 			}
+			final Group group = groupo;
 			if (sender instanceof Player) {
 				Player player = (Player) sender;
 				if (manager.getPlayerGroup(player) == Group.ADMIN) {
-					if((group.ordinal() < 7 && group.ordinal() > 0) || group == Group.ADMIN || group == Group.DONO) {
+					if ((group.ordinal() < 7 && group.ordinal() > 0) || group == Group.ADMIN || group == Group.DONO) {
 						player.sendMessage(ChatColor.RED + "Desculpe, mas voce nao pode manipular estes grupos!");
 						return true;
 					}
@@ -91,15 +106,22 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 							sender.sendMessage(ChatColor.RED + "Parece que o player nao existe!");
 							return;
 						}
+						if (sender instanceof Player) {
+							Player player = (Player) sender;
+							if (manager.getPlayerGroup(uuid) == Group.DONO && manager.getPlayerGroup(player) == Group.ADMIN) {
+								sender.sendMessage(ChatColor.RED + "Voce nao pode mudar o grupo de um dono");
+								return;
+							}
+						}
 						if (group == manager.getPlayerGroup(uuid)) {
 							sender.sendMessage(ChatColor.RED + "O grupo do player ja e " + group.toString());
 							return;
 						}
 						manager.setPlayerGroup(uuid, group);
-						manager.savePlayerGroup(uuid, group);
+						manager.removePlayer(uuid);
 						sender.sendMessage(ChatColor.YELLOW + "Player " + args[0] + "(" + uuid.toString().replace("-", "") + ") foi setado como " + group.toString() + " com sucesso!");
 						if (target == null)
-							manager.removePlayer(uuid);
+							manager.removePlayerGroup(uuid);
 					}
 				}.runTaskAsynchronously(manager.getPlugin());
 				return true;
@@ -121,6 +143,13 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 						sender.sendMessage(ChatColor.RED + "Parece que o player nao existe!");
 						return;
 					}
+					if (sender instanceof Player) {
+						Player player = (Player) sender;
+						if (manager.getPlayerGroup(uuid) == Group.DONO && manager.getPlayerGroup(player) == Group.ADMIN) {
+							sender.sendMessage(ChatColor.RED + "Voce nao pode mudar o grupo de um dono");
+							return;
+						}
+					}
 					if (group == manager.getPlayerGroup(uuid)) {
 						sender.sendMessage(ChatColor.RED + "O grupo do player ja e " + group.toString());
 						return;
@@ -129,7 +158,7 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 					manager.savePlayerGroup(uuid, group);
 					sender.sendMessage(ChatColor.YELLOW + "Player " + args[0] + "(" + uuid.toString().replace("-", "") + ") foi setado como " + group.toString() + " com sucesso!");
 					if (target == null)
-						manager.removePlayer(uuid);
+						manager.removePlayerGroup(uuid);
 				}
 			}.runTaskAsynchronously(manager.getPlugin());
 			return true;
