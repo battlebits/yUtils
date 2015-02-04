@@ -44,6 +44,7 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 					str.add(Group.TRIAL.toString());
 					str.add(Group.HELPER.toString());
 					str.add(Group.NORMAL.toString());
+					str.add(Group.HELPER.toString());
 					return str;
 				}
 			}
@@ -82,7 +83,7 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 			if (sender instanceof Player) {
 				Player player = (Player) sender;
 				if (manager.getPlayerGroup(player) == Group.ADMIN) {
-					if ((group.ordinal() < 7 && group.ordinal() > 0) || group == Group.ADMIN || group == Group.DONO) {
+					if ((group.ordinal() < 5 && group.ordinal() > 0) || group == Group.STAFF || group == Group.ADMIN || group == Group.DONO) {
 						player.sendMessage(ChatColor.RED + "Desculpe, mas voce nao pode manipular estes grupos!");
 						return true;
 					}
