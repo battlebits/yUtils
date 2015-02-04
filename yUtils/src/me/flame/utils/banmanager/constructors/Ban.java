@@ -39,6 +39,10 @@ public class Ban {
 		return duration;
 	}
 
+	public boolean isPermanent() {
+		return getDuration().getTime() == 0;
+	}
+
 	public boolean hasExpired() {
 		return getDuration().getTime() != 0 && getDuration().after(Calendar.getInstance().getTime());
 	}

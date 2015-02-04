@@ -49,8 +49,19 @@ public class BanManagement extends Management {
 		return mutados.get(uuid);
 	}
 
+	public void ban(Ban ban) {
+		banimentos.put(ban.getBannedUuid(), ban);
+		// TODO MySQL
+
+	}
+
+	public void unban(UUID uuid) {
+		banimentos.remove(uuid);
+		// TODO MySQL
+	}
+
 	@Override
 	public void onDisable() {
-
+		banimentos.clear();
 	}
 }
