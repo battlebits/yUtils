@@ -10,13 +10,19 @@ public class Ban {
 	private String bannedBy;
 	private Date banTime;
 	private Date duration;
+	private boolean unbanned;
+	private int previousBans;
 
-	public Ban(UUID bannedUuid, String bannedBy, String reason, Date banTime, Date duration) {
+	public Ban(UUID bannedUuid, String bannedBy, String reason, Date banTime, Date duration, boolean unbanned) {
 		this.bannedUuid = bannedUuid;
 		this.bannedBy = bannedBy;
 		this.reason = reason;
 		this.banTime = banTime;
 		this.duration = duration;
+		this.unbanned = unbanned;
+		this.previousBans = 0;
+		if (unbanned)
+			previousBans++;
 	}
 
 	public UUID getBannedUuid() {
@@ -37,6 +43,29 @@ public class Ban {
 
 	public Date getDuration() {
 		return duration;
+	}
+
+	public int getPreviousBans() {
+		return previousBans;
+	}
+
+	public boolean isBanned() {
+		return !unbanned;
+	}
+
+	public void unban() {
+		unbanned = true;
+		previousBans++;
+	}
+
+	public void setNewBan(String bannedBy, String reason, Date banTime, Date duration, boolean unbanned) {
+		this.bannedBy = bannedBy;
+		this.reason = reason;
+		this.banTime = banTime;
+		this.duration = duration;
+		this.unbanned = unbanned;
+		if (unbanned)
+			previousBans++;
 	}
 
 	public boolean isPermanent() {
