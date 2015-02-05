@@ -9,6 +9,7 @@ import java.util.UUID;
 import me.flame.utils.Main;
 import me.flame.utils.Management;
 import me.flame.utils.banmanager.commands.Kick;
+import me.flame.utils.banmanager.commands.Unban;
 import me.flame.utils.banmanager.constructors.Ban;
 import me.flame.utils.banmanager.constructors.Mute;
 import me.flame.utils.banmanager.listeners.LoginListener;
@@ -31,6 +32,8 @@ public class BanManagement extends Management {
 		getServer().getPluginManager().registerEvents(new LoginListener(this), getPlugin());
 		getPlugin().getCommand("kick").setExecutor(new Kick(this));
 		getPlugin().getCommand("ban").setExecutor(new me.flame.utils.banmanager.commands.Ban(this));
+		getPlugin().getCommand("unban").setExecutor(new Unban(this));
+		getPlugin().getCommand("ban").setExecutor(new me.flame.utils.banmanager.commands.Mute(this));
 		new Thread(new Runnable() {
 			@Override
 			public void run() {

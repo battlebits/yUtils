@@ -50,12 +50,14 @@ public class Mute implements CommandExecutor {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
+					PermissionManager permManager = manager.getPlugin().getPermissionManager();
 					UUID uuid = null;
 					if (target != null) {
 						uuid = target.getUniqueId();
 					} else {
 						try {
 							uuid = UUIDFetcher.getUUIDOf(args[0]);
+							permManager.loadPlayerGroup(uuid);
 						} catch (Exception e) {
 							sender.sendMessage(ChatColor.RED + "O player nao existe");
 							return;
@@ -65,8 +67,6 @@ public class Mute implements CommandExecutor {
 						sender.sendMessage(ChatColor.RED + "O player ja esta banido");
 						return;
 					}
-					PermissionManager permManager = manager.getPlugin().getPermissionManager();
-					permManager.loadPlayerGroup(uuid);
 					if (permManager.getPlayerGroup(uuid).ordinal() >= 5 && sender instanceof Player && permManager.getPlayerGroup((Player) sender) != Group.DONO && permManager.getPlayerGroup((Player) sender) != Group.ADMIN) {
 						sender.sendMessage(ChatColor.RED + "Voce nao pode mutar uma staff");
 						return;
