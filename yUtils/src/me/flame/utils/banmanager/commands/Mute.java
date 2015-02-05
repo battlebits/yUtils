@@ -1,5 +1,7 @@
 package me.flame.utils.banmanager.commands;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import me.flame.utils.banmanager.BanManagement;
@@ -32,7 +34,7 @@ public class Mute implements CommandExecutor {
 				}
 			}
 			if (args.length < 2) {
-				sender.sendMessage(ChatColor.RED + "Uso correto: /ban <player> <motivo>");
+				sender.sendMessage(ChatColor.RED + "Uso correto: /mute <player> <motivo>");
 				return true;
 			}
 			@SuppressWarnings("deprecation")
@@ -41,7 +43,7 @@ public class Mute implements CommandExecutor {
 				if (sender instanceof Player) {
 					Player player = (Player) sender;
 					if (manager.getPlugin().getPermissionManager().isGroup(player, Group.TRIAL)) {
-						sender.sendMessage(ChatColor.RED + "Voce nao possui permissao para banir players offline!");
+						sender.sendMessage(ChatColor.RED + "Voce nao possui permissao para mutar players offline!");
 						return true;
 					}
 				}
@@ -67,7 +69,7 @@ public class Mute implements CommandExecutor {
 					PermissionManager permManager = manager.getPlugin().getPermissionManager();
 					permManager.loadPlayerGroup(uuid);
 					if (permManager.getPlayerGroup(uuid).ordinal() >= 5 && sender instanceof Player && permManager.getPlayerGroup((Player) sender) != Group.DONO && permManager.getPlayerGroup((Player) sender) != Group.ADMIN) {
-						sender.sendMessage(ChatColor.RED + "Voce nao pode banir uma staff");
+						sender.sendMessage(ChatColor.RED + "Voce nao pode mutar uma staff");
 						return;
 					}
 					StringBuilder builder = new StringBuilder();
@@ -77,20 +79,20 @@ public class Mute implements CommandExecutor {
 							espaco = "";
 						builder.append(args[i] + espaco);
 					}
-					sender.sendMessage(ChatColor.YELLOW + "O player " + args[0] + "(" + uuid.toString().replace("-", "") + ") foi banido. Motivo: " + ChatColor.AQUA + builder.toString());
+					sender.sendMessage(ChatColor.YELLOW + "O player " + args[0] + "(" + uuid.toString().replace("-", "") + ") foi mutado. Motivo: " + ChatColor.AQUA + builder.toString());
 					for (Player player : manager.getServer().getOnlinePlayers()) {
 						if (player == sender)
 							continue;
 						if (!manager.getPlugin().getPermissionManager().hasGroupPermission(player, Group.HELPER))
 							continue;
-						player.sendMessage(ChatColor.YELLOW + args[0] + "(" + uuid.toString().replace("-", "") + ") foi banido do servidor por " + sender.getName() + "! Motivo: " + ChatColor.AQUA + builder.toString());
+						player.sendMessage(ChatColor.YELLOW + args[0] + "(" + uuid.toString().replace("-", "") + ") foi mutado por " + sender.getName() + "! Motivo: " + ChatColor.AQUA + builder.toString());
 					}
 					if (target != null) {
-						String kickMessage = ChatColor.YELLOW + "Voce foi banido do servidor por " + sender.getName() + "! Motivo: " + ChatColor.AQUA + builder.toString();
-						target.kickPlayer(kickMessage);
+						target.sendMessage(ChatColor.YELLOW + "Voce foi mutado por " + sender.getName() + "! Motivo: " + ChatColor.AQUA + builder.toString());
 					} else {
 						permManager.removePlayerGroup(uuid);
 					}
+					manager.mute(new me.flame.utils.banmanager.constructors.Mute(uuid, sender.getName(), builder.toString(), Date.valueOf(LocalDate.now()), Date.valueOf("0")));
 				}
 			}).start();
 		}
