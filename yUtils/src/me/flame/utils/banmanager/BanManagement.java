@@ -146,7 +146,7 @@ public class BanManagement extends Management {
 			public void run() {
 				try {
 					Statement stmt = getMySQL().createStatement();
-					stmt.executeUpdate("INSERT INTO `Mutes`(`uuid`, `muted_By`, `reason`, `expire`, `mute_time`) VALUES ('" + mute.getMutedUuid() + "', '" + mute.getMutedBy() + "', '" + mute.getReason() + "' , " + mute.getDuration() + ", NOW());");
+					stmt.executeUpdate("INSERT INTO `Mutes`(`uuid`, `muted_By`, `reason`, `expire`, `mute_time`) VALUES ('" + mute.getMutedUuid() + "', '" + mute.getMutedBy() + "', '" + mute.getReason() + "' , " + mute.getDuration() + ", " + mute.getMuteTime() + ");");
 					stmt.close();
 				} catch (Exception e) {
 					getLogger().info("Nao foi possivel mutar " + mute.getMutedUuid().toString());
@@ -186,7 +186,7 @@ public class BanManagement extends Management {
 			public void run() {
 				try {
 					Statement stmt = getMySQL().createStatement();
-					stmt.executeUpdate("UPDATE `Banimentos` SET `unbanned`=1 WHERE `uuid`='" + uuid.toString().replace("-", "") + "', `unbanned`=0;");
+					stmt.executeUpdate("UPDATE `Banimentos` SET `unbanned`=1 WHERE `uuid`='" + uuid.toString().replace("-", "") + "' and `unbanned`=0;");
 					stmt.close();
 				} catch (Exception e) {
 					getLogger().info("Nao foi possivel desbanir " + uuid);
