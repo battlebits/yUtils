@@ -34,7 +34,7 @@ public class BanManagement extends Management {
 		getPlugin().getCommand("kick").setExecutor(new Kick(this));
 		getPlugin().getCommand("ban").setExecutor(new me.flame.utils.banmanager.commands.Ban(this));
 		getPlugin().getCommand("unban").setExecutor(new Unban(this));
-		getPlugin().getCommand("ban").setExecutor(new me.flame.utils.banmanager.commands.Mute(this));
+		getPlugin().getCommand("mute").setExecutor(new me.flame.utils.banmanager.commands.Mute(this));
 		getPlugin().getCommand("unmute").setExecutor(new Unmute(this));
 		new Thread(new Runnable() {
 			@Override
@@ -127,6 +127,7 @@ public class BanManagement extends Management {
 			@Override
 			public void run() {
 				try {
+					System.out.println((ban.getBanTime() + "").length());
 					Statement stmt = getMySQL().createStatement();
 					stmt.executeUpdate("INSERT INTO `Banimentos`(`uuid`, `banned_By`, `reason`, `expire`, `ban_time`, `unbanned`) " + "VALUES ('" + ban.getBannedUuid().toString().replace("-", "") + "' , '" + ban.getBannedBy() + "' , '" + ban.getReason() + "' , " + ban.getDuration() + ", " + ban.getBanTime() + " , 0);");
 					stmt.close();
@@ -176,7 +177,7 @@ public class BanManagement extends Management {
 	}
 
 	public boolean unban(UUID uuid) {
-		if (isBanned(uuid))
+		if (!isBanned(uuid))
 			return false;
 		Ban ban = getBan(uuid);
 		ban.unban();
