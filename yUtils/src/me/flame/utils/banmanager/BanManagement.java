@@ -29,6 +29,7 @@ public class BanManagement extends Management {
 		this.banimentos = new HashMap<>();
 		this.mutados = new HashMap<>();
 		getPlugin().getCommand("kick").setExecutor(new Kick(this));
+		getPlugin().getCommand("ban").setExecutor(new Kick(this));
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
