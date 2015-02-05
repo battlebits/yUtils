@@ -10,6 +10,7 @@ import me.flame.utils.Main;
 import me.flame.utils.Management;
 import me.flame.utils.banmanager.commands.Kick;
 import me.flame.utils.banmanager.commands.Unban;
+import me.flame.utils.banmanager.commands.Unmute;
 import me.flame.utils.banmanager.constructors.Ban;
 import me.flame.utils.banmanager.constructors.Mute;
 import me.flame.utils.banmanager.listeners.LoginListener;
@@ -34,6 +35,7 @@ public class BanManagement extends Management {
 		getPlugin().getCommand("ban").setExecutor(new me.flame.utils.banmanager.commands.Ban(this));
 		getPlugin().getCommand("unban").setExecutor(new Unban(this));
 		getPlugin().getCommand("ban").setExecutor(new me.flame.utils.banmanager.commands.Mute(this));
+		getPlugin().getCommand("unmute").setExecutor(new Unmute(this));
 		new Thread(new Runnable() {
 			@Override
 			public void run() {

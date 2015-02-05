@@ -15,4 +15,6 @@ commands:
   mute:
     description: Comando utilizado para mutar pessoas
   unban:
-    description: Comando utilizado para mutar pessoas
+    description: Comando utilizado para desbanir pessoas
+  unmute:
+    description: Comando utilizado para desmutar pessoas

@@ -1,5 +1,74 @@
 package me.flame.utils.banmanager.commands;
 
-public class Unmute {
+import java.util.UUID;
 
+import me.flame.utils.banmanager.BanManagement;
+import me.flame.utils.permissions.enums.Group;
+import me.flame.utils.utils.UUIDFetcher;
+
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+public class Unmute implements CommandExecutor {
+
+	private BanManagement manager;
+
+	public Unmute(BanManagement manager) {
+		this.manager = manager;
+	}
+
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if (cmd.getName().equalsIgnoreCase("unmute")) {
+			if (sender instanceof Player) {
+				Player player = (Player) sender;
+				if (!manager.getPlugin().getPermissionManager().hasGroupPermission(player, Group.ADMIN)) {
+					sender.sendMessage(ChatColor.RED + "Voce nao possui permissao para usar este comando!");
+					return true;
+				}
+			}
+			if (args.length != 1) {
+				sender.sendMessage(ChatColor.RED + "Uso correto: /unmute <player>");
+				return true;
+			}
+			@SuppressWarnings("deprecation")
+			Player target = manager.getServer().getPlayer(args[0]);
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					UUID uuid = null;
+					if (target != null) {
+						uuid = target.getUniqueId();
+					} else {
+						try {
+							uuid = UUIDFetcher.getUUIDOf(args[0]);
+						} catch (Exception e) {
+							sender.sendMessage(ChatColor.RED + "O player nao existe");
+							return;
+						}
+					}
+					if (!manager.isMuted(uuid)) {
+						sender.sendMessage(ChatColor.RED + "O player nao esta mutado");
+						return;
+					}
+					sender.sendMessage(ChatColor.YELLOW + "O player " + args[0] + "(" + uuid.toString().replace("-", "") + ") foi desmutado!");
+					for (Player player : manager.getServer().getOnlinePlayers()) {
+						if (player == sender)
+							continue;
+						if (!manager.getPlugin().getPermissionManager().hasGroupPermission(player, Group.HELPER))
+							continue;
+						player.sendMessage(ChatColor.YELLOW + args[0] + "(" + uuid.toString().replace("-", "") + ") foi desmutado do servidor por " + sender.getName() + "!");
+					}
+					if (target != null) {
+						target.sendMessage(ChatColor.YELLOW + "Voce foi desmutado do servidor por " + sender.getName() + "! Agora voce ja pode falar");
+					}
+					manager.unmute(uuid);
+				}
+			}).start();
+		}
+		return false;
+	}
 }
