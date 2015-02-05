@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import me.flame.utils.Main;
 import me.flame.utils.Management;
+import me.flame.utils.banmanager.commands.Kick;
 import me.flame.utils.banmanager.constructors.Ban;
 import me.flame.utils.banmanager.constructors.Mute;
 import me.flame.utils.utils.UUIDFetcher;
@@ -27,6 +28,7 @@ public class BanManagement extends Management {
 	public void onEnable() {
 		this.banimentos = new HashMap<>();
 		this.mutados = new HashMap<>();
+		getPlugin().getCommand("kick").setExecutor(new Kick(this));
 		new Thread(new Runnable() {
 			@Override
 			public void run() {

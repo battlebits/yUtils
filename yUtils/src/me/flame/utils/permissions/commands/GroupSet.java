@@ -33,18 +33,18 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 				if (args.length == 2) {
 					List<String> str = new ArrayList<String>();
 					for (Group group : Group.values()) {
-						str.add(group.toString());
+						str.add(group.toString().toLowerCase());
 					}
 					return str;
 				}
 			} else if (manager.hasGroupPermission(player, Group.ADMIN)) {
 				if (args.length == 2) {
 					List<String> str = new ArrayList<String>();
-					str.add(Group.MOD.toString());
-					str.add(Group.TRIAL.toString());
-					str.add(Group.HELPER.toString());
-					str.add(Group.NORMAL.toString());
-					str.add(Group.HELPER.toString());
+					str.add(Group.MOD.toString().toLowerCase());
+					str.add(Group.TRIAL.toString().toLowerCase());
+					str.add(Group.HELPER.toString().toLowerCase());
+					str.add(Group.NORMAL.toString().toLowerCase());
+					str.add(Group.HELPER.toString().toLowerCase());
 					return str;
 				}
 			}
