@@ -48,7 +48,7 @@ public class Kick implements CommandExecutor {
 						espaco = "";
 					builder.append(args[i] + espaco);
 				}
-				kickMessage = kickMessage + " Motivo:" + ChatColor.AQUA + builder.toString();
+				kickMessage = kickMessage + " Motivo: " + ChatColor.AQUA + builder.toString();
 			}
 			if (temmotivo)
 				sender.sendMessage(ChatColor.YELLOW + "O player " + target.getName() + " foi kickado. Motivo: " + ChatColor.AQUA + builder.toString());

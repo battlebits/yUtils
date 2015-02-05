@@ -1,6 +1,5 @@
 package me.flame.utils.banmanager;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -12,6 +11,7 @@ import me.flame.utils.Management;
 import me.flame.utils.banmanager.commands.Kick;
 import me.flame.utils.banmanager.constructors.Ban;
 import me.flame.utils.banmanager.constructors.Mute;
+import me.flame.utils.banmanager.listeners.LoginListener;
 import me.flame.utils.utils.UUIDFetcher;
 
 import org.bukkit.entity.Player;
@@ -28,8 +28,9 @@ public class BanManagement extends Management {
 	public void onEnable() {
 		this.banimentos = new HashMap<>();
 		this.mutados = new HashMap<>();
+		getServer().getPluginManager().registerEvents(new LoginListener(this), getPlugin());
 		getPlugin().getCommand("kick").setExecutor(new Kick(this));
-		getPlugin().getCommand("ban").setExecutor(new Kick(this));
+		getPlugin().getCommand("ban").setExecutor(new me.flame.utils.banmanager.commands.Ban(this));
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -41,8 +42,8 @@ public class BanManagement extends Management {
 						String bannedBy = result.getString("banned_By");
 						String reason = result.getString("reason");
 						boolean unbanned = result.getInt("unbanned") == 1;
-						Date expire = result.getDate("expire");
-						Date ban_time = result.getDate("ban_time");
+						long expire = result.getLong("expire");
+						long ban_time = result.getLong("ban_time");
 						Ban ban = banimentos.get(uuid);
 						if (ban == null)
 							ban = new Ban(uuid, bannedBy, reason, ban_time, expire, unbanned);
@@ -56,8 +57,8 @@ public class BanManagement extends Management {
 						UUID uuid = UUIDFetcher.getUUID(result.getString("uuid"));
 						String mutedBy = result.getString("muted_By");
 						String reason = result.getString("reason");
-						Date expire = result.getDate("expire");
-						Date mute_time = result.getDate("mute_time");
+						long expire = result.getLong("expire");
+						long mute_time = result.getLong("mute_time");
 						Mute mute = new Mute(uuid, mutedBy, reason, mute_time, expire);
 						mutados.put(uuid, mute);
 					}
@@ -122,10 +123,11 @@ public class BanManagement extends Management {
 			public void run() {
 				try {
 					Statement stmt = getMySQL().createStatement();
-					stmt.executeQuery("INSERT INTO `Banimentos`(`uuid`, `banned_By`, `reason`, `expire`, `ban_time`, `unbaned`) " + "VALUES ('" + ban.getBannedUuid().toString().replace("-", "") + "' , '" + ban.getBannedBy() + "' , '" + ban.getReason() + "' , " + ban.getBanTime() + ", NOW() , 0);");
+					stmt.executeUpdate("INSERT INTO `Banimentos`(`uuid`, `banned_By`, `reason`, `expire`, `ban_time`, `unbanned`) " + "VALUES ('" + ban.getBannedUuid().toString().replace("-", "") + "' , '" + ban.getBannedBy() + "' , '" + ban.getReason() + "' , " + ban.getDuration() + ", " + ban.getBanTime() + " , 0);");
 					stmt.close();
 				} catch (Exception e) {
 					getLogger().info("Nao foi possivel banir " + ban.getBannedUuid().toString());
+					e.printStackTrace();
 				}
 			}
 		}).start();
@@ -138,10 +140,11 @@ public class BanManagement extends Management {
 			public void run() {
 				try {
 					Statement stmt = getMySQL().createStatement();
-					stmt.executeQuery("INSERT INTO `Mutes`(`uuid`, `muted_By`, `reason`, `expire`, `mute_time`) VALUES ('" + mute.getMutedUuid() + "', '" + mute.getMutedBy() + "', '" + mute.getReason() + "' , " + mute.getDuration() + ", NOW());");
+					stmt.executeUpdate("INSERT INTO `Mutes`(`uuid`, `muted_By`, `reason`, `expire`, `mute_time`) VALUES ('" + mute.getMutedUuid() + "', '" + mute.getMutedBy() + "', '" + mute.getReason() + "' , " + mute.getDuration() + ", NOW());");
 					stmt.close();
 				} catch (Exception e) {
-					getLogger().info("Nao foi possivel banir " + mute.getMutedUuid().toString());
+					getLogger().info("Nao foi possivel mutar " + mute.getMutedUuid().toString());
+					e.printStackTrace();
 				}
 			}
 		}).start();
@@ -156,10 +159,11 @@ public class BanManagement extends Management {
 			public void run() {
 				try {
 					Statement stmt = getMySQL().createStatement();
-					stmt.executeQuery("DELETE FROM `Mutes` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
+					stmt.executeUpdate("DELETE FROM `Mutes` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
 					stmt.close();
 				} catch (Exception e) {
-					getLogger().info("Nao foi possivel desbanir " + uuid);
+					getLogger().info("Nao foi possivel desmutar " + uuid);
+					e.printStackTrace();
 				}
 			}
 		}).start();
@@ -176,10 +180,11 @@ public class BanManagement extends Management {
 			public void run() {
 				try {
 					Statement stmt = getMySQL().createStatement();
-					stmt.executeQuery("UPDATE `Banimentos` SET `unbanned`=1 WHERE `uuid`='" + uuid.toString().replace("-", "") + "', `unbanned`=0;");
+					stmt.executeUpdate("UPDATE `Banimentos` SET `unbanned`=1 WHERE `uuid`='" + uuid.toString().replace("-", "") + "', `unbanned`=0;");
 					stmt.close();
 				} catch (Exception e) {
 					getLogger().info("Nao foi possivel desbanir " + uuid);
+					e.printStackTrace();
 				}
 			}
 		}).start();

@@ -1,7 +1,6 @@
 package me.flame.utils.banmanager.commands;
 
-import java.sql.Date;
-import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.UUID;
 
 import me.flame.utils.banmanager.BanManagement;
@@ -92,7 +91,7 @@ public class Mute implements CommandExecutor {
 					} else {
 						permManager.removePlayerGroup(uuid);
 					}
-					manager.mute(new me.flame.utils.banmanager.constructors.Mute(uuid, sender.getName(), builder.toString(), Date.valueOf(LocalDate.now()), Date.valueOf("0")));
+					manager.mute(new me.flame.utils.banmanager.constructors.Mute(uuid, sender.getName(), builder.toString(), Calendar.getInstance().getTimeInMillis(), 0));
 				}
 			}).start();
 		}

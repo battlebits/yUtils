@@ -8,3 +8,9 @@ commands:
     description: Comando utilizado para mudar o grupo de pessoas
   giveyoutuber:
     description: Comando utilizado por admins para dar youtuber
+  kick:
+    description: Comando utilizado para kickar pessoas
+  ban:
+    description: Comando utilizado para banir pessoas
+  mute:
+    description: Comando utilizado para mutar pessoas

@@ -1,7 +1,6 @@
 package me.flame.utils.banmanager.commands;
 
-import java.sql.Date;
-import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.UUID;
 
 import me.flame.utils.banmanager.BanManagement;
@@ -63,8 +62,10 @@ public class Ban implements CommandExecutor {
 						}
 					}
 					if (manager.isBanned(uuid)) {
-						sender.sendMessage(ChatColor.RED + "O player ja esta banido");
-						return;
+						if (!manager.getBan(uuid).isUnbanned()) {
+							sender.sendMessage(ChatColor.RED + "O player ja esta banido");
+							return;
+						}
 					}
 					PermissionManager permManager = manager.getPlugin().getPermissionManager();
 					permManager.loadPlayerGroup(uuid);
@@ -93,7 +94,7 @@ public class Ban implements CommandExecutor {
 					} else {
 						permManager.removePlayerGroup(uuid);
 					}
-					manager.ban(new me.flame.utils.banmanager.constructors.Ban(uuid, sender.getName(), builder.toString(), Date.valueOf(LocalDate.now()), Date.valueOf("0"), false));
+					manager.ban(new me.flame.utils.banmanager.constructors.Ban(uuid, sender.getName(), builder.toString(), Calendar.getInstance().getTimeInMillis(), 0, false));
 				}
 			}).start();
 		}

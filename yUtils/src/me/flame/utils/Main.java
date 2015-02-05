@@ -2,6 +2,7 @@ package me.flame.utils;
 
 import java.sql.Connection;
 
+import me.flame.utils.banmanager.BanManagement;
 import me.flame.utils.mysql.Connect;
 import me.flame.utils.permissions.PermissionManager;
 import me.flame.utils.permissions.enums.ServerType;
@@ -28,6 +29,7 @@ public class Main extends JavaPlugin {
 	 */
 	private PermissionManager permissionManager;
 	private ScoreboardManager scoreboardManager;
+	private BanManagement banManager;
 	private TagManager tagManager;
 
 	private static Main instance;
@@ -59,12 +61,18 @@ public class Main extends JavaPlugin {
 		permissionManager.onEnable();
 		scoreboardManager = new ScoreboardManager(this);
 		scoreboardManager.onEnable();
+		banManager = new BanManagement(this);
+		banManager.onEnable();
 		tagManager = new TagManager(this);
 		tagManager.onEnable();
 	}
 
 	@Override
 	public void onDisable() {
+		permissionManager.onDisable();
+		scoreboardManager.onDisable();
+		banManager.onDisable();
+		tagManager.onDisable();
 		Connect.SQLdisconnect(mainConnection);
 	}
 

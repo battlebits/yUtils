@@ -44,12 +44,12 @@ public class LoginListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void onLogin(PlayerLoginEvent event) {
-		Player player = event.getPlayer();
+	public void onLogin(final PlayerLoginEvent event) {
+		final UUID uuid = event.getPlayer().getUniqueId();
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				main.getPermissionManager().loadPlayerGroup(player.getUniqueId());
+				main.getPermissionManager().loadPlayerGroup(uuid);
 			}
 		}.runTaskAsynchronously(main);
 	}
@@ -95,12 +95,12 @@ public class LoginListener implements Listener {
 		return perm;
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onQuit(PlayerQuitEvent event) {
 		removeAttachment(event.getPlayer());
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onKick(PlayerKickEvent event) {
 		removeAttachment(event.getPlayer());
 	}

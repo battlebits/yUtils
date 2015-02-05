@@ -50,6 +50,7 @@ public class TagManager extends Management {
 			updateTag(player, tag);
 			return;
 		}
+		System.out.println("yo");
 		player.setDisplayName(tag.getPrefix() + player.getName() + ChatColor.RESET);
 		List<Player> playerList = tags.get(tag);
 		playerList.add(player);
@@ -72,6 +73,8 @@ public class TagManager extends Management {
 	}
 
 	public void removePlayerTag(Player player) {
+		if (getPlugin().getPermissionManager().getPlayerGroup(player) == null)
+			return;
 		Tag tag = Tag.valueOf(getPlugin().getPermissionManager().getPlayerGroup(player).toString());
 		for (Entry<Tag, List<Player>> entry : tags.entrySet()) {
 			List<Player> players = entry.getValue();

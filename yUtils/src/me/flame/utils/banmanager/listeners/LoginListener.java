@@ -3,8 +3,8 @@ package me.flame.utils.banmanager.listeners;
 import me.flame.utils.banmanager.BanManagement;
 import me.flame.utils.banmanager.constructors.Ban;
 import me.flame.utils.banmanager.constructors.Mute;
-import net.md_5.bungee.api.ChatColor;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,10 +29,10 @@ public class LoginListener implements Listener {
 			return;
 		}
 		// TODO Rever sistema de tempban
-		if (mute.getDuration().toString() == "0") {
-			p.sendMessage(ChatColor.YELLOW + "Voce foi mutado por " + mute.getMutedBy() + "! Motivo: " + ChatColor.AQUA + mute.getReason());
+		if (mute.isPermanent()) {
+			p.sendMessage(ChatColor.YELLOW + "Voce foi mutado permanentemente por " + mute.getMutedBy() + "! Motivo: " + ChatColor.AQUA + mute.getReason());
 		} else {
-			p.sendMessage(ChatColor.YELLOW + "Voce foi mutado por " + mute.getDuration().getTime() + " segundos pelo player " + mute.getMutedBy() + "! Motivo: " + ChatColor.AQUA + mute.getReason());
+			p.sendMessage(ChatColor.YELLOW + "Voce foi mutado por " + mute.getDuration() + " segundos pelo player " + mute.getMutedBy() + "! Motivo: " + ChatColor.AQUA + mute.getReason());
 		}
 		event.setCancelled(true);
 	}
@@ -44,6 +44,9 @@ public class LoginListener implements Listener {
 			return;
 		// TODO Rever sistema de tempban
 		Ban ban = manager.getBan(p);
+
+		if (ban.isUnbanned())
+			return;
 		StringBuilder builder = new StringBuilder();
 		builder.append(ChatColor.YELLOW + "Voce foi banido do servidor!");
 		builder.append("\n" + ban.getBannedBy() + " baniu voce! Motivo: " + ban.getReason());

@@ -1,6 +1,5 @@
 package me.flame.utils.banmanager.constructors;
 
-import java.sql.Date;
 import java.util.Calendar;
 import java.util.UUID;
 
@@ -8,12 +7,12 @@ public class Ban {
 	private UUID bannedUuid;
 	private String reason;
 	private String bannedBy;
-	private Date banTime;
-	private Date duration;
+	private long banTime;
+	private long duration;
 	private boolean unbanned;
 	private int previousBans;
 
-	public Ban(UUID bannedUuid, String bannedBy, String reason, Date banTime, Date duration, boolean unbanned) {
+	public Ban(UUID bannedUuid, String bannedBy, String reason, long banTime, long duration, boolean unbanned) {
 		this.bannedUuid = bannedUuid;
 		this.bannedBy = bannedBy;
 		this.reason = reason;
@@ -37,11 +36,11 @@ public class Ban {
 		return reason;
 	}
 
-	public Date getBanTime() {
+	public long getBanTime() {
 		return banTime;
 	}
 
-	public Date getDuration() {
+	public long getDuration() {
 		return duration;
 	}
 
@@ -49,8 +48,8 @@ public class Ban {
 		return previousBans;
 	}
 
-	public boolean isBanned() {
-		return !unbanned;
+	public boolean isUnbanned() {
+		return unbanned;
 	}
 
 	public void unban() {
@@ -58,7 +57,7 @@ public class Ban {
 		previousBans++;
 	}
 
-	public void setNewBan(String bannedBy, String reason, Date banTime, Date duration, boolean unbanned) {
+	public void setNewBan(String bannedBy, String reason, long banTime, long duration, boolean unbanned) {
 		this.bannedBy = bannedBy;
 		this.reason = reason;
 		this.banTime = banTime;
@@ -69,11 +68,10 @@ public class Ban {
 	}
 
 	public boolean isPermanent() {
-		return getDuration().getTime() == 0;
+		return getDuration() == 0;
 	}
 
 	public boolean hasExpired() {
-		return getDuration().getTime() != 0 && getDuration().after(Calendar.getInstance().getTime());
+		return !isPermanent() && duration < Calendar.getInstance().getTimeInMillis();
 	}
-
 }

@@ -1,6 +1,5 @@
 package me.flame.utils.banmanager.constructors;
 
-import java.sql.Date;
 import java.util.Calendar;
 import java.util.UUID;
 
@@ -8,10 +7,10 @@ public class Mute {
 	private UUID mutedUuid;
 	private String mutedBy;
 	private String reason;
-	private Date muteTime;
-	private Date duration;
+	private long muteTime;
+	private long duration;
 
-	public Mute(UUID mutedUuid, String mutedBy, String reason, Date muteTime, Date duration) {
+	public Mute(UUID mutedUuid, String mutedBy, String reason, long muteTime, long duration) {
 		this.mutedUuid = mutedUuid;
 		this.mutedBy = mutedBy;
 		this.reason = reason;
@@ -31,15 +30,19 @@ public class Mute {
 		return reason;
 	}
 
-	public Date getMuteTime() {
+	public long getMuteTime() {
 		return muteTime;
 	}
 
-	public Date getDuration() {
+	public long getDuration() {
 		return duration;
 	}
 
+	public boolean isPermanent() {
+		return getDuration() == 0;
+	}
+
 	public boolean hasExpired() {
-		return getDuration().getTime() != 0 && getDuration().after(Calendar.getInstance().getTime());
+		return !isPermanent() && duration < Calendar.getInstance().getTimeInMillis();
 	}
 }
