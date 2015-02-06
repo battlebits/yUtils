@@ -1,6 +1,5 @@
 package me.flame.utils.banmanager.commands;
 
-import java.util.Calendar;
 import java.util.UUID;
 
 import me.flame.utils.banmanager.BanManagement;
@@ -91,7 +90,7 @@ public class Mute implements CommandExecutor {
 					} else {
 						permManager.removePlayerGroup(uuid);
 					}
-					manager.mute(new me.flame.utils.banmanager.constructors.Mute(uuid, sender.getName(), builder.toString(), Calendar.getInstance().getTimeInMillis(), 0));
+					manager.mute(new me.flame.utils.banmanager.constructors.Mute(uuid, sender.getName(), builder.toString(), System.currentTimeMillis(), 0));
 				}
 			}).start();
 		}

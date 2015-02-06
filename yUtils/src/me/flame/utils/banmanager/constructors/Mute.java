@@ -1,6 +1,5 @@
 package me.flame.utils.banmanager.constructors;
 
-import java.util.Calendar;
 import java.util.UUID;
 
 public class Mute {
@@ -43,6 +42,6 @@ public class Mute {
 	}
 
 	public boolean hasExpired() {
-		return !isPermanent() && duration < Calendar.getInstance().getTimeInMillis();
+		return !isPermanent() && duration < System.currentTimeMillis();
 	}
 }

@@ -39,8 +39,9 @@ public class TagManager extends Management {
 		for (Tag teamTag : Tag.values()) {
 			Team team = board.getTeam(teamTag.getTeamName());
 			if (team != null) {
+				System.out.println(team.getName() + " ja existe");
 				update = true;
-				break;
+				continue;
 			}
 			team = board.registerNewTeam(teamTag.getTeamName());
 			team.setPrefix(teamTag.getPrefix());
@@ -50,7 +51,6 @@ public class TagManager extends Management {
 			updateTag(player, tag);
 			return;
 		}
-		System.out.println("yo");
 		player.setDisplayName(tag.getPrefix() + player.getName() + ChatColor.RESET);
 		List<Player> playerList = tags.get(tag);
 		playerList.add(player);

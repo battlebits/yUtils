@@ -1,6 +1,5 @@
 package me.flame.utils.banmanager.commands;
 
-import java.util.Calendar;
 import java.util.UUID;
 
 import me.flame.utils.banmanager.BanManagement;
@@ -94,7 +93,7 @@ public class Ban implements CommandExecutor {
 					} else {
 						permManager.removePlayerGroup(uuid);
 					}
-					manager.ban(new me.flame.utils.banmanager.constructors.Ban(uuid, sender.getName(), builder.toString(), Calendar.getInstance().getTimeInMillis(), 0, false));
+					manager.ban(new me.flame.utils.banmanager.constructors.Ban(uuid, sender.getName(), builder.toString(), System.currentTimeMillis(), 0, false));
 				}
 			}).start();
 		}
