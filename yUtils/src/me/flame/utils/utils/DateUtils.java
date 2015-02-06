@@ -1,4 +1,4 @@
-package me.flame.utils.banmanager.utils;
+package me.flame.utils.utils;
 
 /**
  * 

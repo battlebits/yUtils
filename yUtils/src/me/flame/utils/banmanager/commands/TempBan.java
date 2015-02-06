@@ -3,9 +3,9 @@ package me.flame.utils.banmanager.commands;
 import java.util.UUID;
 
 import me.flame.utils.banmanager.BanManagement;
-import me.flame.utils.banmanager.utils.DateUtils;
 import me.flame.utils.permissions.PermissionManager;
 import me.flame.utils.permissions.enums.Group;
+import me.flame.utils.utils.DateUtils;
 import me.flame.utils.utils.UUIDFetcher;
 
 import org.bukkit.ChatColor;
@@ -13,6 +13,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class TempBan implements CommandExecutor {
 
@@ -47,7 +48,7 @@ public class TempBan implements CommandExecutor {
 					}
 				}
 			}
-			new Thread(new Runnable() {
+			new BukkitRunnable() {
 				@Override
 				public void run() {
 					PermissionManager permManager = manager.getPlugin().getPermissionManager();
@@ -98,14 +99,23 @@ public class TempBan implements CommandExecutor {
 					}
 					if (target != null) {
 						String kickMessage = ChatColor.YELLOW + "Voce foi temporariamente banido do servidor por " + sender.getName() + ".\nBanimendo durara " + tempo + "!\nMotivo: " + ChatColor.AQUA + builder.toString();
-						target.kickPlayer(kickMessage);
+						kickPlayer(target, kickMessage);
 					} else {
 						permManager.removePlayerGroup(uuid);
 					}
 					manager.ban(new me.flame.utils.banmanager.constructors.Ban(uuid, sender.getName(), builder.toString(), System.currentTimeMillis(), expiresCheck, false));
 				}
-			}).start();
+			}.runTaskAsynchronously(manager.getPlugin());
 		}
 		return false;
+	}
+
+	public void kickPlayer(final Player player, final String message) {
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				player.kickPlayer(message);
+			}
+		}.runTask(manager.getPlugin());
 	}
 }

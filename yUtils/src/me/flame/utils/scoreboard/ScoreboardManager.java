@@ -27,6 +27,7 @@ public class ScoreboardManager extends Management {
 		Scoreboard board = playerBoards.get(player.getUniqueId());
 		if (board == null) {
 			board = getServer().getScoreboardManager().getNewScoreboard();
+			playerBoards.put(player.getUniqueId(), board);
 		}
 		player.setScoreboard(board);
 		return board;
@@ -41,6 +42,7 @@ public class ScoreboardManager extends Management {
 		for (Player player : getServer().getOnlinePlayers()) {
 			removeScoreboard(player);
 		}
+		playerBoards.clear();
 	}
 
 }

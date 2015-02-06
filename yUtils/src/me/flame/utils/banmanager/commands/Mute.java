@@ -62,8 +62,8 @@ public class Mute implements CommandExecutor {
 							return;
 						}
 					}
-					if (manager.isBanned(uuid)) {
-						sender.sendMessage(ChatColor.RED + "O player ja esta banido");
+					if (manager.isMuted(uuid)) {
+						sender.sendMessage(ChatColor.RED + "O player ja esta mutado");
 						return;
 					}
 					if (permManager.getPlayerGroup(uuid).ordinal() >= 5 && sender instanceof Player && permManager.getPlayerGroup((Player) sender) != Group.DONO && permManager.getPlayerGroup((Player) sender) != Group.ADMIN) {

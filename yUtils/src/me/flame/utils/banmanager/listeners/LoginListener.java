@@ -3,7 +3,7 @@ package me.flame.utils.banmanager.listeners;
 import me.flame.utils.banmanager.BanManagement;
 import me.flame.utils.banmanager.constructors.Ban;
 import me.flame.utils.banmanager.constructors.Mute;
-import me.flame.utils.banmanager.utils.DateUtils;
+import me.flame.utils.utils.DateUtils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -54,12 +54,12 @@ public class LoginListener implements Listener {
 		StringBuilder builder = new StringBuilder();
 		if (ban.isPermanent()) {
 			builder.append(ChatColor.YELLOW + "Voce foi banido do servidor!");
-			builder.append("\n" + ban.getBannedBy() + " baniu voce! Motivo: " + ban.getReason());
+			builder.append("\n" + ban.getBannedBy() + " baniu voce! Motivo: " + ChatColor.AQUA + ban.getReason());
 		} else {
 			String tempo = DateUtils.formatDifference((ban.getDuration() - System.currentTimeMillis()) / 1000);
 			builder.append(ChatColor.YELLOW + "Voce foi temporariamente banido do servidor!");
 			builder.append("\nBanimento durara " + tempo);
-			builder.append("\n" + ban.getBannedBy() + " baniu voce! Motivo: " + ban.getReason());
+			builder.append("\n" + ban.getBannedBy() + " baniu voce! Motivo: " + ChatColor.AQUA + ban.getReason());
 		}
 		event.disallow(Result.KICK_BANNED, builder.toString());
 	}

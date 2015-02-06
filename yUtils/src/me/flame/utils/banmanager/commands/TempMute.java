@@ -3,9 +3,9 @@ package me.flame.utils.banmanager.commands;
 import java.util.UUID;
 
 import me.flame.utils.banmanager.BanManagement;
-import me.flame.utils.banmanager.utils.DateUtils;
 import me.flame.utils.permissions.PermissionManager;
 import me.flame.utils.permissions.enums.Group;
+import me.flame.utils.utils.DateUtils;
 import me.flame.utils.utils.UUIDFetcher;
 
 import org.bukkit.ChatColor;

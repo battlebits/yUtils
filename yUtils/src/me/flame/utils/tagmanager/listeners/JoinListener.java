@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class JoinListener implements Listener {
 	private TagManager manager;
@@ -21,7 +22,12 @@ public class JoinListener implements Listener {
 	public void onJoin(AccountLoadEvent event) {
 		Player p = manager.getServer().getPlayer(event.getUUID());
 		if (p != null)
-			manager.addPlayerTag(p, getPlayerDefaultTag(p));
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					manager.addPlayerTag(p, getPlayerDefaultTag(p));
+				}
+			}.runTask(manager.getPlugin());
 	}
 
 	private Tag getPlayerDefaultTag(Player p) {

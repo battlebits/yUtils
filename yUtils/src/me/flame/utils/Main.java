@@ -59,10 +59,10 @@ public class Main extends JavaPlugin {
 		}
 		permissionManager = new PermissionManager(this, type);
 		permissionManager.onEnable();
-		scoreboardManager = new ScoreboardManager(this);
-		scoreboardManager.onEnable();
 		banManager = new BanManagement(this);
 		banManager.onEnable();
+		scoreboardManager = new ScoreboardManager(this);
+		scoreboardManager.onEnable();
 		tagManager = new TagManager(this);
 		tagManager.onEnable();
 	}
@@ -70,8 +70,8 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		permissionManager.onDisable();
-		scoreboardManager.onDisable();
 		banManager.onDisable();
+		scoreboardManager.onDisable();
 		tagManager.onDisable();
 		Connect.SQLdisconnect(mainConnection);
 	}

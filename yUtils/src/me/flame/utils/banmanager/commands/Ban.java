@@ -12,6 +12,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class Ban implements CommandExecutor {
 
@@ -46,7 +47,7 @@ public class Ban implements CommandExecutor {
 					}
 				}
 			}
-			new Thread(new Runnable() {
+			new BukkitRunnable() {
 				@Override
 				public void run() {
 					PermissionManager permManager = manager.getPlugin().getPermissionManager();
@@ -89,14 +90,23 @@ public class Ban implements CommandExecutor {
 					}
 					if (target != null) {
 						String kickMessage = ChatColor.YELLOW + "Voce foi banido do servidor por " + sender.getName() + "! Motivo: " + ChatColor.AQUA + builder.toString();
-						target.kickPlayer(kickMessage);
+						kickPlayer(target, kickMessage);
 					} else {
 						permManager.removePlayerGroup(uuid);
 					}
 					manager.ban(new me.flame.utils.banmanager.constructors.Ban(uuid, sender.getName(), builder.toString(), System.currentTimeMillis(), 0, false));
 				}
-			}).start();
+			}.runTaskAsynchronously(manager.getPlugin());
 		}
 		return false;
+	}
+
+	public void kickPlayer(final Player player, final String message) {
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				player.kickPlayer(message);
+			}
+		}.runTask(manager.getPlugin());
 	}
 }
