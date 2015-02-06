@@ -40,6 +40,10 @@ public class Main extends JavaPlugin {
 		instance = this;
 		connect = new Connect(this);
 		mainConnection = connect.trySQLConnection("localhost", "3306", "utils", "root", "saobestanime");
+		if (!sql) {
+			getServer().shutdown();
+			return;
+		}
 		ServerType type = null;
 		switch (getConfig().getString("serverType")) {
 		case "hungergames":
