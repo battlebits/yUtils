@@ -16,6 +16,7 @@ public class Trial extends MainGroup {
 		case SKYWARS:
 			break;
 		case LOBBY:
+			permissions.add("battle.vip");
 			break;
 		case BATTLECRAFT:
 			permissions.add("minecraft.command.tp");

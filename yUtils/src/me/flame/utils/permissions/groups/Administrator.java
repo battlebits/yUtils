@@ -16,6 +16,7 @@ public class Administrator extends MainGroup {
 		case SKYWARS:
 			break;
 		case LOBBY:
+			permissions.add("battle.vip");
 			break;
 		case BATTLECRAFT:
 			permissions.add("flame.cmd.say");

@@ -16,6 +16,7 @@ public class Ultimate extends MainGroup {
 		case SKYWARS:
 			break;
 		case LOBBY:
+			permissions.add("battle.vip");
 			break;
 		case BATTLECRAFT:
 			permissions.add("flame.vip.pro");
