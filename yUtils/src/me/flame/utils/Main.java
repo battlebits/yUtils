@@ -3,6 +3,7 @@ package me.flame.utils;
 import java.sql.Connection;
 
 import me.flame.utils.banmanager.BanManagement;
+import me.flame.utils.listeners.PlayerListener;
 import me.flame.utils.mysql.Connect;
 import me.flame.utils.permissions.PermissionManager;
 import me.flame.utils.permissions.enums.ServerType;
@@ -69,6 +70,7 @@ public class Main extends JavaPlugin {
 		scoreboardManager.onEnable();
 		tagManager = new TagManager(this);
 		tagManager.onEnable();
+		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 	}
 
 	@Override
