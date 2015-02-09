@@ -27,4 +27,12 @@ public class Expire {
 		return group;
 	}
 
+	public void setGroup(Group group) {
+		this.group = group;
+	}
+
+	public void addLong(long l) {
+		this.expire = l;
+	}
+
 }
