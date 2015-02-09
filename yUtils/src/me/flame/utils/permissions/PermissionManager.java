@@ -37,7 +37,6 @@ public class PermissionManager extends Management {
 		getServer().getPluginManager().registerEvents(superms, getPlugin());
 		getPlugin().getCommand("giveyoutuber").setExecutor(new GiveYoutuber(this));
 		getPlugin().getCommand("groupset").setExecutor(new GroupSet(this));
-		// TODO Load playerGroups
 		regexPerms = new RegexPermissions(this);
 		playerGroups = new HashMap<>();
 	}

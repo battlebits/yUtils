@@ -32,7 +32,7 @@ public abstract class Management {
 	public Connection getMySQL() {
 		try {
 			if (main.mainConnection.isClosed())
-				main.mainConnection = main.connect.trySQLConnection("", "", "", "", "");
+				main.mainConnection = main.connect.trySQLConnection("localhost", "3306", "utils", "root", "saobestanime");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
