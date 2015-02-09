@@ -128,6 +128,12 @@ public class PermissionManager extends Management {
 		getServer().getPluginManager().callEvent(new AccountLoadEvent(uuid, group));
 	}
 
+	public void setPlayerGroup2(UUID uuid, Group group) {
+		if (playerGroups.containsKey(uuid))
+			removePlayerGroup(uuid);
+		playerGroups.put(uuid, group);
+	}
+
 	public void removePlayerGroup(Player player) {
 		playerGroups.remove(player.getUniqueId());
 	}

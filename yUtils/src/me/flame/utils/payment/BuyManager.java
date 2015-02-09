@@ -10,12 +10,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import me.flame.utils.Main;
 import me.flame.utils.Management;
+import me.flame.utils.payment.commands.Givevip;
 import me.flame.utils.payment.constructors.Expire;
+import me.flame.utils.payment.listeners.JoinListener;
 import me.flame.utils.permissions.enums.Group;
 import me.flame.utils.utils.UUIDFetcher;
 
 public class BuyManager extends Management {
-	private HashMap<UUID, Expire> expires;
+	public HashMap<UUID, Expire> expires;
 
 	public BuyManager(Main main) {
 		super(main);
@@ -23,12 +25,14 @@ public class BuyManager extends Management {
 
 	@Override
 	public void onEnable() {
+		getServer().getPluginManager().registerEvents(new JoinListener(this), getPlugin());
+		getPlugin().getCommand("givevip").setExecutor(new Givevip(this));
 		expires = new HashMap<>();
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				try {
-					PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Expire`;");
+					PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Expires`;");
 					ResultSet result = stmt.executeQuery();
 					while (result.next()) {
 						UUID uuid = UUIDFetcher.getUUID(result.getString("uuid"));
@@ -47,7 +51,7 @@ public class BuyManager extends Management {
 			@Override
 			public void run() {
 				try {
-					PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Expire`;");
+					PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Expires`;");
 					ResultSet result = stmt.executeQuery();
 					expires.clear();
 					while (result.next()) {
@@ -74,12 +78,16 @@ public class BuyManager extends Management {
 		}.runTaskLaterAsynchronously(getPlugin(), 20 * 60 * 60);
 	}
 
+	public Expire getExpire(UUID uuid) {
+		return expires.get(uuid);
+	}
+
 	public void removeExpire(UUID uuid) {
 		try {
-			PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Expire` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
+			PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Expires` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
 			ResultSet result = stmt.executeQuery();
 			if (result.next()) {
-				stmt.execute("DELETE FROM `Expire` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
+				stmt.execute("DELETE FROM `Expires` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
 			}
 			result.close();
 			stmt.close();
@@ -97,12 +105,12 @@ public class BuyManager extends Management {
 			expire = new Expire(uuid, expireLong, grupo);
 		expires.put(uuid, expire);
 		try {
-			PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Expire` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
+			PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Expires` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
 			ResultSet result = stmt.executeQuery();
 			if (result.next()) {
-				stmt.execute("UPDATE `Expire` SET `group`='" + expire.getGroup().toString().toLowerCase() + "', `expire`=" + expireLong + "  WHERE uuid='" + uuid.toString().replace("-", "") + "';");
+				stmt.execute("UPDATE `Expires` SET `group`='" + expire.getGroup().toString().toLowerCase() + "', `expire`=" + expireLong + "  WHERE uuid='" + uuid.toString().replace("-", "") + "';");
 			} else {
-				stmt.execute("INSERT INTO `Expire`(`uuid`, `expire`, `group`) VALUES ('" + uuid.toString().replace("-", "") + "'," + expire.getExpire() + " ,'" + expire.getGroup().toString().toLowerCase() + "');");
+				stmt.execute("INSERT INTO `Expires`(`uuid`, `expire`, `group`) VALUES ('" + uuid.toString().replace("-", "") + "'," + expire.getExpire() + " ,'" + expire.getGroup().toString().toLowerCase() + "');");
 			}
 			result.close();
 			stmt.close();

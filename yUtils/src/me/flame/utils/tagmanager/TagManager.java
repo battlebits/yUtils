@@ -56,8 +56,6 @@ public class TagManager extends Management {
 			for (Player participante : players) {
 				if (team != null)
 					team.addPlayer(participante);
-				if (participante == player)
-					continue;
 				Scoreboard playerBoard = getPlugin().getScoreboardManager().getPlayerScoreboard(participante);
 				Team playerTeam = playerBoard.getTeam(tag.getTeamName());
 				if (playerTeam != null)

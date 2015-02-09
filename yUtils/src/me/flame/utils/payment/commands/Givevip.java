@@ -38,6 +38,7 @@ public class Givevip implements CommandExecutor {
 				return true;
 			}
 			new BukkitRunnable() {
+				@SuppressWarnings("deprecation")
 				@Override
 				public void run() {
 					Player target = manager.getServer().getPlayer(args[0]);
@@ -61,6 +62,7 @@ public class Givevip implements CommandExecutor {
 						sender.sendMessage("Formato invalido");
 						return;
 					}
+					String tempo = DateUtils.formatDifference((expiresCheck - System.currentTimeMillis()) / 1000);
 					Group grupo = null;
 					try {
 						grupo = Group.valueOf(args[2].toUpperCase());
@@ -75,8 +77,16 @@ public class Givevip implements CommandExecutor {
 					permManager.setPlayerGroup(uuid, grupo);
 					permManager.savePlayerGroup(uuid, grupo);
 					manager.addExpire(uuid, grupo, expiresCheck);
+					sender.sendMessage(ChatColor.YELLOW + "O player " + args[0] + "(" + uuid.toString() + ") teve vip setado por " + tempo);
 					if (target == null)
 						permManager.removePlayerGroup(uuid);
+					else {
+						target.sendMessage(ChatColor.YELLOW + "---------------------------BATTLEBITS------------------------------");
+						target.sendMessage("");
+						target.sendMessage(ChatColor.YELLOW + "Seu pagamento foi detectado e voce ja recebeu seu " + grupo.toString() + "!");
+						target.sendMessage("");
+						target.sendMessage(ChatColor.YELLOW + "-------------------------------------------------------------------");
+					}
 				}
 			}.runTaskAsynchronously(manager.getPlugin());
 		}

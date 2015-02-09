@@ -5,6 +5,7 @@ import java.sql.Connection;
 import me.flame.utils.banmanager.BanManagement;
 import me.flame.utils.listeners.PlayerListener;
 import me.flame.utils.mysql.Connect;
+import me.flame.utils.payment.BuyManager;
 import me.flame.utils.permissions.PermissionManager;
 import me.flame.utils.permissions.enums.ServerType;
 import me.flame.utils.scoreboard.ScoreboardManager;
@@ -31,6 +32,7 @@ public class Main extends JavaPlugin {
 	private PermissionManager permissionManager;
 	private ScoreboardManager scoreboardManager;
 	private BanManagement banManager;
+	private BuyManager buyManager;
 	private TagManager tagManager;
 
 	private static Main instance;
@@ -70,6 +72,8 @@ public class Main extends JavaPlugin {
 		scoreboardManager.onEnable();
 		tagManager = new TagManager(this);
 		tagManager.onEnable();
+		buyManager = new BuyManager(this);
+		buyManager.onEnable();
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 	}
 
@@ -79,11 +83,16 @@ public class Main extends JavaPlugin {
 		banManager.onDisable();
 		scoreboardManager.onDisable();
 		tagManager.onDisable();
+		buyManager.onDisable();
 		Connect.SQLdisconnect(mainConnection);
 	}
 
 	public ScoreboardManager getScoreboardManager() {
 		return scoreboardManager;
+	}
+
+	public TagManager getTagManager() {
+		return tagManager;
 	}
 
 	public PermissionManager getPermissionManager() {

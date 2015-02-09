@@ -22,3 +22,5 @@ commands:
     description: Comando utilizado para banir temporariamente
   tempmute:
     description: Comando utilizado para mutar temporariamente
+  givevip:
+    description: Comando utilizado para mutar temporariamente
