@@ -99,7 +99,6 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 						} else {
 							try {
 								uuid = UUIDFetcher.getUUIDOf(args[0]);
-								manager.loadPlayerGroup(uuid);
 							} catch (Exception e) {
 							}
 						}
@@ -118,11 +117,9 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 							sender.sendMessage(ChatColor.RED + "O grupo do player ja e " + group.toString());
 							return;
 						}
-						manager.setPlayerGroup(uuid, group);
+						manager.removePlayerGroup(uuid);
 						manager.removePlayer(uuid);
 						sender.sendMessage(ChatColor.YELLOW + "Player " + args[0] + "(" + uuid.toString().replace("-", "") + ") foi setado como " + group.toString() + " com sucesso!");
-						if (target == null)
-							manager.removePlayerGroup(uuid);
 					}
 				}.runTaskAsynchronously(manager.getPlugin());
 				return true;
@@ -136,7 +133,6 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 					} else {
 						try {
 							uuid = UUIDFetcher.getUUIDOf(args[0]);
-							manager.loadPlayerGroup(uuid);
 						} catch (Exception e) {
 						}
 					}
@@ -158,8 +154,6 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 					manager.setPlayerGroup(uuid, group);
 					manager.savePlayerGroup(uuid, group);
 					sender.sendMessage(ChatColor.YELLOW + "Player " + args[0] + "(" + uuid.toString().replace("-", "") + ") foi setado como " + group.toString() + " com sucesso!");
-					if (target == null)
-						manager.removePlayerGroup(uuid);
 				}
 			}.runTaskAsynchronously(manager.getPlugin());
 			return true;

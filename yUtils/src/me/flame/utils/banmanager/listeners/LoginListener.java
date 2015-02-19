@@ -8,6 +8,7 @@ import me.flame.utils.utils.DateUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -20,7 +21,7 @@ public class LoginListener implements Listener {
 		this.manager = manager;
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onChat(AsyncPlayerChatEvent event) {
 		Player p = event.getPlayer();
 		if (!manager.isMuted(p))
@@ -30,7 +31,6 @@ public class LoginListener implements Listener {
 			manager.unmute(mute.getMutedUuid());
 			return;
 		}
-		// TODO Rever sistema de tempban
 		if (mute.isPermanent()) {
 			p.sendMessage(ChatColor.YELLOW + "Voce foi mutado permanentemente por " + mute.getMutedBy() + "! Motivo: " + ChatColor.AQUA + mute.getReason());
 		} else {
@@ -40,9 +40,11 @@ public class LoginListener implements Listener {
 		event.setCancelled(true);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onLogin(PlayerLoginEvent event) {
 		Player p = event.getPlayer();
+		if (event.getResult() != Result.ALLOWED)
+			return;
 		if (!manager.isBanned(p))
 			return;
 		Ban ban = manager.getBan(p);
@@ -50,17 +52,8 @@ public class LoginListener implements Listener {
 			return;
 		if (ban.hasExpired()) {
 			manager.removeTempban(ban.getBannedUuid());
+			return;
 		}
-		StringBuilder builder = new StringBuilder();
-		if (ban.isPermanent()) {
-			builder.append(ChatColor.YELLOW + "Voce foi banido do servidor!");
-			builder.append("\n" + ban.getBannedBy() + " baniu voce! Motivo: " + ChatColor.AQUA + ban.getReason());
-		} else {
-			String tempo = DateUtils.formatDifference((ban.getDuration() - System.currentTimeMillis()) / 1000);
-			builder.append(ChatColor.YELLOW + "Voce foi temporariamente banido do servidor!");
-			builder.append("\nBanimento durara " + tempo);
-			builder.append("\n" + ban.getBannedBy() + " baniu voce! Motivo: " + ChatColor.AQUA + ban.getReason());
-		}
-		event.disallow(Result.KICK_BANNED, builder.toString());
+		event.disallow(Result.KICK_BANNED, manager.getBanMessage(ban));
 	}
 }

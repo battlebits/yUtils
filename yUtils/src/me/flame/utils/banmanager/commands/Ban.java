@@ -57,7 +57,6 @@ public class Ban implements CommandExecutor {
 					} else {
 						try {
 							uuid = UUIDFetcher.getUUIDOf(args[0]);
-							permManager.loadPlayerGroup(uuid);
 						} catch (Exception e) {
 							sender.sendMessage(ChatColor.RED + "O player nao existe");
 							return;
@@ -91,8 +90,6 @@ public class Ban implements CommandExecutor {
 					if (target != null) {
 						String kickMessage = ChatColor.YELLOW + "Voce foi banido do servidor por " + sender.getName() + "! Motivo: " + ChatColor.AQUA + builder.toString();
 						kickPlayer(target, kickMessage);
-					} else {
-						permManager.removePlayerGroup(uuid);
 					}
 					manager.ban(new me.flame.utils.banmanager.constructors.Ban(uuid, sender.getName(), builder.toString(), System.currentTimeMillis(), 0, false));
 				}

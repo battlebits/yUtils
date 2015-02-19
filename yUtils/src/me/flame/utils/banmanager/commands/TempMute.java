@@ -57,7 +57,6 @@ public class TempMute implements CommandExecutor {
 					} else {
 						try {
 							uuid = UUIDFetcher.getUUIDOf(args[0]);
-							permManager.loadPlayerGroup(uuid);
 						} catch (Exception e) {
 							sender.sendMessage(ChatColor.RED + "O player nao existe");
 							return;

@@ -56,7 +56,6 @@ public class Mute implements CommandExecutor {
 					} else {
 						try {
 							uuid = UUIDFetcher.getUUIDOf(args[0]);
-							permManager.loadPlayerGroup(uuid);
 						} catch (Exception e) {
 							sender.sendMessage(ChatColor.RED + "O player nao existe");
 							return;
@@ -87,8 +86,6 @@ public class Mute implements CommandExecutor {
 					}
 					if (target != null) {
 						target.sendMessage(ChatColor.YELLOW + "Voce foi mutado por " + sender.getName() + "! Motivo: " + ChatColor.AQUA + builder.toString());
-					} else {
-						permManager.removePlayerGroup(uuid);
 					}
 					manager.mute(new me.flame.utils.banmanager.constructors.Mute(uuid, sender.getName(), builder.toString(), System.currentTimeMillis(), 0));
 				}

@@ -16,8 +16,10 @@ import me.flame.utils.banmanager.commands.Unmute;
 import me.flame.utils.banmanager.constructors.Ban;
 import me.flame.utils.banmanager.constructors.Mute;
 import me.flame.utils.banmanager.listeners.LoginListener;
+import me.flame.utils.utils.DateUtils;
 import me.flame.utils.utils.UUIDFetcher;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -41,44 +43,6 @@ public class BanManagement extends Management {
 		getPlugin().getCommand("unmute").setExecutor(new Unmute(this));
 		getPlugin().getCommand("tempban").setExecutor(new TempBan(this));
 		getPlugin().getCommand("tempmute").setExecutor(new TempMute(this));
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Banimentos`;");
-					ResultSet result = stmt.executeQuery();
-					while (result.next()) {
-						UUID uuid = UUIDFetcher.getUUID(result.getString("uuid"));
-						String bannedBy = result.getString("banned_By");
-						String reason = result.getString("reason");
-						boolean unbanned = result.getInt("unbanned") == 1;
-						long expire = result.getInt("expire");
-						long ban_time = result.getInt("ban_time");
-						Ban ban = banimentos.get(uuid);
-						if (ban == null)
-							ban = new Ban(uuid, bannedBy, reason, ban_time, expire, unbanned);
-						else
-							ban.setNewBan(bannedBy, reason, ban_time, expire, unbanned);
-						banimentos.put(uuid, ban);
-					}
-					stmt = getMySQL().prepareStatement("SELECT * FROM `Mutes`;");
-					result = stmt.executeQuery();
-					while (result.next()) {
-						UUID uuid = UUIDFetcher.getUUID(result.getString("uuid"));
-						String mutedBy = result.getString("muted_By");
-						String reason = result.getString("reason");
-						long expire = result.getInt("expire");
-						long mute_time = result.getInt("mute_time");
-						Mute mute = new Mute(uuid, mutedBy, reason, mute_time, expire);
-						mutados.put(uuid, mute);
-					}
-					result.close();
-					stmt.close();
-				} catch (Exception e) {
-					getLogger().info("Nao foi possivel carregar banimentos e mutes");
-				}
-			}
-		}).start();
 		new BukkitRunnable() {
 			@SuppressWarnings("unchecked")
 			@Override
@@ -120,10 +84,18 @@ public class BanManagement extends Management {
 					banimentos = (HashMap<UUID, Ban>) banList.clone();
 					mutados = (HashMap<UUID, Mute>) muteList.clone();
 					for (Ban ban : banimentos.values()) {
-						if (ban.isPermanent())
+						if (ban.isPermanent()) {
+							if (getServer().getPlayer(ban.getBannedUuid()) != null) {
+								getServer().getPlayer(ban.getBannedUuid()).kickPlayer(getBanMessage(ban));
+							}
 							continue;
-						if (!ban.hasExpired())
+						}
+						if (!ban.hasExpired()) {
+							if (getServer().getPlayer(ban.getBannedUuid()) != null) {
+								getServer().getPlayer(ban.getBannedUuid()).kickPlayer(getBanMessage(ban));
+							}
 							continue;
+						}
 						removeTempban(ban.getBannedUuid());
 					}
 					for (Mute mute : mutados.values()) {
@@ -137,7 +109,7 @@ public class BanManagement extends Management {
 					getLogger().info("Nao foi possivel carregar banimentos e mutes");
 				}
 			}
-		}.runTaskTimerAsynchronously(getPlugin(), 20, 20 * 60);
+		}.runTaskTimerAsynchronously(getPlugin(), 0, 20 * 60);
 	}
 
 	public boolean isBanned(Player player) {
@@ -278,6 +250,20 @@ public class BanManagement extends Management {
 			}
 		}).start();
 		return true;
+	}
+
+	public String getBanMessage(Ban ban) {
+		StringBuilder builder = new StringBuilder();
+		if (ban.isPermanent()) {
+			builder.append(ChatColor.YELLOW + "Voce foi banido do servidor!");
+			builder.append("\n" + ban.getBannedBy() + " baniu voce! Motivo: " + ChatColor.AQUA + ban.getReason());
+		} else {
+			String tempo = DateUtils.formatDifference((ban.getDuration() - System.currentTimeMillis()) / 1000);
+			builder.append(ChatColor.YELLOW + "Voce foi temporariamente banido do servidor!");
+			builder.append("\nBanimento durara " + tempo);
+			builder.append("\n" + ban.getBannedBy() + " baniu voce! Motivo: " + ChatColor.AQUA + ban.getReason());
+		}
+		return builder.toString();
 	}
 
 	@Override

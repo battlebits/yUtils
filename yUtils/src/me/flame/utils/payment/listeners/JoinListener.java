@@ -1,18 +1,19 @@
 package me.flame.utils.payment.listeners;
 
-import me.flame.utils.events.AccountLoadEvent;
+import java.util.UUID;
+
 import me.flame.utils.payment.BuyManager;
 import me.flame.utils.payment.constructors.Expire;
 import me.flame.utils.permissions.PermissionManager;
 import me.flame.utils.permissions.enums.Group;
 import me.flame.utils.tagmanager.enums.Tag;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class JoinListener implements Listener {
@@ -23,21 +24,22 @@ public class JoinListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void onJoin(AccountLoadEvent event) {
-		if (!manager.expires.containsKey(event.getUUID()))
+	public void onJoin(PlayerJoinEvent event) {
+		Player target = event.getPlayer();
+		UUID uuid = event.getPlayer().getUniqueId();
+		if (!manager.expires.containsKey(uuid))
 			return;
-		Expire expire = manager.getExpire(event.getUUID());
+		Expire expire = manager.getExpire(uuid);
 		if (expire == null)
 			return;
 		if (expire.getExpire() < System.currentTimeMillis()) {
 			new BukkitRunnable() {
 				@Override
 				public void run() {
-					manager.getPlugin().getPermissionManager().setPlayerGroup2(expire.getUuid(), Group.NORMAL);
+					manager.getPlugin().getPermissionManager().setPlayerGroup(expire.getUuid(), Group.NORMAL);
 					manager.getPlugin().getPermissionManager().removePlayer(expire.getUuid());
 					manager.removeExpire(expire.getUuid());
-					manager.expires.remove(event.getUUID());
-					Player target = Bukkit.getPlayer(event.getUUID());
+					manager.expires.remove(uuid);
 					if (target != null) {
 						target.sendMessage(ChatColor.RED + "---------------------------BATTLEBITS------------------------------");
 						target.sendMessage("");

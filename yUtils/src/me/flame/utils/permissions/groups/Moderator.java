@@ -32,6 +32,7 @@ public class Moderator extends MainGroup {
 			permissions.add("bm.unmute");
 			permissions.add("bm.tempmuteoffline");
 			permissions.add("bm.tempbanoffline");
+			permissions.add("flame.evento");
 			break;
 		default:
 			break;

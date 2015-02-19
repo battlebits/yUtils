@@ -49,7 +49,6 @@ public class Givevip implements CommandExecutor {
 					} else {
 						try {
 							uuid = UUIDFetcher.getUUIDOf(args[0]);
-							permManager.loadPlayerGroup(uuid);
 						} catch (Exception e) {
 							sender.sendMessage(ChatColor.RED + "O player nao existe");
 							return;
@@ -78,9 +77,7 @@ public class Givevip implements CommandExecutor {
 					permManager.savePlayerGroup(uuid, grupo);
 					manager.addExpire(uuid, grupo, expiresCheck);
 					sender.sendMessage(ChatColor.YELLOW + "O player " + args[0] + "(" + uuid.toString() + ") teve vip setado por " + tempo);
-					if (target == null)
-						permManager.removePlayerGroup(uuid);
-					else {
+					if (target != null) {
 						target.sendMessage(ChatColor.YELLOW + "---------------------------BATTLEBITS------------------------------");
 						target.sendMessage("");
 						target.sendMessage(ChatColor.YELLOW + "Seu pagamento foi detectado e voce ja recebeu seu " + grupo.toString() + "!");

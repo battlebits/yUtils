@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import me.flame.utils.Main;
-import me.flame.utils.events.AccountLoadEvent;
 import me.flame.utils.permissions.enums.Group;
 
 import org.bukkit.entity.Player;
@@ -19,7 +18,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class LoginListener implements Listener {
 	private Main main;
@@ -28,39 +26,13 @@ public class LoginListener implements Listener {
 	public LoginListener(Main main) {
 		attachments = new HashMap<>();
 		this.main = main;
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				for (Player player : main.getServer().getOnlinePlayers()) {
-					new BukkitRunnable() {
-						@Override
-						public void run() {
-							main.getPermissionManager().loadPlayerGroup(player.getUniqueId());
-						}
-					}.runTaskAsynchronously(main);
-				}
-			}
-		}.runTaskLater(main, 5);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void onLogin(final PlayerLoginEvent event) {
-		final UUID uuid = event.getPlayer().getUniqueId();
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				main.getPermissionManager().loadPlayerGroup(uuid);
-			}
-		}.runTaskAsynchronously(main);
-	}
-
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onAccountLoad(AccountLoadEvent event) {
-		Player player = main.getServer().getPlayer(event.getUUID());
-		if (player != null) {
-			Group group = main.getPermissionManager().getPlayerGroup(player);
-			updateAttachment(player, group);
-		}
+	public void onLogin(PlayerLoginEvent event) {
+		Player player = event.getPlayer();
+		Group group = main.getPermissionManager().getPlayerGroup(player);
+		updateAttachment(player, group);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -110,7 +82,6 @@ public class LoginListener implements Listener {
 		if (attach != null) {
 			attach.remove();
 		}
-		main.getPermissionManager().removePlayerGroup(player);
 		this.main.getServer().getPluginManager().removePermission(player.getUniqueId().toString());
 	}
 

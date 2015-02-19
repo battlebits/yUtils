@@ -25,6 +25,8 @@ public class Administrator extends MainGroup {
 			permissions.add("nohax.viewalerts");
 			permissions.add("bm.*");
 			permissions.add("permission.*");
+			permissions.add("flame.build");
+			permissions.add("flame.evento");
 			break;
 		default:
 			break;

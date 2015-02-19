@@ -58,7 +58,6 @@ public class TempBan implements CommandExecutor {
 					} else {
 						try {
 							uuid = UUIDFetcher.getUUIDOf(args[0]);
-							permManager.loadPlayerGroup(uuid);
 						} catch (Exception e) {
 							sender.sendMessage(ChatColor.RED + "O player nao existe");
 							return;
@@ -100,8 +99,6 @@ public class TempBan implements CommandExecutor {
 					if (target != null) {
 						String kickMessage = ChatColor.YELLOW + "Voce foi temporariamente banido do servidor por " + sender.getName() + ".\nBanimendo durara " + tempo + "!\nMotivo: " + ChatColor.AQUA + builder.toString();
 						kickPlayer(target, kickMessage);
-					} else {
-						permManager.removePlayerGroup(uuid);
 					}
 					manager.ban(new me.flame.utils.banmanager.constructors.Ban(uuid, sender.getName(), builder.toString(), System.currentTimeMillis(), expiresCheck, false));
 				}

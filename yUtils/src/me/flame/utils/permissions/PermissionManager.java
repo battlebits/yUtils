@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import me.flame.utils.Main;
 import me.flame.utils.Management;
-import me.flame.utils.events.AccountLoadEvent;
 import me.flame.utils.permissions.commands.GiveYoutuber;
 import me.flame.utils.permissions.commands.GroupSet;
 import me.flame.utils.permissions.enums.Group;
@@ -16,8 +15,10 @@ import me.flame.utils.permissions.injector.PermissionMatcher;
 import me.flame.utils.permissions.injector.RegExpMatcher;
 import me.flame.utils.permissions.injector.regexperms.RegexPermissions;
 import me.flame.utils.permissions.listeners.LoginListener;
+import me.flame.utils.utils.UUIDFetcher;
 
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class PermissionManager extends Management {
 	private HashMap<UUID, Group> playerGroups;
@@ -39,6 +40,33 @@ public class PermissionManager extends Management {
 		getPlugin().getCommand("groupset").setExecutor(new GroupSet(this));
 		regexPerms = new RegexPermissions(this);
 		playerGroups = new HashMap<>();
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				try {
+					PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Staff-" + getServerType().toString() + "`;");
+					ResultSet result = stmt.executeQuery();
+					while (result.next()) {
+						UUID uuid = UUIDFetcher.getUUID(result.getString("uuid"));
+						Group grupo = Group.valueOf(result.getString("rank").toUpperCase());
+						setPlayerGroup(uuid, grupo);
+					}
+					stmt = getMySQL().prepareStatement("SELECT * FROM `Ranks`;");
+					result = stmt.executeQuery();
+					while (result.next()) {
+						UUID uuid = UUIDFetcher.getUUID(result.getString("uuid"));
+						if (playerGroups.containsKey(uuid))
+							continue;
+						Group grupo = Group.valueOf(result.getString("rank").toUpperCase());
+						setPlayerGroup(uuid, grupo);
+					}
+					result.close();
+					stmt.close();
+				} catch (Exception e) {
+					getLogger().info("Nao foi possivel carregar grupos");
+				}
+			}
+		}.runTaskTimerAsynchronously(getPlugin(), 5, 20 * 60 * 3);
 	}
 
 	public boolean isGroup(Player player, Group group) {
@@ -68,10 +96,7 @@ public class PermissionManager extends Management {
 
 	public void setPlayerGroup(Player player, Group group) {
 		UUID uuid = player.getUniqueId();
-		if (playerGroups.containsKey(uuid))
-			removePlayerGroup(player);
 		playerGroups.put(uuid, group);
-		getServer().getPluginManager().callEvent(new AccountLoadEvent(player.getUniqueId(), group));
 	}
 
 	public void savePlayerGroup(UUID uuid, Group group) {
@@ -122,34 +147,30 @@ public class PermissionManager extends Management {
 	}
 
 	public void setPlayerGroup(UUID uuid, Group group) {
-		if (playerGroups.containsKey(uuid))
-			removePlayerGroup(uuid);
-		playerGroups.put(uuid, group);
-		getServer().getPluginManager().callEvent(new AccountLoadEvent(uuid, group));
-	}
-
-	public void setPlayerGroup2(UUID uuid, Group group) {
-		if (playerGroups.containsKey(uuid))
-			removePlayerGroup(uuid);
 		playerGroups.put(uuid, group);
 	}
-
+/*
 	public void removePlayerGroup(Player player) {
 		playerGroups.remove(player.getUniqueId());
 	}
-
+*/
 	public void removePlayerGroup(UUID uuid) {
 		playerGroups.remove(uuid);
 	}
 
 	public Group getPlayerGroup(Player player) {
+		if(!playerGroups.containsKey(player.getUniqueId()))
+			return Group.NORMAL;
 		return playerGroups.get(player.getUniqueId());
 	}
 
 	public Group getPlayerGroup(UUID uuid) {
+		if(!playerGroups.containsKey(uuid))
+			return Group.NORMAL;
 		return playerGroups.get(uuid);
 	}
 
+	/*
 	public void loadPlayerGroup(UUID uuid) {
 		try {
 			PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Staff-" + getServerType().toString() + "` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
@@ -163,7 +184,6 @@ public class PermissionManager extends Management {
 				result = stmt.executeQuery();
 				if (result.next()) {
 					Group grupo = Group.valueOf(result.getString("rank").toUpperCase());
-					System.out.println(grupo.toString());
 					setPlayerGroup(uuid, grupo);
 				} else {
 					setPlayerGroup(uuid, Group.NORMAL);
@@ -175,7 +195,7 @@ public class PermissionManager extends Management {
 			e.printStackTrace();
 		}
 	}
-
+*/
 	@Override
 	public void onDisable() {
 		if (this.regexPerms != null) {
@@ -186,5 +206,6 @@ public class PermissionManager extends Management {
 			this.superms.onDisable();
 			this.superms = null;
 		}
+		playerGroups.clear();
 	}
 }
