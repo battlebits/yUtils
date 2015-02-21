@@ -18,6 +18,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class LoginListener implements Listener {
 	private Main main;
@@ -26,6 +27,15 @@ public class LoginListener implements Listener {
 	public LoginListener(Main main) {
 		attachments = new HashMap<>();
 		this.main = main;
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				for (Player player : main.getServer().getOnlinePlayers()) {
+					Group group = main.getPermissionManager().getPlayerGroup(player);
+					updateAttachment(player, group);
+				}
+			}
+		}.runTaskLater(main, 10);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)

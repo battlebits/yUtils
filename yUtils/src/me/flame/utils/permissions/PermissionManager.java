@@ -149,53 +149,44 @@ public class PermissionManager extends Management {
 	public void setPlayerGroup(UUID uuid, Group group) {
 		playerGroups.put(uuid, group);
 	}
-/*
-	public void removePlayerGroup(Player player) {
-		playerGroups.remove(player.getUniqueId());
-	}
-*/
+
+	/*
+	 * public void removePlayerGroup(Player player) {
+	 * playerGroups.remove(player.getUniqueId()); }
+	 */
 	public void removePlayerGroup(UUID uuid) {
 		playerGroups.remove(uuid);
 	}
 
 	public Group getPlayerGroup(Player player) {
-		if(!playerGroups.containsKey(player.getUniqueId()))
+		if (!playerGroups.containsKey(player.getUniqueId()))
 			return Group.NORMAL;
 		return playerGroups.get(player.getUniqueId());
 	}
 
 	public Group getPlayerGroup(UUID uuid) {
-		if(!playerGroups.containsKey(uuid))
+		if (!playerGroups.containsKey(uuid))
 			return Group.NORMAL;
 		return playerGroups.get(uuid);
 	}
 
 	/*
-	public void loadPlayerGroup(UUID uuid) {
-		try {
-			PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Staff-" + getServerType().toString() + "` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
-			ResultSet result = stmt.executeQuery();
-			if (result.next()) {
-				Group grupo = Group.valueOf(result.getString("rank").toUpperCase());
-				System.out.println(grupo.toString());
-				setPlayerGroup(uuid, grupo);
-			} else {
-				stmt = getMySQL().prepareStatement("SELECT * FROM `Ranks` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
-				result = stmt.executeQuery();
-				if (result.next()) {
-					Group grupo = Group.valueOf(result.getString("rank").toUpperCase());
-					setPlayerGroup(uuid, grupo);
-				} else {
-					setPlayerGroup(uuid, Group.NORMAL);
-				}
-			}
-			result.close();
-			stmt.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-*/
+	 * public void loadPlayerGroup(UUID uuid) { try { PreparedStatement stmt =
+	 * getMySQL().prepareStatement("SELECT * FROM `Staff-" +
+	 * getServerType().toString() + "` WHERE `uuid` = '" +
+	 * uuid.toString().replace("-", "") + "';"); ResultSet result =
+	 * stmt.executeQuery(); if (result.next()) { Group grupo =
+	 * Group.valueOf(result.getString("rank").toUpperCase());
+	 * System.out.println(grupo.toString()); setPlayerGroup(uuid, grupo); } else
+	 * { stmt =
+	 * getMySQL().prepareStatement("SELECT * FROM `Ranks` WHERE `uuid` = '" +
+	 * uuid.toString().replace("-", "") + "';"); result = stmt.executeQuery();
+	 * if (result.next()) { Group grupo =
+	 * Group.valueOf(result.getString("rank").toUpperCase());
+	 * setPlayerGroup(uuid, grupo); } else { setPlayerGroup(uuid, Group.NORMAL);
+	 * } } result.close(); stmt.close(); } catch (Exception e) {
+	 * e.printStackTrace(); } }
+	 */
 	@Override
 	public void onDisable() {
 		if (this.regexPerms != null) {
