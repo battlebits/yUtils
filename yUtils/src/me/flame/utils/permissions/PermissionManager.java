@@ -46,6 +46,7 @@ public class PermissionManager extends Management {
 				try {
 					PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Staff-" + getServerType().toString() + "`;");
 					ResultSet result = stmt.executeQuery();
+					playerGroups.clear();
 					while (result.next()) {
 						UUID uuid = UUIDFetcher.getUUID(result.getString("uuid"));
 						Group grupo = Group.valueOf(result.getString("rank").toUpperCase());

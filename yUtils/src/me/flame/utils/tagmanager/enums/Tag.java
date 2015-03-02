@@ -14,6 +14,7 @@ public enum Tag {
 	ULTIMATE("iultimate", ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "ULTIMATE " + ChatColor.LIGHT_PURPLE), 
 	PREMIUM("jpremium", ChatColor.GOLD + "" + ChatColor.BOLD + "PREMIUM " + ChatColor.GOLD), 
 	LIGHT("klight", ChatColor.GREEN + "" + ChatColor.BOLD + "LIGHT " + ChatColor.GREEN), 
+	TORNEIO("ltorneio", ChatColor.DARK_BLUE + "" + ChatColor.BOLD + "TORNEIO " + ChatColor.DARK_BLUE),
 	NORMAL("znormal", ChatColor.GRAY + "");
 
 	private String teamName;

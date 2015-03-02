@@ -33,6 +33,8 @@ public class JoinListener implements Listener {
 
 	private Tag getPlayerDefaultTag(Player p) {
 		PermissionManager man = manager.getPlugin().getPermissionManager();
+		if (manager.getPlugin().getTorneioManager().isParticipante(p.getUniqueId()))
+			return Tag.TORNEIO;
 		return Tag.valueOf(man.getPlayerGroup(p).toString());
 	}
 }

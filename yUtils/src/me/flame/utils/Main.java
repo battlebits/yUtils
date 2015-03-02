@@ -10,6 +10,7 @@ import me.flame.utils.permissions.PermissionManager;
 import me.flame.utils.permissions.enums.ServerType;
 import me.flame.utils.scoreboard.ScoreboardManager;
 import me.flame.utils.tagmanager.TagManager;
+import me.flame.utils.torneio.TorneioManager;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -31,6 +32,7 @@ public class Main extends JavaPlugin {
 	 */
 	private PermissionManager permissionManager;
 	private ScoreboardManager scoreboardManager;
+	private TorneioManager torneioManager;
 	private BanManagement banManager;
 	private BuyManager buyManager;
 	private TagManager tagManager;
@@ -74,6 +76,8 @@ public class Main extends JavaPlugin {
 		tagManager.onEnable();
 		buyManager = new BuyManager(this);
 		buyManager.onEnable();
+		torneioManager = new TorneioManager(this);
+		torneioManager.onEnable();
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 	}
 
@@ -84,6 +88,7 @@ public class Main extends JavaPlugin {
 		scoreboardManager.onDisable();
 		tagManager.onDisable();
 		buyManager.onDisable();
+		torneioManager.onDisable();
 		Connect.SQLdisconnect(mainConnection);
 	}
 
@@ -93,6 +98,10 @@ public class Main extends JavaPlugin {
 
 	public TagManager getTagManager() {
 		return tagManager;
+	}
+
+	public TorneioManager getTorneioManager() {
+		return torneioManager;
 	}
 
 	public PermissionManager getPermissionManager() {
