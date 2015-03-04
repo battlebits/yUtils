@@ -66,7 +66,7 @@ public class TorneioManager extends Management {
 			public void run() {
 				try {
 					Statement stmt = getMySQL().createStatement();
-					stmt.executeQuery("INSERT INTO `Torneio`(`uuid`) VALUES ('" + uuid.toString().replace("-", "") + "')");
+					stmt.executeUpdate("INSERT INTO `Torneio`(`uuid`) VALUES ('" + uuid.toString().replace("-", "") + "');");
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
