@@ -2,12 +2,15 @@ package me.flame.utils.torneio;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import me.flame.utils.Main;
 import me.flame.utils.Management;
+import me.flame.utils.torneio.commands.AddTorneio;
 import me.flame.utils.utils.UUIDFetcher;
 
 import org.bukkit.scheduler.BukkitRunnable;
@@ -23,6 +26,7 @@ public class TorneioManager extends Management {
 	@Override
 	public void onEnable() {
 		participantes = new ArrayList<>();
+		getPlugin().getCommand("addtorneio").setExecutor(new AddTorneio(this));
 		new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -50,5 +54,24 @@ public class TorneioManager extends Management {
 
 	public boolean isParticipante(UUID uuid) {
 		return participantes.contains(uuid);
+	}
+
+	public void addPlayerOnTorneio(UUID uuid) {
+		if (participantes.contains(uuid)) {
+			return;
+		}
+		participantes.add(uuid);
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				try {
+					Statement stmt = getMySQL().createStatement();
+					stmt.executeQuery("INSERT INTO `Torneio`(`uuid`) VALUES ('" + uuid.toString().replace("-", "") + "')");
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}.runTaskAsynchronously(getPlugin());
 	}
 }

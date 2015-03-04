@@ -23,4 +23,6 @@ commands:
   tempmute:
     description: Comando utilizado para mutar temporariamente
   givevip:
-    description: Comando utilizado para mutar temporariamente
+    description: Comando utilizado para dar vips
+  addtorneio:
+    description: Comando utilizado para adicionar players ao torneio
