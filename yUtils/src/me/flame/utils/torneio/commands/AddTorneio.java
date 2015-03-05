@@ -22,16 +22,16 @@ public class AddTorneio implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (!(sender instanceof Player))
-			return false;
-		Player player = (Player) sender;
 		if (cmd.getName().equalsIgnoreCase("addtorneio")) {
-			if (!manager.getPlugin().getPermissionManager().hasGroupPermission(player, Group.DONO)) {
-				player.sendMessage(ChatColor.RED + "Voce nao possui permissao para usar este comando!");
-				return true;
+			if (sender instanceof Player) {
+				Player player = (Player) sender;
+				if (!manager.getPlugin().getPermissionManager().hasGroupPermission(player, Group.DONO)) {
+					sender.sendMessage(ChatColor.RED + "Voce nao possui permissao para usar este comando!");
+					return true;
+				}
 			}
 			if (args.length != 1) {
-				player.sendMessage(ChatColor.RED + "Uso correto: /addtorneio <player>");
+				sender.sendMessage(ChatColor.RED + "Uso correto: /addtorneio <player>");
 				return true;
 			}
 			new BukkitRunnable() {
@@ -49,11 +49,11 @@ public class AddTorneio implements CommandExecutor {
 						}
 					}
 					if (uuid == null) {
-						player.sendMessage(ChatColor.RED + "Parece que o player nao existe!");
+						sender.sendMessage(ChatColor.RED + "Parece que o player nao existe!");
 						return;
 					}
 					manager.addPlayerOnTorneio(uuid);
-					player.sendMessage(ChatColor.YELLOW + "Player " + args[0] + "(" + uuid.toString().replace("-", "") + ") foi adicionado a lista de participantes do torneio");
+					sender.sendMessage(ChatColor.YELLOW + "Player " + args[0] + "(" + uuid.toString().replace("-", "") + ") foi adicionado a lista de participantes do torneio");
 				}
 			}.runTaskAsynchronously(manager.getPlugin());
 			return true;
