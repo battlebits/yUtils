@@ -80,7 +80,7 @@ public class Main extends JavaPlugin {
 		torneioManager = new TorneioManager(this);
 		torneioManager.onEnable();
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
-		getServer().getScheduler().runTaskTimerAsynchronously(this, new PluginUpdater(this), 0L, 108000L);
+		getServer().getScheduler().runTaskTimerAsynchronously(this, new PluginUpdater(this), 2L, 108000L);
 	}
 
 	@Override

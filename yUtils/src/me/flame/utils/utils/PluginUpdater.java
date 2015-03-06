@@ -19,6 +19,7 @@ public class PluginUpdater implements Runnable {
 	private String versaoAtual;
 	private String versaoUpdate;
 	private String downloadURL;
+	private boolean needUpdate = true;
 
 	public PluginUpdater(Plugin plugin) {
 		this.plugin = plugin;
@@ -29,6 +30,8 @@ public class PluginUpdater implements Runnable {
 
 	@Override
 	public void run() {
+		if (!needUpdate)
+			return;
 		if (running)
 			return;
 		running = true;
@@ -42,6 +45,9 @@ public class PluginUpdater implements Runnable {
 				versaoUpdate = inputLine;
 			}
 			if (versaoAtual.equals(versaoUpdate)) {
+				System.out.println("============================");
+				System.out.println("Plugin " + pluginName + " ja esta atualizado");
+				System.out.println("============================");
 				running = false;
 				return;
 			}
@@ -76,6 +82,10 @@ public class PluginUpdater implements Runnable {
 			if (to.exists())
 				to.delete();
 			tmp.renameTo(to);
+			System.out.println("============================");
+			System.out.println("Atualizacao de " + pluginName + " baixada com sucesso e terá efeito na proxima reinicialização");
+			System.out.println("============================");
+			needUpdate = false;
 			running = false;
 		} catch (Exception e) {
 			System.out.println("============================");
