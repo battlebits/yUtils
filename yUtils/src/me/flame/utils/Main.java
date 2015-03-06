@@ -13,6 +13,7 @@ import me.flame.utils.tagmanager.TagManager;
 import me.flame.utils.torneio.TorneioManager;
 import me.flame.utils.utils.PluginUpdater;
 
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
@@ -23,6 +24,10 @@ public class Main extends JavaPlugin {
 	 * 
 	 */
 	public boolean sql = true;
+	public String host = "";
+	public String password = "";
+	public String user = "";
+	public String port = "3306";
 	public Connect connect;
 	public Connection mainConnection;
 
@@ -44,8 +49,9 @@ public class Main extends JavaPlugin {
 	public void onEnable() {
 		saveDefaultConfig();
 		instance = this;
+		prepareConfig();
 		connect = new Connect(this);
-		mainConnection = connect.trySQLConnection("localhost", "3306", "utils", "root", "saobestanime");
+		mainConnection = connect.trySQLConnection();
 		if (!sql) {
 			getServer().shutdown();
 			return;
@@ -67,6 +73,7 @@ public class Main extends JavaPlugin {
 		default:
 			type = ServerType.NONE;
 		}
+		getLogger().info("Carregando Config!");
 		permissionManager = new PermissionManager(this, type);
 		permissionManager.onEnable();
 		banManager = new BanManagement(this);
@@ -92,6 +99,14 @@ public class Main extends JavaPlugin {
 		buyManager.onDisable();
 		torneioManager.onDisable();
 		Connect.SQLdisconnect(mainConnection);
+	}
+
+	private void prepareConfig() {
+		FileConfiguration c = getConfig();
+		sql = c.getBoolean("sql");
+		host = c.getString("sql-host");
+		password = c.getString("sql-pass");
+		user = c.getString("sql-user");
 	}
 
 	public ScoreboardManager getScoreboardManager() {

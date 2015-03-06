@@ -14,7 +14,7 @@ public class Connect {
 		this.m = m;
 	}
 
-	public synchronized Connection trySQLConnection(String host, String port, String database, String user, String password) {
+	public synchronized Connection trySQLConnection() {
 		if (!m.sql) {
 			m.getLogger().info("MySQL Desativado!");
 			return null;
@@ -22,8 +22,8 @@ public class Connect {
 		try {
 			m.getLogger().info("Conectando ao MySQL");
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			String conn = "jdbc:mysql://" + host + ":" + port + "/" + database;
-			return DriverManager.getConnection(conn, user, password);
+			String conn = "jdbc:mysql://" + m.host + ":" + m.port + "/utils";
+			return DriverManager.getConnection(conn, m.user, m.password);
 		} catch (ClassNotFoundException ex) {
 			m.getLogger().warning("MySQL Driver nao encontrado!");
 			m.sql = false;

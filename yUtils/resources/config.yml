@@ -1,1 +1,10 @@
 serverType: lobby
+
+#SQL CONFIGS
+
+sql: true
+
+sql-user: hungergames
+sql-pass: pass321
+sql-host: 177.54.146.67
+sql-db: HungerGames
