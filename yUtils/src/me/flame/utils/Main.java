@@ -11,6 +11,7 @@ import me.flame.utils.permissions.enums.ServerType;
 import me.flame.utils.scoreboard.ScoreboardManager;
 import me.flame.utils.tagmanager.TagManager;
 import me.flame.utils.torneio.TorneioManager;
+import me.flame.utils.utils.PluginUpdater;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -79,6 +80,7 @@ public class Main extends JavaPlugin {
 		torneioManager = new TorneioManager(this);
 		torneioManager.onEnable();
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+		getServer().getScheduler().runTaskTimerAsynchronously(this, new PluginUpdater(this), 0L, 108000L);
 	}
 
 	@Override
