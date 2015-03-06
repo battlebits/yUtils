@@ -15,6 +15,7 @@ import me.flame.utils.utils.PluginUpdater;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class Main extends JavaPlugin {
 
@@ -53,7 +54,12 @@ public class Main extends JavaPlugin {
 		connect = new Connect(this);
 		mainConnection = connect.trySQLConnection();
 		if (!sql) {
-			getServer().shutdown();
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					getServer().shutdown();
+				}
+			}.runTaskLater(this, 1);
 			return;
 		}
 		ServerType type = null;
