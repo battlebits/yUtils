@@ -198,6 +198,7 @@ public class PermissionManager extends Management {
 			this.superms.onDisable();
 			this.superms = null;
 		}
-		playerGroups.clear();
+		if (playerGroups != null)
+			playerGroups.clear();
 	}
 }
