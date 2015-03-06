@@ -24,7 +24,7 @@ public class GiveYoutuber implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player))
 			return false;
-		Player player = (Player) sender;
+		final Player player = (Player) sender;
 		if (cmd.getName().equalsIgnoreCase("giveyoutuber")) {
 			if (!manager.hasGroupPermission(player, Group.ADMIN)) {
 				player.sendMessage(ChatColor.RED + "Voce nao possui permissao para usar este comando!");
@@ -34,17 +34,18 @@ public class GiveYoutuber implements CommandExecutor {
 				player.sendMessage(ChatColor.RED + "Uso correto: /giveyoutuber <player>");
 				return true;
 			}
+			final String[] argss = args;
 			new BukkitRunnable() {
 				@Override
 				public void run() {
 					@SuppressWarnings("deprecation")
-					Player target = manager.getServer().getPlayer(args[0]);
+					Player target = manager.getServer().getPlayer(argss[0]);
 					UUID uuid = null;
 					if (target != null) {
 						uuid = target.getUniqueId();
 					} else {
 						try {
-							uuid = UUIDFetcher.getUUIDOf(args[0]);
+							uuid = UUIDFetcher.getUUIDOf(argss[0]);
 						} catch (Exception e) {
 						}
 					}
@@ -54,7 +55,7 @@ public class GiveYoutuber implements CommandExecutor {
 					}
 					manager.setPlayerGroup(uuid, Group.YOUTUBER);
 					manager.savePlayerGroup(uuid, Group.YOUTUBER);
-					player.sendMessage(ChatColor.YELLOW + "Player " + args[0] + "(" + uuid.toString().replace("-", "") + ") foi setado como Youtuber com sucesso!");
+					player.sendMessage(ChatColor.YELLOW + "Player " + argss[0] + "(" + uuid.toString().replace("-", "") + ") foi setado como Youtuber com sucesso!");
 				}
 			}.runTaskAsynchronously(manager.getPlugin());
 			return true;

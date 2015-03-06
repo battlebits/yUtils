@@ -30,8 +30,8 @@ public class LoginListener implements Listener {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				for (Player player : main.getServer().getOnlinePlayers()) {
-					Group group = main.getPermissionManager().getPlayerGroup(player);
+				for (Player player : LoginListener.this.main.getServer().getOnlinePlayers()) {
+					Group group = LoginListener.this.main.getPermissionManager().getPlayerGroup(player);
 					updateAttachment(player, group);
 				}
 			}

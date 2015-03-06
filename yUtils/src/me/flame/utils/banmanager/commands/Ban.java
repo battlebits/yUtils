@@ -37,7 +37,7 @@ public class Ban implements CommandExecutor {
 				return true;
 			}
 			@SuppressWarnings("deprecation")
-			Player target = manager.getServer().getPlayer(args[0]);
+			final Player target = manager.getServer().getPlayer(args[0]);
 			if (target == null) {
 				if (sender instanceof Player) {
 					Player player = (Player) sender;
@@ -47,6 +47,8 @@ public class Ban implements CommandExecutor {
 					}
 				}
 			}
+			final String[] argss = args;
+			final CommandSender senderr = sender;
 			new BukkitRunnable() {
 				@Override
 				public void run() {
@@ -56,42 +58,42 @@ public class Ban implements CommandExecutor {
 						uuid = target.getUniqueId();
 					} else {
 						try {
-							uuid = UUIDFetcher.getUUIDOf(args[0]);
+							uuid = UUIDFetcher.getUUIDOf(argss[0]);
 						} catch (Exception e) {
-							sender.sendMessage(ChatColor.RED + "O player nao existe");
+							senderr.sendMessage(ChatColor.RED + "O player nao existe");
 							return;
 						}
 					}
 					if (manager.isBanned(uuid)) {
 						if (!manager.getBan(uuid).isUnbanned()) {
-							sender.sendMessage(ChatColor.RED + "O player ja esta banido");
+							senderr.sendMessage(ChatColor.RED + "O player ja esta banido");
 							return;
 						}
 					}
-					if (permManager.getPlayerGroup(uuid).ordinal() >= 5 && sender instanceof Player && permManager.getPlayerGroup((Player) sender) != Group.DONO && permManager.getPlayerGroup((Player) sender) != Group.ADMIN) {
-						sender.sendMessage(ChatColor.RED + "Voce nao pode banir uma staff");
+					if (permManager.getPlayerGroup(uuid).ordinal() >= 5 && senderr instanceof Player && permManager.getPlayerGroup((Player) senderr) != Group.DONO && permManager.getPlayerGroup((Player) senderr) != Group.ADMIN) {
+						senderr.sendMessage(ChatColor.RED + "Voce nao pode banir uma staff");
 						return;
 					}
 					StringBuilder builder = new StringBuilder();
-					for (int i = 1; i < args.length; i++) {
+					for (int i = 1; i < argss.length; i++) {
 						String espaco = " ";
-						if (i >= args.length - 1)
+						if (i >= argss.length - 1)
 							espaco = "";
-						builder.append(args[i] + espaco);
+						builder.append(argss[i] + espaco);
 					}
-					sender.sendMessage(ChatColor.YELLOW + "O player " + args[0] + "(" + uuid.toString().replace("-", "") + ") foi banido. Motivo: " + ChatColor.AQUA + builder.toString());
+					senderr.sendMessage(ChatColor.YELLOW + "O player " + argss[0] + "(" + uuid.toString().replace("-", "") + ") foi banido. Motivo: " + ChatColor.AQUA + builder.toString());
 					for (Player player : manager.getServer().getOnlinePlayers()) {
-						if (player == sender)
+						if (player == senderr)
 							continue;
 						if (!manager.getPlugin().getPermissionManager().hasGroupPermission(player, Group.HELPER))
 							continue;
-						player.sendMessage(ChatColor.YELLOW + args[0] + "(" + uuid.toString().replace("-", "") + ") foi banido do servidor por " + sender.getName() + "! Motivo: " + ChatColor.AQUA + builder.toString());
+						player.sendMessage(ChatColor.YELLOW + argss[0] + "(" + uuid.toString().replace("-", "") + ") foi banido do servidor por " + senderr.getName() + "! Motivo: " + ChatColor.AQUA + builder.toString());
 					}
 					if (target != null) {
-						String kickMessage = ChatColor.YELLOW + "Voce foi banido do servidor por " + sender.getName() + "! Motivo: " + ChatColor.AQUA + builder.toString();
+						String kickMessage = ChatColor.YELLOW + "Voce foi banido do servidor por " + senderr.getName() + "! Motivo: " + ChatColor.AQUA + builder.toString();
 						kickPlayer(target, kickMessage);
 					}
-					manager.ban(new me.flame.utils.banmanager.constructors.Ban(uuid, sender.getName(), builder.toString(), System.currentTimeMillis(), 0, false));
+					manager.ban(new me.flame.utils.banmanager.constructors.Ban(uuid, senderr.getName(), builder.toString(), System.currentTimeMillis(), 0, false));
 				}
 			}.runTaskAsynchronously(manager.getPlugin());
 		}

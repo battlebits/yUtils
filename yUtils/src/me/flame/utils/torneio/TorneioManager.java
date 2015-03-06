@@ -56,7 +56,7 @@ public class TorneioManager extends Management {
 		return participantes.contains(uuid);
 	}
 
-	public void addPlayerOnTorneio(UUID uuid) {
+	public void addPlayerOnTorneio(final UUID uuid) {
 		if (participantes.contains(uuid)) {
 			return;
 		}

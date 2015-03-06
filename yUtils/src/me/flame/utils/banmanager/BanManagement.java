@@ -156,7 +156,7 @@ public class BanManagement extends Management {
 		return mutados.get(uuid);
 	}
 
-	public void ban(Ban ban) {
+	public void ban(final Ban ban) {
 		banimentos.put(ban.getBannedUuid(), ban);
 		new Thread(new Runnable() {
 			@Override
@@ -173,7 +173,7 @@ public class BanManagement extends Management {
 		}).start();
 	}
 
-	public void mute(Mute mute) {
+	public void mute(final Mute mute) {
 		mutados.put(mute.getMutedUuid(), mute);
 		new Thread(new Runnable() {
 			@Override
@@ -190,7 +190,7 @@ public class BanManagement extends Management {
 		}).start();
 	}
 
-	public boolean unmute(UUID uuid) {
+	public boolean unmute(final UUID uuid) {
 		if (!isMuted(uuid))
 			return false;
 		mutados.remove(uuid);
@@ -210,7 +210,7 @@ public class BanManagement extends Management {
 		return true;
 	}
 
-	public boolean unban(UUID uuid) {
+	public boolean unban(final UUID uuid) {
 		if (!isBanned(uuid))
 			return false;
 		Ban ban = getBan(uuid);
@@ -231,7 +231,7 @@ public class BanManagement extends Management {
 		return true;
 	}
 
-	public boolean removeTempban(UUID uuid) {
+	public boolean removeTempban(final UUID uuid) {
 		if (!isBanned(uuid))
 			return false;
 		Ban ban = getBan(uuid);

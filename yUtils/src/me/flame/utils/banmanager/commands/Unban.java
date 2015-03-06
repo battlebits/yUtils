@@ -34,31 +34,33 @@ public class Unban implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + "Uso correto: /unban <player>");
 				return true;
 			}
+			final String[] argss = args;
+			final CommandSender senderr = sender;
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
 					UUID uuid = null;
 					try {
-						uuid = UUIDFetcher.getUUIDOf(args[0]);
+						uuid = UUIDFetcher.getUUIDOf(argss[0]);
 					} catch (Exception e) {
-						sender.sendMessage(ChatColor.RED + "O player nao existe");
+						senderr.sendMessage(ChatColor.RED + "O player nao existe");
 						return;
 					}
 					if (!manager.isBanned(uuid)) {
-						sender.sendMessage(ChatColor.RED + "O player nao esta banido");
+						senderr.sendMessage(ChatColor.RED + "O player nao esta banido");
 						return;
 					}
 					if (manager.getBan(uuid).isUnbanned()) {
-						sender.sendMessage(ChatColor.RED + "O player nao esta banido");
+						senderr.sendMessage(ChatColor.RED + "O player nao esta banido");
 						return;
 					}
-					sender.sendMessage(ChatColor.YELLOW + "O player " + args[0] + "(" + uuid.toString().replace("-", "") + ") foi desbanido");
+					senderr.sendMessage(ChatColor.YELLOW + "O player " + argss[0] + "(" + uuid.toString().replace("-", "") + ") foi desbanido");
 					for (Player player : manager.getServer().getOnlinePlayers()) {
-						if (player == sender)
+						if (player == senderr)
 							continue;
 						if (!manager.getPlugin().getPermissionManager().hasGroupPermission(player, Group.HELPER))
 							continue;
-						player.sendMessage(ChatColor.YELLOW + args[0] + "(" + uuid.toString().replace("-", "") + ") foi desbanido do servidor por " + sender.getName() + "!");
+						player.sendMessage(ChatColor.YELLOW + argss[0] + "(" + uuid.toString().replace("-", "") + ") foi desbanido do servidor por " + senderr.getName() + "!");
 					}
 					manager.unban(uuid);
 				}

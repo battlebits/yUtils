@@ -70,8 +70,8 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 				sender.sendMessage(ChatColor.RED + "Nome muito longo, maximo de caracteres e 16");
 				return true;
 			}
-			@SuppressWarnings("deprecation")
-			Player target = manager.getServer().getPlayer(args[0]);
+			@SuppressWarnings({ "deprecation" })
+			final Player target = manager.getServer().getPlayer(args[0]);
 			Group groupo = null;
 			try {
 				groupo = Group.valueOf(args[1].toUpperCase());
@@ -89,6 +89,8 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 					}
 				}
 			}
+			final String[] argss = args;
+			final CommandSender senderr = sender;
 			if (group == Group.NORMAL) {
 				new BukkitRunnable() {
 					@Override
@@ -98,28 +100,28 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 							uuid = target.getUniqueId();
 						} else {
 							try {
-								uuid = UUIDFetcher.getUUIDOf(args[0]);
+								uuid = UUIDFetcher.getUUIDOf(argss[0]);
 							} catch (Exception e) {
 							}
 						}
 						if (uuid == null) {
-							sender.sendMessage(ChatColor.RED + "Parece que o player nao existe!");
+							senderr.sendMessage(ChatColor.RED + "Parece que o player nao existe!");
 							return;
 						}
-						if (sender instanceof Player) {
-							Player player = (Player) sender;
+						if (senderr instanceof Player) {
+							Player player = (Player) senderr;
 							if (manager.getPlayerGroup(uuid) == Group.DONO && manager.getPlayerGroup(player) == Group.ADMIN) {
-								sender.sendMessage(ChatColor.RED + "Voce nao pode mudar o grupo de um dono");
+								senderr.sendMessage(ChatColor.RED + "Voce nao pode mudar o grupo de um dono");
 								return;
 							}
 						}
 						if (group == manager.getPlayerGroup(uuid)) {
-							sender.sendMessage(ChatColor.RED + "O grupo do player ja e " + group.toString());
+							senderr.sendMessage(ChatColor.RED + "O grupo do player ja e " + group.toString());
 							return;
 						}
 						manager.removePlayerGroup(uuid);
 						manager.removePlayer(uuid);
-						sender.sendMessage(ChatColor.YELLOW + "Player " + args[0] + "(" + uuid.toString().replace("-", "") + ") foi setado como " + group.toString() + " com sucesso!");
+						senderr.sendMessage(ChatColor.YELLOW + "Player " + argss[0] + "(" + uuid.toString().replace("-", "") + ") foi setado como " + group.toString() + " com sucesso!");
 					}
 				}.runTaskAsynchronously(manager.getPlugin());
 				return true;
@@ -132,28 +134,28 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 						uuid = target.getUniqueId();
 					} else {
 						try {
-							uuid = UUIDFetcher.getUUIDOf(args[0]);
+							uuid = UUIDFetcher.getUUIDOf(argss[0]);
 						} catch (Exception e) {
 						}
 					}
 					if (uuid == null) {
-						sender.sendMessage(ChatColor.RED + "Parece que o player nao existe!");
+						senderr.sendMessage(ChatColor.RED + "Parece que o player nao existe!");
 						return;
 					}
-					if (sender instanceof Player) {
-						Player player = (Player) sender;
+					if (senderr instanceof Player) {
+						Player player = (Player) senderr;
 						if (manager.getPlayerGroup(uuid) == Group.DONO && manager.getPlayerGroup(player) == Group.ADMIN) {
-							sender.sendMessage(ChatColor.RED + "Voce nao pode mudar o grupo de um dono");
+							senderr.sendMessage(ChatColor.RED + "Voce nao pode mudar o grupo de um dono");
 							return;
 						}
 					}
 					if (group == manager.getPlayerGroup(uuid)) {
-						sender.sendMessage(ChatColor.RED + "O grupo do player ja e " + group.toString());
+						senderr.sendMessage(ChatColor.RED + "O grupo do player ja e " + group.toString());
 						return;
 					}
 					manager.setPlayerGroup(uuid, group);
 					manager.savePlayerGroup(uuid, group);
-					sender.sendMessage(ChatColor.YELLOW + "Player " + args[0] + "(" + uuid.toString().replace("-", "") + ") foi setado como " + group.toString() + " com sucesso!");
+					senderr.sendMessage(ChatColor.YELLOW + "Player " + argss[0] + "(" + uuid.toString().replace("-", "") + ") foi setado como " + group.toString() + " com sucesso!");
 				}
 			}.runTaskAsynchronously(manager.getPlugin());
 			return true;

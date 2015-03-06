@@ -19,8 +19,8 @@ public class JoinListener implements Listener {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				for (Player player : manager.getServer().getOnlinePlayers()) {
-					manager.addPlayerTag(player, getPlayerDefaultTag(player));
+				for (Player player : JoinListener.this.manager.getServer().getOnlinePlayers()) {
+					JoinListener.this.manager.addPlayerTag(player, getPlayerDefaultTag(player));
 				}
 			}
 		}.runTaskLater(manager.getPlugin(), 11);

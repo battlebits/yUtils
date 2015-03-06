@@ -25,11 +25,11 @@ public class JoinListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onJoin(PlayerJoinEvent event) {
-		Player target = event.getPlayer();
-		UUID uuid = event.getPlayer().getUniqueId();
+		final Player target = event.getPlayer();
+		final UUID uuid = event.getPlayer().getUniqueId();
 		if (!manager.expires.containsKey(uuid))
 			return;
-		Expire expire = manager.getExpire(uuid);
+		final Expire expire = manager.getExpire(uuid);
 		if (expire == null)
 			return;
 		if (expire.getExpire() < System.currentTimeMillis()) {

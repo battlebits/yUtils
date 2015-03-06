@@ -35,7 +35,9 @@ public class Unmute implements CommandExecutor {
 				return true;
 			}
 			@SuppressWarnings("deprecation")
-			Player target = manager.getServer().getPlayer(args[0]);
+			final Player target = manager.getServer().getPlayer(args[0]);
+			final String[] argss = args;
+			final CommandSender senderr = sender;
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -44,26 +46,26 @@ public class Unmute implements CommandExecutor {
 						uuid = target.getUniqueId();
 					} else {
 						try {
-							uuid = UUIDFetcher.getUUIDOf(args[0]);
+							uuid = UUIDFetcher.getUUIDOf(argss[0]);
 						} catch (Exception e) {
-							sender.sendMessage(ChatColor.RED + "O player nao existe");
+							senderr.sendMessage(ChatColor.RED + "O player nao existe");
 							return;
 						}
 					}
 					if (!manager.isMuted(uuid)) {
-						sender.sendMessage(ChatColor.RED + "O player nao esta mutado");
+						senderr.sendMessage(ChatColor.RED + "O player nao esta mutado");
 						return;
 					}
-					sender.sendMessage(ChatColor.YELLOW + "O player " + args[0] + "(" + uuid.toString().replace("-", "") + ") foi desmutado!");
+					senderr.sendMessage(ChatColor.YELLOW + "O player " + argss[0] + "(" + uuid.toString().replace("-", "") + ") foi desmutado!");
 					for (Player player : manager.getServer().getOnlinePlayers()) {
-						if (player == sender)
+						if (player == senderr)
 							continue;
 						if (!manager.getPlugin().getPermissionManager().hasGroupPermission(player, Group.HELPER))
 							continue;
-						player.sendMessage(ChatColor.YELLOW + args[0] + "(" + uuid.toString().replace("-", "") + ") foi desmutado do servidor por " + sender.getName() + "!");
+						player.sendMessage(ChatColor.YELLOW + argss[0] + "(" + uuid.toString().replace("-", "") + ") foi desmutado do servidor por " + senderr.getName() + "!");
 					}
 					if (target != null) {
-						target.sendMessage(ChatColor.YELLOW + "Voce foi desmutado do servidor por " + sender.getName() + "! Agora voce ja pode falar");
+						target.sendMessage(ChatColor.YELLOW + "Voce foi desmutado do servidor por " + senderr.getName() + "! Agora voce ja pode falar");
 					}
 					manager.unmute(uuid);
 				}

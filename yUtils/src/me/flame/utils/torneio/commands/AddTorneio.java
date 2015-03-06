@@ -34,26 +34,28 @@ public class AddTorneio implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + "Uso correto: /addtorneio <player>");
 				return true;
 			}
+			final String[] argss = args;
+			final CommandSender senderr = sender;
 			new BukkitRunnable() {
 				@Override
 				public void run() {
 					@SuppressWarnings("deprecation")
-					Player target = manager.getServer().getPlayer(args[0]);
+					Player target = manager.getServer().getPlayer(argss[0]);
 					UUID uuid = null;
 					if (target != null) {
 						uuid = target.getUniqueId();
 					} else {
 						try {
-							uuid = UUIDFetcher.getUUIDOf(args[0]);
+							uuid = UUIDFetcher.getUUIDOf(argss[0]);
 						} catch (Exception e) {
 						}
 					}
 					if (uuid == null) {
-						sender.sendMessage(ChatColor.RED + "Parece que o player nao existe!");
+						senderr.sendMessage(ChatColor.RED + "Parece que o player nao existe!");
 						return;
 					}
 					manager.addPlayerOnTorneio(uuid);
-					sender.sendMessage(ChatColor.YELLOW + "Player " + args[0] + "(" + uuid.toString().replace("-", "") + ") foi adicionado a lista de participantes do torneio");
+					senderr.sendMessage(ChatColor.YELLOW + "Player " + argss[0] + "(" + uuid.toString().replace("-", "") + ") foi adicionado a lista de participantes do torneio");
 				}
 			}.runTaskAsynchronously(manager.getPlugin());
 			return true;
