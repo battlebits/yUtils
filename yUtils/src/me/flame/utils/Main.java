@@ -3,6 +3,8 @@ package me.flame.utils;
 import java.sql.Connection;
 
 import me.flame.utils.banmanager.BanManagement;
+import me.flame.utils.commands.Fake;
+import me.flame.utils.commands.TagCommand;
 import me.flame.utils.listeners.PlayerListener;
 import me.flame.utils.mysql.Connect;
 import me.flame.utils.payment.BuyManager;
@@ -92,6 +94,8 @@ public class Main extends JavaPlugin {
 		buyManager.onEnable();
 		torneioManager = new TorneioManager(this);
 		torneioManager.onEnable();
+		getPlugin().getCommand("fake").setExecutor(new Fake());
+		getPlugin().getCommand("tag").setExecutor(new TagCommand(this));
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 		getServer().getScheduler().runTaskTimerAsynchronously(this, new PluginUpdater(this), 2L, 108000L);
 	}

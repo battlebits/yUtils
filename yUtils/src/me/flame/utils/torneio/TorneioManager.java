@@ -45,6 +45,9 @@ public class TorneioManager extends Management {
 				}
 			}
 		}.runTaskTimerAsynchronously(getPlugin(), 5, 20 * 60 * 10);
+		for(UUID uuid : participantes) {
+			System.out.println(uuid.toString().replace("-", ""));
+		}
 	}
 
 	@Override
