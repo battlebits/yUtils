@@ -75,7 +75,7 @@ public class Fake implements CommandExecutor {
 	}
 
 	public boolean validate(final String username) {
-		Pattern pattern = Pattern.compile("^[a-z0-9_-]{3,16}$");
+		Pattern pattern = Pattern.compile("^[a-zA-Z0-9_-]{3,16}$");
 		Matcher matcher = pattern.matcher(username);
 		return matcher.matches();
 	}
