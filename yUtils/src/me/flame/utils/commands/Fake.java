@@ -11,6 +11,7 @@ import me.flame.utils.tagmanager.enums.Tag;
 import me.flame.utils.utils.UUIDFetcher;
 import net.minecraft.server.v1_8_R1.EntityPlayer;
 import net.minecraft.server.v1_8_R1.EnumPlayerInfoAction;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_8_R1.PacketPlayOutNamedEntitySpawn;
 import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
 
@@ -92,12 +93,16 @@ public class Fake implements CommandExecutor {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		PacketPlayOutEntityDestroy destroy = new PacketPlayOutEntityDestroy(player.getId());
 		PacketPlayOutNamedEntitySpawn spawn = new PacketPlayOutNamedEntitySpawn(player);
 		player.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, player));
 		for (Player pla : Main.getPlugin().getServer().getOnlinePlayers()) {
 			EntityPlayer pl = ((CraftPlayer) pla).getHandle();
-			if (pla != p)
+			if (pla != p) {
+				pl.playerConnection.sendPacket(destroy);
 				pl.playerConnection.sendPacket(spawn);
+			}
 		}
 	}
 }
