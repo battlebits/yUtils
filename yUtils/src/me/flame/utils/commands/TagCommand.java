@@ -27,6 +27,8 @@ public class TagCommand implements CommandExecutor {
 			return false;
 		Player p = (Player) sender;
 		String message = "Default | Normal";
+		if (manager.getPlugin().getTorneioManager().isParticipante(p.getUniqueId()))
+			message = message + " | TORNEIO";
 		if (manager.hasGroupPermission(p, Group.LIGHT))
 			message = message + " | LIGHT";
 		if (manager.hasGroupPermission(p, Group.PREMIUM))
@@ -116,6 +118,12 @@ public class TagCommand implements CommandExecutor {
 					if (manager.hasGroupPermission(p, Group.LIGHT)) {
 						tagManager.addPlayerTag(p, Tag.LIGHT);
 						p.sendMessage(ChatColor.GOLD + "Voce esta usando sua tag LIGHT");
+						return true;
+					}
+				} else if (args[0].equalsIgnoreCase("TORNEIO")) {
+					if (manager.getPlugin().getTorneioManager().isParticipante(p.getUniqueId())) {
+						tagManager.addPlayerTag(p, Tag.TORNEIO);
+						p.sendMessage(ChatColor.GOLD + "Voce esta usando sua tag TORNEIO");
 						return true;
 					}
 				} else if (args[0].equalsIgnoreCase("normal")) {

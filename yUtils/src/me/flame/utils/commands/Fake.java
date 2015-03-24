@@ -2,14 +2,17 @@ package me.flame.utils.commands;
 
 import java.lang.reflect.Field;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import me.flame.utils.Main;
 import me.flame.utils.permissions.enums.Group;
 import me.flame.utils.tagmanager.enums.Tag;
 import me.flame.utils.utils.UUIDFetcher;
 import net.minecraft.server.v1_8_R1.EntityPlayer;
-import net.minecraft.server.v1_8_R1.PacketPlayOutEntityDestroy;
+import net.minecraft.server.v1_8_R1.EnumPlayerInfoAction;
 import net.minecraft.server.v1_8_R1.PacketPlayOutNamedEntitySpawn;
+import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -38,6 +41,10 @@ public class Fake implements CommandExecutor {
 				return true;
 			}
 			final String[] argss = args;
+			if (!validate(args[0])) {
+				player.sendMessage(ChatColor.RED + "Parece que o nick escolhido possui caracteres inapropriados ou e muito grande");
+				return true;
+			}
 			new BukkitRunnable() {
 				@Override
 				public void run() {
@@ -56,6 +63,7 @@ public class Fake implements CommandExecutor {
 						player.sendMessage(ChatColor.RED + "Parece que o nick escolhido ja existe, use outro!");
 						return;
 					}
+					Main.getPlugin().getTagManager().removePlayerTag(player);
 					changeNick(player, argss[0]);
 					Main.getPlugin().getTagManager().addPlayerTag(player, Tag.NORMAL);
 					player.sendMessage(ChatColor.YELLOW + "Voce agora esta disfarcado como '" + argss[0] + "'!");
@@ -66,8 +74,15 @@ public class Fake implements CommandExecutor {
 		return false;
 	}
 
+	public boolean validate(final String username) {
+		Pattern pattern = Pattern.compile("^[a-z0-9_-]{3,16}$");
+		Matcher matcher = pattern.matcher(username);
+		return matcher.matches();
+	}
+
 	public void changeNick(Player p, String nick) {
 		EntityPlayer player = ((CraftPlayer) p).getHandle();
+		player.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, player));
 		GameProfile profile = player.getProfile();
 		try {
 			Field field = profile.getClass().getDeclaredField("name");
@@ -77,12 +92,12 @@ public class Fake implements CommandExecutor {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		PacketPlayOutEntityDestroy destroy = new PacketPlayOutEntityDestroy(player.getId());
 		PacketPlayOutNamedEntitySpawn spawn = new PacketPlayOutNamedEntitySpawn(player);
+		player.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, player));
 		for (Player pla : Main.getPlugin().getServer().getOnlinePlayers()) {
 			EntityPlayer pl = ((CraftPlayer) pla).getHandle();
-			pl.playerConnection.sendPacket(destroy);
-			pl.playerConnection.sendPacket(spawn);
+			if (pla != p)
+				pl.playerConnection.sendPacket(spawn);
 		}
 	}
 }
