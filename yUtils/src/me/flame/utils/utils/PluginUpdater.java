@@ -83,10 +83,11 @@ public class PluginUpdater implements Runnable {
 				to.delete();
 			tmp.renameTo(to);
 			System.out.println("============================");
-			System.out.println("Atualizacao de " + pluginName + " baixada com sucesso e terá efeito na proxima reinicialização");
+			System.out.println("Atualizacao de " + pluginName + " baixada com sucesso! Servidor reiniciando");
 			System.out.println("============================");
 			needUpdate = false;
 			running = false;
+			plugin.getServer().shutdown();
 		} catch (Exception e) {
 			System.out.println("============================");
 			System.out.println("Erro ao tentar baixar update de " + pluginName);

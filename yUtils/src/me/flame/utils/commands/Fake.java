@@ -83,7 +83,6 @@ public class Fake implements CommandExecutor {
 
 	public void changeNick(Player p, String nick) {
 		EntityPlayer player = ((CraftPlayer) p).getHandle();
-		player.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, player));
 		GameProfile profile = player.getProfile();
 		try {
 			Field field = profile.getClass().getDeclaredField("name");
@@ -93,16 +92,16 @@ public class Fake implements CommandExecutor {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		PacketPlayOutEntityDestroy destroy = new PacketPlayOutEntityDestroy(player.getId());
 		PacketPlayOutNamedEntitySpawn spawn = new PacketPlayOutNamedEntitySpawn(player);
-		player.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, player));
 		for (Player pla : Main.getPlugin().getServer().getOnlinePlayers()) {
 			EntityPlayer pl = ((CraftPlayer) pla).getHandle();
+			pl.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, player));
 			if (pla != p) {
 				pl.playerConnection.sendPacket(destroy);
 				pl.playerConnection.sendPacket(spawn);
 			}
+			pl.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, player));
 		}
 	}
 }
