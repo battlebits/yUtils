@@ -1,5 +1,5 @@
 name: yUtils
-version: 1.3.4
+version: 1.3.5
 main: me.flame.utils.Main
 author: flame_tuner
 description: Plugin feito para gerenciar Permissions, Compras, Banimentos, Tags e Scoreboards
