@@ -1,11 +1,15 @@
 package me.flame.utils.commands;
 
 import java.lang.reflect.Field;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import me.flame.utils.Main;
+import me.flame.utils.permissions.PermissionManager;
 import me.flame.utils.permissions.enums.Group;
 import me.flame.utils.tagmanager.enums.Tag;
 import me.flame.utils.utils.UUIDFetcher;
@@ -19,13 +23,22 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
+import org.bukkit.craftbukkit.libs.com.google.gson.JsonObject;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 
 public class Fake implements CommandExecutor {
+	private Map<UUID, FakePlayer> names;
+
+	public Fake() {
+		names = new HashMap<UUID, FakePlayer>();
+	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -49,6 +62,16 @@ public class Fake implements CommandExecutor {
 			new BukkitRunnable() {
 				@Override
 				public void run() {
+					if (names.containsKey(player.getUniqueId())) {
+						FakePlayer originalName = names.get(player.getUniqueId());
+						if (argss[0].equalsIgnoreCase(originalName.lastPlayerName)) {
+							Main.getPlugin().getTagManager().removePlayerTag(player);
+							changeNick(player, argss[0]);
+							Main.getPlugin().getTagManager().addPlayerTag(player, getPlayerDefaultTag(player));
+							player.sendMessage(ChatColor.YELLOW + "Seu nick voltou ao normal e voce recebeu novamente sua tag!");
+							return;
+						}
+					}
 					@SuppressWarnings("deprecation")
 					Player target = Main.getPlugin().getServer().getPlayer(argss[0]);
 					UUID uuid = null;
@@ -67,7 +90,7 @@ public class Fake implements CommandExecutor {
 					Main.getPlugin().getTagManager().removePlayerTag(player);
 					changeNick(player, argss[0]);
 					Main.getPlugin().getTagManager().addPlayerTag(player, Tag.NORMAL);
-					player.sendMessage(ChatColor.YELLOW + "Voce agora esta disfarcado como '" + argss[0] + "'!");
+					player.sendMessage(ChatColor.YELLOW + "Voce agora esta disfarcado como '" + argss[0] + "' e sua tag foi setada para NORMAL!");
 				}
 			}.runTaskAsynchronously(Main.getPlugin());
 			return true;
@@ -75,15 +98,48 @@ public class Fake implements CommandExecutor {
 		return false;
 	}
 
-	public boolean validate(final String username) {
+	public boolean validate(String username) {
 		Pattern pattern = Pattern.compile("[a-zA-Z0-9_]{1,16}");
 		Matcher matcher = pattern.matcher(username);
 		return matcher.matches();
 	}
 
-	public void changeNick(Player p, String nick) {
+	private Tag getPlayerDefaultTag(Player p) {
+		PermissionManager man = Main.getPlugin().getPermissionManager();
+		if (Main.getPlugin().getTorneioManager().isParticipante(p.getUniqueId()))
+			return Tag.TORNEIO;
+		return Tag.valueOf(man.getPlayerGroup(p).toString());
+	}
+
+	public void changeNick(final Player p, String nick) {
 		EntityPlayer player = ((CraftPlayer) p).getHandle();
 		GameProfile profile = player.getProfile();
+		String name = "textures";
+		String signature = null;
+		String valuee = "";
+		if (names.containsKey(p.getUniqueId()) && nick.equalsIgnoreCase(names.get(p.getUniqueId()).lastPlayerName)) {
+			FakePlayer originalName = names.get(p.getUniqueId());
+			profile.getProperties().asMap().remove("textures");
+			profile.getProperties().put(name, new Property(name, originalName.value, signature));
+			names.remove(p.getUniqueId());
+		} else {
+			for (Property property : profile.getProperties().asMap().get("textures")) {
+				if (property.getName().equals("textures")) {
+					valuee = property.getValue();
+					break;
+				}
+			}
+			names.put(p.getUniqueId(), new FakePlayer(new String(p.getName()), valuee));
+			profile.getProperties().asMap().remove("textures");
+			byte[] decode = Base64.getDecoder().decode(valuee);
+			Gson gson = new Gson();
+			JsonObject jb = gson.fromJson(new String(decode), JsonObject.class);
+			String timestamp = jb.get("timestamp").getAsString();
+			String json = "{\"timestamp\":" + timestamp + ",\"profileId\":\"" + p.getUniqueId().toString().replace("-", "") + "\",\"profileName\":\"" + nick + "\",\"textures\":{}}";
+			byte[] encode = Base64.getEncoder().encode(json.getBytes());
+			String value = new String(encode);
+			profile.getProperties().put(name, new Property(name, value, signature));
+		}
 		try {
 			Field field = profile.getClass().getDeclaredField("name");
 			field.setAccessible(true);
@@ -102,6 +158,31 @@ public class Fake implements CommandExecutor {
 				pl.playerConnection.sendPacket(spawn);
 			}
 			pl.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, player));
+		}
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				for (Entity e : p.getNearbyEntities(8, 8, 8)) {
+					if (!(e instanceof Player))
+						continue;
+					Player pla = (Player) e;
+					if (pla.canSee(p)) {
+						pla.hidePlayer(p);
+						pla.showPlayer(p);
+					}
+				}
+			}
+		}.runTask(Main.getPlugin());
+
+	}
+
+	private static class FakePlayer {
+		private String lastPlayerName;
+		private String value;
+
+		public FakePlayer(String name, String value) {
+			lastPlayerName = name;
+			this.value = value;
 		}
 	}
 }

@@ -8,12 +8,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
 
 public class PlayerListener implements Listener {
 	private static boolean torneio = false;
-	
+
 	@EventHandler
 	public void onChat(AsyncPlayerChatEvent event) {
 		Player p = event.getPlayer();
@@ -29,5 +30,17 @@ public class PlayerListener implements Listener {
 		if (Main.getPlugin().getPermissionManager().hasGroupPermission(event.getPlayer(), Group.MOD))
 			return;
 		event.disallow(Result.KICK_WHITELIST, ChatColor.YELLOW + "Voce nao está participando do torneio");
+	}
+
+	@EventHandler
+	public void onPreProcessCommand(PlayerCommandPreprocessEvent event) {
+		if (event.getMessage().contains("/me")) {
+			event.getPlayer().sendMessage(ChatColor.RED + "Voce nao pode utilizar o comando 'me'");
+			event.setCancelled(true);
+		}
+		if (event.getMessage().contains(":")) {
+			event.getPlayer().sendMessage(ChatColor.RED + "Voce nao pode enviar comando que possuem ':' (dois pontos)");
+			event.setCancelled(true);
+		}
 	}
 }
