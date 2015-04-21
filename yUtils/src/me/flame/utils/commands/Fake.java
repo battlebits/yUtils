@@ -1,7 +1,9 @@
 package me.flame.utils.commands;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -9,29 +11,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import me.flame.utils.Main;
+import me.flame.utils.nms.Utils;
+import me.flame.utils.nms.Utils.PlayerInfoAction;
 import me.flame.utils.permissions.PermissionManager;
 import me.flame.utils.permissions.enums.Group;
 import me.flame.utils.tagmanager.enums.Tag;
 import me.flame.utils.utils.UUIDFetcher;
-import net.minecraft.server.v1_8_R1.EntityPlayer;
-import net.minecraft.server.v1_8_R1.EnumPlayerInfoAction;
-import net.minecraft.server.v1_8_R1.PacketPlayOutEntityDestroy;
-import net.minecraft.server.v1_8_R1.PacketPlayOutNamedEntitySpawn;
-import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
-import org.bukkit.craftbukkit.libs.com.google.gson.JsonObject;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 
 public class Fake implements CommandExecutor {
 	private Map<UUID, FakePlayer> names;
@@ -111,69 +104,83 @@ public class Fake implements CommandExecutor {
 		return Tag.valueOf(man.getPlayerGroup(p).toString());
 	}
 
+	@SuppressWarnings("unchecked")
 	public void changeNick(final Player p, String nick) {
-		EntityPlayer player = ((CraftPlayer) p).getHandle();
-		GameProfile profile = player.getProfile();
-		String name = "textures";
-		String signature = null;
-		String valuee = "";
-		if (names.containsKey(p.getUniqueId()) && nick.equalsIgnoreCase(names.get(p.getUniqueId()).lastPlayerName)) {
-			FakePlayer originalName = names.get(p.getUniqueId());
-			profile.getProperties().asMap().remove("textures");
-			profile.getProperties().put(name, new Property(name, originalName.value, signature));
-			names.remove(p.getUniqueId());
-		} else {
-			for (Property property : profile.getProperties().asMap().get("textures")) {
-				if (property.getName().equals("textures")) {
-					valuee = property.getValue();
-					break;
-				}
-			}
-			names.put(p.getUniqueId(), new FakePlayer(new String(p.getName()), valuee));
-			profile.getProperties().asMap().remove("textures");
-			byte[] decode = Base64.getDecoder().decode(valuee);
-			Gson gson = new Gson();
-			JsonObject jb = gson.fromJson(new String(decode), JsonObject.class);
-			String timestamp = jb.get("timestamp").getAsString();
-			String json = "{\"timestamp\":" + timestamp + ",\"profileId\":\"" + p.getUniqueId().toString().replace("-", "") + "\",\"profileName\":\"" + nick + "\",\"textures\":{}}";
-			byte[] encode = Base64.getEncoder().encode(json.getBytes());
-			String value = new String(encode);
-			profile.getProperties().put(name, new Property(name, value, signature));
-		}
 		try {
-			Field field = profile.getClass().getDeclaredField("name");
-			field.setAccessible(true);
-			field.set(profile, nick);
-			field.setAccessible(false);
+			Object player = Utils.getHandle(p);
+			Method profileMeth = player.getClass().getMethod("getProfile");
+			Object profile = profileMeth.invoke(player);
+			String name = "textures";
+			String signature = null;
+			String valuee = "";
+			Object propertyMap = Utils.getMethod(profile.getClass(), "getProperties").invoke(profile);
+			if (names.containsKey(p.getUniqueId()) && nick.equalsIgnoreCase(names.get(p.getUniqueId()).lastPlayerName)) {
+				FakePlayer originalName = names.get(p.getUniqueId());
+				Object asMap = Utils.getMethod(propertyMap.getClass(), "asMap").invoke(propertyMap);
+				Utils.getMethod(asMap.getClass(), "remove").invoke(asMap, "textures");
+				Utils.getMethod(propertyMap.getClass(), "put").invoke(propertyMap, name, Utils.getPropertyClass().getConstructor(String.class, String.class, String.class).newInstance(name, originalName.value, signature));
+				names.remove(p.getUniqueId());
+			} else {
+				Map<String, Collection<Object>> map = (Map<String, Collection<Object>>) Utils.getMethod(propertyMap.getClass(), "asMap").invoke(propertyMap);
+				for (Object property : map.get("textures")) {
+					String propertyName = (String) Utils.getMethod(property.getClass(), "getName").invoke(property);
+					if (propertyName.equals("textures")) {
+						valuee = (String) Utils.getMethod(property.getClass(), "getValue").invoke(property);
+						break;
+					}
+				}
+				names.put(p.getUniqueId(), new FakePlayer(new String(p.getName()), valuee));
+				Object asMap = Utils.getMethod(propertyMap.getClass(), "asMap").invoke(propertyMap);
+				Utils.getMethod(asMap.getClass(), "remove").invoke(asMap, "textures");
+				byte[] decode = Base64.getDecoder().decode(valuee);
+				Object gson = Utils.getGsonClass().newInstance();
+				Object jb = Utils.getMethod(gson.getClass(), "fromJson").invoke(gson, new String(decode), Utils.getJsonObjectClass());
+				Object times = Utils.getMethod(jb.getClass(), "get").invoke(jb, "timestamp");
+				String timestamp = (String) Utils.getMethod(times.getClass(), "getAsString").invoke(times);
+				String json = "{\"timestamp\":" + timestamp + ",\"profileId\":\"" + p.getUniqueId().toString().replace("-", "") + "\",\"profileName\":\"" + nick + "\",\"textures\":{}}";
+				byte[] encode = Base64.getEncoder().encode(json.getBytes());
+				String value = new String(encode);
+				Utils.getMethod(propertyMap.getClass(), "put").invoke(propertyMap, name, Utils.getPropertyClass().getConstructor(String.class, String.class, String.class).newInstance(name, value, signature));
+			}
+			try {
+				Field field = profile.getClass().getDeclaredField("name");
+				field.setAccessible(true);
+				field.set(profile, nick);
+				field.setAccessible(false);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			Object destroy = Utils.newPacketPlayOutEntityDestroy((int) Utils.getMethod(player.getClass(), "getId").invoke(player));
+			Object spawn = Utils.newPacketPlayOutNamedEntitySpawn(player);
+			for (Player pla : Main.getPlugin().getServer().getOnlinePlayers()) {
+				Utils.sendPacket(pla, Utils.newPacketPlayOutPlayerInfo(PlayerInfoAction.REMOVE_PLAYER, player));
+				if (pla != p) {
+					Utils.sendPacket(pla, destroy);
+					Utils.sendPacket(pla, spawn);
+				}
+				Utils.sendPacket(pla, Utils.newPacketPlayOutPlayerInfo(PlayerInfoAction.ADD_PLAYER, player));
+			}
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					for (Entity e : p.getNearbyEntities(8, 8, 8)) {
+						if (!(e instanceof Player))
+							continue;
+						Player pla = (Player) e;
+						if (pla.canSee(p)) {
+							pla.hidePlayer(p);
+							pla.showPlayer(p);
+						}
+					}
+				}
+			}.runTask(Main.getPlugin());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		PacketPlayOutEntityDestroy destroy = new PacketPlayOutEntityDestroy(player.getId());
-		PacketPlayOutNamedEntitySpawn spawn = new PacketPlayOutNamedEntitySpawn(player);
-		for (Player pla : Main.getPlugin().getServer().getOnlinePlayers()) {
-			EntityPlayer pl = ((CraftPlayer) pla).getHandle();
-			pl.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, player));
-			if (pla != p) {
-				pl.playerConnection.sendPacket(destroy);
-				pl.playerConnection.sendPacket(spawn);
-			}
-			pl.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, player));
-		}
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				for (Entity e : p.getNearbyEntities(8, 8, 8)) {
-					if (!(e instanceof Player))
-						continue;
-					Player pla = (Player) e;
-					if (pla.canSee(p)) {
-						pla.hidePlayer(p);
-						pla.showPlayer(p);
-					}
-				}
-			}
-		}.runTask(Main.getPlugin());
+	}
 
+	public Object getMethodObj(Method method) {
+		return null;
 	}
 
 	private static class FakePlayer {

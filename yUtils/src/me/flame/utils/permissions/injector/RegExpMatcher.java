@@ -5,19 +5,20 @@ package me.flame.utils.permissions.injector;
  * Este codigo pertence ao criador do PermissionEX
  * 
  */
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-
-import java.util.concurrent.ExecutionException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import me.flame.utils.nms.Utils;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 
 public class RegExpMatcher implements PermissionMatcher {
 	public static final String RAW_REGEX_CHAR = "$";
 	protected static Pattern rangeExpression = Pattern.compile("(\\d+)-(\\d+)");
 
-	private final LoadingCache<String, Pattern> patternCache = CacheBuilder.newBuilder().maximumSize(500).build(new CacheLoader<String, Pattern>() {
+	private final Object patternCache = CacheBuilder.newBuilder().maximumSize(500).build(new CacheLoader<String, Pattern>() {
 		@Override
 		public Pattern load(String permission) throws Exception {
 			return createPattern(permission);
@@ -27,12 +28,16 @@ public class RegExpMatcher implements PermissionMatcher {
 	@Override
 	public boolean isMatches(String expression, String permission) {
 		try {
-			Pattern permissionMatcher = patternCache.get(expression);
+			Pattern permissionMatcher = (Pattern) Utils.getMethod(patternCache.getClass(), "get").invoke(patternCache, expression);
 			return permissionMatcher.matcher(permission).matches();
-		} catch (ExecutionException e) {
+		} catch (IllegalAccessException e) {
 			e.printStackTrace();
-			return false;
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
 		}
+		return false;
 	}
 
 	protected static Pattern createPattern(String expression) {
