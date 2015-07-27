@@ -3,13 +3,18 @@ package me.flame.utils;
 import java.sql.Connection;
 
 import me.flame.utils.banmanager.BanManagement;
+import me.flame.utils.commands.Account;
 import me.flame.utils.commands.Fake;
+import me.flame.utils.commands.Rank;
 import me.flame.utils.commands.TagCommand;
+import me.flame.utils.injector.Injector;
 import me.flame.utils.listeners.PlayerListener;
 import me.flame.utils.mysql.Connect;
+import me.flame.utils.nms.Utils;
 import me.flame.utils.payment.BuyManager;
 import me.flame.utils.permissions.PermissionManager;
 import me.flame.utils.permissions.enums.ServerType;
+import me.flame.utils.ranking.RankingManager;
 import me.flame.utils.scoreboard.ScoreboardManager;
 import me.flame.utils.tagmanager.TagManager;
 import me.flame.utils.torneio.TorneioManager;
@@ -17,7 +22,6 @@ import me.flame.utils.utils.PluginUpdater;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class Main extends JavaPlugin {
 
@@ -45,25 +49,19 @@ public class Main extends JavaPlugin {
 	private BanManagement banManager;
 	private BuyManager buyManager;
 	private TagManager tagManager;
+	private RankingManager rankingManager;
 
 	private static Main instance;
 
 	@Override
 	public void onEnable() {
+		if (Utils.version.startsWith("v1_7"))
+			Injector.createTinyProtocol(this);
 		saveDefaultConfig();
 		instance = this;
 		prepareConfig();
 		connect = new Connect(this);
 		mainConnection = connect.trySQLConnection();
-		if (!sql) {
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					getServer().shutdown();
-				}
-			}.runTaskLater(this, 1);
-			return;
-		}
 		ServerType type = null;
 		switch (getConfig().getString("serverType")) {
 		case "hungergames":
@@ -77,6 +75,9 @@ public class Main extends JavaPlugin {
 			break;
 		case "skywars":
 			type = ServerType.SKYWARS;
+			break;
+		case "raid":
+			type = ServerType.RAID;
 			break;
 		default:
 			type = ServerType.NONE;
@@ -94,8 +95,12 @@ public class Main extends JavaPlugin {
 		buyManager.onEnable();
 		torneioManager = new TorneioManager(this);
 		torneioManager.onEnable();
-		getPlugin().getCommand("fake").setExecutor(new Fake());
+		rankingManager = new RankingManager(this);
+		rankingManager.onEnable();
+		getPlugin().getCommand("fake").setExecutor(new Fake(type));
 		getPlugin().getCommand("tag").setExecutor(new TagCommand(this));
+		getPlugin().getCommand("account").setExecutor(new Account(this));
+		getPlugin().getCommand("rank").setExecutor(new Rank());
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 		getServer().getScheduler().runTaskTimerAsynchronously(this, new PluginUpdater(this), 2L, 108000L);
 	}
@@ -108,6 +113,7 @@ public class Main extends JavaPlugin {
 		tagManager.onDisable();
 		buyManager.onDisable();
 		torneioManager.onDisable();
+		rankingManager.onDisable();
 		Connect.SQLdisconnect(mainConnection);
 	}
 
@@ -123,12 +129,24 @@ public class Main extends JavaPlugin {
 		return scoreboardManager;
 	}
 
+	public RankingManager getRankingManager() {
+		return rankingManager;
+	}
+
 	public TagManager getTagManager() {
 		return tagManager;
 	}
 
 	public TorneioManager getTorneioManager() {
 		return torneioManager;
+	}
+
+	public BuyManager getBuyManager() {
+		return buyManager;
+	}
+
+	public BanManagement getBanManager() {
+		return banManager;
 	}
 
 	public PermissionManager getPermissionManager() {

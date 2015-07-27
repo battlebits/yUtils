@@ -1,7 +1,7 @@
 package me.flame.utils.permissions.enums;
 
 public enum ServerType {
-	HUNGERGAMES, BATTLECRAFT, SKYWARS, LOBBY, NONE;
+	HUNGERGAMES, BATTLECRAFT, SKYWARS, LOBBY, RAID, NONE;
 
 	@Override
 	public String toString() {

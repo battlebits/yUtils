@@ -1,5 +1,6 @@
 package me.flame.utils.nms;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,26 +24,25 @@ public class Utils {
 	}
 
 	public static Object newPacketPlayOutEntityDestroy(int id) {
-		Class<?> classe = getCraftClass("PacketPlayOutEntityDestroy");
-		if (classe == null)
-			return null;
-		Object obj = null;
+		Class<?> PacketPlayOutEntityDestroy = getCraftClass("PacketPlayOutEntityDestroy");
+		Object packet = null;
 		try {
-			obj = classe.getConstructor(Integer.class).newInstance(id);
+			packet = PacketPlayOutEntityDestroy.newInstance();
+			Field a = PacketPlayOutEntityDestroy.getDeclaredField("a");
+			a.setAccessible(true);
+			a.set(packet, new int[] { id });
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
 		}
-		return obj;
+		return packet;
 	}
 
 	public static Object newPacketPlayOutPlayerInfo(PlayerInfoAction action, Object obj) {
@@ -103,7 +103,11 @@ public class Utils {
 			return null;
 		Object packet = null;
 		try {
-			packet = classe.getConstructor(Object.class).newInstance(obj);
+			for (Constructor<?> construct : classe.getConstructors()) {
+				if (construct.getParameterCount() > 0) {
+					packet = construct.newInstance(obj);
+				}
+			}
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -111,8 +115,6 @@ public class Utils {
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 		} catch (SecurityException e) {
 			e.printStackTrace();
@@ -123,9 +125,9 @@ public class Utils {
 	public static void sendPacket(Player p, Object packet) {
 		try {
 			Object nmsPlayer = getHandle(p);
-			Field con_field = nmsPlayer.getClass().getField("playerConnection");
+			Field con_field = nmsPlayer.getClass().getDeclaredField("playerConnection");
 			Object con = con_field.get(nmsPlayer);
-			Method packet_method = getMethod(con.getClass(), "sendPacket");
+			Method packet_method = con.getClass().getMethod("sendPacket", getCraftClass("Packet"));
 			packet_method.invoke(con, packet);
 		} catch (SecurityException e) {
 			e.printStackTrace();
@@ -136,6 +138,8 @@ public class Utils {
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 		}
 	}
@@ -162,7 +166,7 @@ public class Utils {
 	public static Class<?> getJsonObjectClass() {
 		String str = "com.google.gson.JsonObject";
 		if (version.equals("v1_7_R4.")) {
-			str = "org.bukkit.craftbukkit.libs." + str;
+			str = "org.json.simple.JSONObject";
 		}
 		return getClass(str);
 	}
@@ -223,7 +227,7 @@ public class Utils {
 
 	public static Field getField(Class<?> cl, String field_name) {
 		try {
-			Field field = cl.getDeclaredField(field_name);
+			Field field = cl.getField(field_name);
 			return field;
 		} catch (SecurityException e) {
 			e.printStackTrace();

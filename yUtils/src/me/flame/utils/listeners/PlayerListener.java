@@ -2,6 +2,7 @@ package me.flame.utils.listeners;
 
 import me.flame.utils.Main;
 import me.flame.utils.permissions.enums.Group;
+import me.flame.utils.ranking.enums.Rank;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -18,7 +19,8 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onChat(AsyncPlayerChatEvent event) {
 		Player p = event.getPlayer();
-		event.setFormat(p.getDisplayName() + ChatColor.GRAY + ": " + ChatColor.WHITE + "%2$s");
+		Rank rank = Main.getPlugin().getRankingManager().getAccount(p).getLiga();
+		event.setFormat(ChatColor.GRAY + "[" + rank.getSymbol() + ChatColor.GRAY + "] " + p.getDisplayName() + ChatColor.GRAY + ": " + ChatColor.WHITE + "%2$s");
 	}
 
 	@EventHandler
@@ -38,7 +40,7 @@ public class PlayerListener implements Listener {
 			event.getPlayer().sendMessage(ChatColor.RED + "Voce nao pode utilizar o comando 'me'");
 			event.setCancelled(true);
 		}
-		if (event.getMessage().contains(":")) {
+		if (event.getMessage().split(" ")[0].contains(":")) {
 			event.getPlayer().sendMessage(ChatColor.RED + "Voce nao pode enviar comando que possuem ':' (dois pontos)");
 			event.setCancelled(true);
 		}

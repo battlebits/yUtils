@@ -3,11 +3,33 @@ package me.flame.utils.permissions.groups;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.flame.utils.permissions.PermissionManager;
+
 public class Developer extends MainGroup {
 
 	@Override
 	public List<String> getPermissions() {
 		List<String> permissions = new ArrayList<>(new Ultimate().getPermissions());
+		switch (PermissionManager.getServerType()) {
+		case HUNGERGAMES:
+			break;
+		case SKYWARS:
+			break;
+		case LOBBY:
+			permissions.add("battle.vip");
+			break;
+		case BATTLECRAFT:
+			permissions.add("flame.vip.pro");
+			break;
+		case RAID:
+			permissions.add("inception.ultimate");
+			permissions.add("inception.premium");
+			permissions.add("inception.light");
+			permissions.add("inception.normal");
+			break;
+		default:
+			break;
+		}
 		return permissions;
 	}
 

@@ -53,29 +53,39 @@ public class BanManagement extends Management {
 					PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Banimentos`;");
 					ResultSet result = stmt.executeQuery();
 					while (result.next()) {
-						UUID uuid = UUIDFetcher.getUUID(result.getString("uuid"));
-						String bannedBy = result.getString("banned_By");
-						String reason = result.getString("reason");
-						boolean unbanned = result.getInt("unbanned") == 1;
-						long expire = result.getLong("expire");
-						long ban_time = result.getLong("ban_time");
-						Ban ban = banimentos.get(uuid);
-						if (ban == null)
-							ban = new Ban(uuid, bannedBy, reason, ban_time, expire, unbanned);
-						else
-							ban.setNewBan(bannedBy, reason, ban_time, expire, unbanned);
-						banList.put(uuid, ban);
+						try {
+							UUID uuid = UUIDFetcher.getUUID(result.getString("uuid"));
+							String bannedBy = result.getString("banned_By");
+							String reason = result.getString("reason");
+							boolean unbanned = result.getInt("unbanned") == 1;
+							long expire = result.getLong("expire");
+							long ban_time = result.getLong("ban_time");
+							Ban ban = banimentos.get(uuid);
+							if (ban == null)
+								ban = new Ban(uuid, bannedBy, reason, ban_time, expire, unbanned);
+							else
+								ban.setNewBan(bannedBy, reason, ban_time, expire, unbanned);
+							banList.put(uuid, ban);
+						} catch (Exception e) {
+							System.out.println("Erro ao carregar ban  " + result.getString("id"));
+							e.printStackTrace();
+						}
 					}
 					stmt = getMySQL().prepareStatement("SELECT * FROM `Mutes`;");
 					result = stmt.executeQuery();
 					while (result.next()) {
-						UUID uuid = UUIDFetcher.getUUID(result.getString("uuid"));
-						String mutedBy = result.getString("muted_By");
-						String reason = result.getString("reason");
-						long expire = result.getLong("expire");
-						long mute_time = result.getLong("mute_time");
-						Mute mute = new Mute(uuid, mutedBy, reason, mute_time, expire);
-						muteList.put(uuid, mute);
+						try {
+							UUID uuid = UUIDFetcher.getUUID(result.getString("uuid"));
+							String mutedBy = result.getString("muted_By");
+							String reason = result.getString("reason");
+							long expire = result.getLong("expire");
+							long mute_time = result.getLong("mute_time");
+							Mute mute = new Mute(uuid, mutedBy, reason, mute_time, expire);
+							muteList.put(uuid, mute);
+						} catch (Exception e) {
+							System.out.println("Erro ao carregar mute  " + result.getString("id"));
+							e.printStackTrace();
+						}
 					}
 					result.close();
 					stmt.close();

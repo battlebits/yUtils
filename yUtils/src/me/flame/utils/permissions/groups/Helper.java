@@ -19,6 +19,13 @@ public class Helper extends MainGroup {
 			permissions.add("battle.vip");
 			break;
 		case BATTLECRAFT:
+			permissions.add("flame.vip.pro");
+			break;
+		case RAID:
+			permissions.add("inception.ultimate");
+			permissions.add("inception.premium");
+			permissions.add("inception.light");
+			permissions.add("inception.normal");
 			break;
 		default:
 			break;

@@ -14,9 +14,9 @@ import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 import me.flame.utils.Main;
-import me.flame.utils.nms.Utils;
 import me.flame.utils.permissions.injector.FieldReplacer;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.plugin.PluginManager;
@@ -161,21 +161,23 @@ public class PEXPermissionSubscriptionMap extends HashMap<String, Map<Permissibl
 			return backing.get(key);
 		}
 
+		@SuppressWarnings("rawtypes")
 		@Override
 		public Set<Permissible> keySet() {
 			Object players = plugin.getServer().getOnlinePlayers();
 			int size = 0;
 			try {
-				if (Utils.version.equals("v1_8_R1.")) {
-					size = (int) Utils.getMethod(players.getClass(), "size").invoke(players);
+				if (players.getClass().isAssignableFrom(Collection.class)) {
+					size = (int) ((Collection) players).size();
 				} else {
-					size = (int) Utils.getField(players.getClass(), "lenght").getInt(players);
+					size = (int) ((Player[]) players).length;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+
 			Set<Permissible> pexMatches = new HashSet<Permissible>(size);
-			for (Player player : plugin.getServer().getOnlinePlayers()) {
+			for (Player player : Bukkit.getOnlinePlayers()) {
 				if (player.hasPermission(permission)) {
 					pexMatches.add(player);
 				}

@@ -10,6 +10,10 @@ public class Trial extends MainGroup {
 	@Override
 	public List<String> getPermissions() {
 		List<String> permissions = new ArrayList<>();
+		permissions.add("minecraft.command.tp");
+		permissions.add("bukkit.command.teleport");
+		permissions.add("knohax.forcecheck");
+		permissions.add("nohax.viewalerts");
 		switch (PermissionManager.getServerType()) {
 		case HUNGERGAMES:
 			break;
@@ -19,14 +23,15 @@ public class Trial extends MainGroup {
 			permissions.add("battle.vip");
 			break;
 		case BATTLECRAFT:
-			permissions.add("minecraft.command.tp");
-			permissions.add("knohax.forcecheck");
-			permissions.add("nohax.viewalerts");
 			permissions.add("flame.mod");
-			permissions.add("bm.ban");
-			permissions.add("bm.tempban");
-			permissions.add("bm.kick");
-			permissions.add("bm.tempmute");
+			break;
+		case RAID:
+			permissions.add("inception.mod");
+			permissions.add("inception.youtuber");
+			permissions.add("inception.ultimate");
+			permissions.add("inception.premium");
+			permissions.add("inception.light");
+			permissions.add("inception.normal");
 			break;
 		default:
 			break;

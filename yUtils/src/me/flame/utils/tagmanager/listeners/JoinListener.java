@@ -28,7 +28,8 @@ public class JoinListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onJoin(PlayerJoinEvent event) {
-		manager.addPlayerTag(event.getPlayer(), getPlayerDefaultTag(event.getPlayer()));
+		final Player p = event.getPlayer();
+		manager.addPlayerTag(p, getPlayerDefaultTag(p));
 	}
 
 	private Tag getPlayerDefaultTag(Player p) {

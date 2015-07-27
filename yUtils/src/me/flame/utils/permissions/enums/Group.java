@@ -3,21 +3,15 @@ package me.flame.utils.permissions.enums;
 import me.flame.utils.permissions.groups.*;
 
 public enum Group {
-	NORMAL(Normal.class), LIGHT(Light.class), PREMIUM(Premium.class), ULTIMATE(Ultimate.class), YOUTUBER(Youtuber.class), DEV(Developer.class), HELPER(Helper.class), STAFF(Staff.class), TRIAL(Trial.class), MOD(Moderator.class), ADMIN(Administrator.class), DONO(Dono.class);
+	NORMAL(new Normal()), LIGHT(new Light()), PREMIUM(new Premium()), ULTIMATE(new Ultimate()), YOUTUBER(new Youtuber()), DEV(new Developer()), HELPER(new Helper()), STAFF(new Staff()), TRIAL(new Trial()), MOD(new Moderator()), ADMIN(new Administrator()), DONO(new Dono());
 
-	private Class<? extends MainGroup> group;
+	private MainGroup group;
 
-	private Group(Class<? extends MainGroup> classe) {
-		this.group = classe;
+	private Group(MainGroup group) {
+		this.group = group;
 	}
 
 	public MainGroup getGroup() {
-		MainGroup groupe = null;
-		try {
-			groupe = group.newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		return groupe;
+		return group;
 	}
 }

@@ -2,8 +2,6 @@ package me.flame.utils.commands;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Base64;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -15,8 +13,11 @@ import me.flame.utils.nms.Utils;
 import me.flame.utils.nms.Utils.PlayerInfoAction;
 import me.flame.utils.permissions.PermissionManager;
 import me.flame.utils.permissions.enums.Group;
+import me.flame.utils.permissions.enums.ServerType;
 import me.flame.utils.tagmanager.enums.Tag;
 import me.flame.utils.utils.UUIDFetcher;
+import net.minecraft.util.com.mojang.authlib.GameProfile;
+import net.minecraft.util.com.mojang.authlib.properties.PropertyMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -27,10 +28,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Fake implements CommandExecutor {
-	private Map<UUID, FakePlayer> names;
+	private Map<UUID, String> names;
+	private ServerType type;
 
-	public Fake() {
-		names = new HashMap<UUID, FakePlayer>();
+	public Fake(ServerType type) {
+		this.type = type;
+		names = new HashMap<UUID, String>();
 	}
 
 	@Override
@@ -41,6 +44,10 @@ public class Fake implements CommandExecutor {
 		if (cmd.getName().equalsIgnoreCase("fake")) {
 			if (!Main.getPlugin().getPermissionManager().hasGroupPermission(player, Group.YOUTUBER)) {
 				player.sendMessage(ChatColor.RED + "Voce nao possui permissao para usar este comando!");
+				return true;
+			}
+			if (type == ServerType.RAID) {
+				player.sendMessage(ChatColor.RED + "Desculpe mas voce nao pode utilizar esse comando no servidor de Raid");
 				return true;
 			}
 			if (args.length != 1) {
@@ -56,8 +63,7 @@ public class Fake implements CommandExecutor {
 				@Override
 				public void run() {
 					if (names.containsKey(player.getUniqueId())) {
-						FakePlayer originalName = names.get(player.getUniqueId());
-						if (argss[0].equalsIgnoreCase(originalName.lastPlayerName)) {
+						if (argss[0].equalsIgnoreCase(names.get(player.getUniqueId()))) {
 							Main.getPlugin().getTagManager().removePlayerTag(player);
 							changeNick(player, argss[0]);
 							Main.getPlugin().getTagManager().addPlayerTag(player, getPlayerDefaultTag(player));
@@ -104,44 +110,23 @@ public class Fake implements CommandExecutor {
 		return Tag.valueOf(man.getPlayerGroup(p).toString());
 	}
 
-	@SuppressWarnings("unchecked")
 	public void changeNick(final Player p, String nick) {
 		try {
-			Object player = Utils.getHandle(p);
+			final Object player = Utils.getHandle(p);
 			Method profileMeth = player.getClass().getMethod("getProfile");
-			Object profile = profileMeth.invoke(player);
-			String name = "textures";
-			String signature = null;
-			String valuee = "";
-			Object propertyMap = Utils.getMethod(profile.getClass(), "getProperties").invoke(profile);
-			if (names.containsKey(p.getUniqueId()) && nick.equalsIgnoreCase(names.get(p.getUniqueId()).lastPlayerName)) {
-				FakePlayer originalName = names.get(p.getUniqueId());
-				Object asMap = Utils.getMethod(propertyMap.getClass(), "asMap").invoke(propertyMap);
-				Utils.getMethod(asMap.getClass(), "remove").invoke(asMap, "textures");
-				Utils.getMethod(propertyMap.getClass(), "put").invoke(propertyMap, name, Utils.getPropertyClass().getConstructor(String.class, String.class, String.class).newInstance(name, originalName.value, signature));
+			GameProfile profile = (GameProfile) profileMeth.invoke(player);
+			for (Player pla : Main.getPlugin().getServer().getOnlinePlayers()) {
+				Utils.sendPacket(pla, Utils.newPacketPlayOutPlayerInfo(PlayerInfoAction.REMOVE_PLAYER, player));
+			}
+			PropertyMap propertyMap = profile.getProperties();
+			if (names.containsKey(p.getUniqueId()) && nick.equalsIgnoreCase(names.get(p.getUniqueId()))) {
 				names.remove(p.getUniqueId());
 			} else {
-				Map<String, Collection<Object>> map = (Map<String, Collection<Object>>) Utils.getMethod(propertyMap.getClass(), "asMap").invoke(propertyMap);
-				for (Object property : map.get("textures")) {
-					String propertyName = (String) Utils.getMethod(property.getClass(), "getName").invoke(property);
-					if (propertyName.equals("textures")) {
-						valuee = (String) Utils.getMethod(property.getClass(), "getValue").invoke(property);
-						break;
-					}
+				if (!names.containsKey(p.getUniqueId())) {
+					names.put(p.getUniqueId(), p.getName());
 				}
-				names.put(p.getUniqueId(), new FakePlayer(new String(p.getName()), valuee));
-				Object asMap = Utils.getMethod(propertyMap.getClass(), "asMap").invoke(propertyMap);
-				Utils.getMethod(asMap.getClass(), "remove").invoke(asMap, "textures");
-				byte[] decode = Base64.getDecoder().decode(valuee);
-				Object gson = Utils.getGsonClass().newInstance();
-				Object jb = Utils.getMethod(gson.getClass(), "fromJson").invoke(gson, new String(decode), Utils.getJsonObjectClass());
-				Object times = Utils.getMethod(jb.getClass(), "get").invoke(jb, "timestamp");
-				String timestamp = (String) Utils.getMethod(times.getClass(), "getAsString").invoke(times);
-				String json = "{\"timestamp\":" + timestamp + ",\"profileId\":\"" + p.getUniqueId().toString().replace("-", "") + "\",\"profileName\":\"" + nick + "\",\"textures\":{}}";
-				byte[] encode = Base64.getEncoder().encode(json.getBytes());
-				String value = new String(encode);
-				Utils.getMethod(propertyMap.getClass(), "put").invoke(propertyMap, name, Utils.getPropertyClass().getConstructor(String.class, String.class, String.class).newInstance(name, value, signature));
 			}
+			propertyMap.clear();
 			try {
 				Field field = profile.getClass().getDeclaredField("name");
 				field.setAccessible(true);
@@ -150,20 +135,22 @@ public class Fake implements CommandExecutor {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			Object destroy = Utils.newPacketPlayOutEntityDestroy((int) Utils.getMethod(player.getClass(), "getId").invoke(player));
+			player.getClass().getDeclaredField("displayName").set(player, nick);
+			;
+			int i = (int) Utils.getMethod(player.getClass(), "getId").invoke(player);
+			Object destroy = Utils.newPacketPlayOutEntityDestroy(i);
 			Object spawn = Utils.newPacketPlayOutNamedEntitySpawn(player);
 			for (Player pla : Main.getPlugin().getServer().getOnlinePlayers()) {
-				Utils.sendPacket(pla, Utils.newPacketPlayOutPlayerInfo(PlayerInfoAction.REMOVE_PLAYER, player));
+				Utils.sendPacket(pla, Utils.newPacketPlayOutPlayerInfo(PlayerInfoAction.ADD_PLAYER, player));
 				if (pla != p) {
 					Utils.sendPacket(pla, destroy);
 					Utils.sendPacket(pla, spawn);
 				}
-				Utils.sendPacket(pla, Utils.newPacketPlayOutPlayerInfo(PlayerInfoAction.ADD_PLAYER, player));
 			}
 			new BukkitRunnable() {
 				@Override
 				public void run() {
-					for (Entity e : p.getNearbyEntities(8, 8, 8)) {
+					for (Entity e : p.getNearbyEntities(10, 10, 10)) {
 						if (!(e instanceof Player))
 							continue;
 						Player pla = (Player) e;
@@ -173,23 +160,9 @@ public class Fake implements CommandExecutor {
 						}
 					}
 				}
-			}.runTask(Main.getPlugin());
+			}.runTaskLater(Main.getPlugin(), 2);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-
-	public Object getMethodObj(Method method) {
-		return null;
-	}
-
-	private static class FakePlayer {
-		private String lastPlayerName;
-		private String value;
-
-		public FakePlayer(String name, String value) {
-			lastPlayerName = name;
-			this.value = value;
 		}
 	}
 }

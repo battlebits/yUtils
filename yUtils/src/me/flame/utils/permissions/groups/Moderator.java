@@ -10,6 +10,10 @@ public class Moderator extends MainGroup {
 	@Override
 	public List<String> getPermissions() {
 		List<String> permissions = new ArrayList<>();
+		permissions.add("minecraft.command.tp");
+		permissions.add("bukkit.command.teleport");
+		permissions.add("knohax.forcecheck");
+		permissions.add("nohax.viewalerts");
 		switch (PermissionManager.getServerType()) {
 		case HUNGERGAMES:
 			break;
@@ -19,20 +23,18 @@ public class Moderator extends MainGroup {
 			permissions.add("battle.vip");
 			break;
 		case BATTLECRAFT:
-			permissions.add("minecraft.command.tp");
 			permissions.add("flame.cmd.say");
-			permissions.add("knohax.forcecheck");
-			permissions.add("nohax.viewalerts");
 			permissions.add("flame.primary");
-			permissions.add("bm.ban");
-			permissions.add("bm.tempban");
-			permissions.add("bm.kick");
-			permissions.add("bm.mute");
-			permissions.add("bm.tempmute");
-			permissions.add("bm.unmute");
-			permissions.add("bm.tempmuteoffline");
-			permissions.add("bm.tempbanoffline");
 			permissions.add("flame.evento");
+			break;
+		case RAID:
+			permissions.add("inception.mod+");
+			permissions.add("inception.mod");
+			permissions.add("inception.youtuber");
+			permissions.add("inception.ultimate");
+			permissions.add("inception.premium");
+			permissions.add("inception.light");
+			permissions.add("inception.normal");
 			break;
 		default:
 			break;

@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import me.flame.utils.permissions.PermissionManager;
 import me.flame.utils.permissions.injector.CraftBukkitInterface;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -66,7 +67,7 @@ public class RegexPermissions {
 	}
 
 	private void injectAllPermissibles() {
-		for (Player player : plugin.getServer().getOnlinePlayers()) {
+		for (Player player : Bukkit.getOnlinePlayers()) {
 			injectPermissible(player);
 		}
 	}

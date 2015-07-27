@@ -48,23 +48,34 @@ public class PermissionManager extends Management {
 					ResultSet result = stmt.executeQuery();
 					playerGroups.clear();
 					while (result.next()) {
-						UUID uuid = UUIDFetcher.getUUID(result.getString("uuid"));
-						Group grupo = Group.valueOf(result.getString("rank").toUpperCase());
-						setPlayerGroup(uuid, grupo);
+						try {
+							UUID uuid = UUIDFetcher.getUUID(result.getString("uuid"));
+							Group grupo = Group.valueOf(result.getString("rank").toUpperCase());
+							setPlayerGroup(uuid, grupo);
+						} catch (Exception e) {
+							System.out.println("Staff-" + getServerType().toString() + " " + result.getString("id") + " esta bugado");
+							e.printStackTrace();
+						}
 					}
 					stmt = getMySQL().prepareStatement("SELECT * FROM `Ranks`;");
 					result = stmt.executeQuery();
 					while (result.next()) {
-						UUID uuid = UUIDFetcher.getUUID(result.getString("uuid"));
-						if (playerGroups.containsKey(uuid))
-							continue;
-						Group grupo = Group.valueOf(result.getString("rank").toUpperCase());
-						setPlayerGroup(uuid, grupo);
+						try {
+							UUID uuid = UUIDFetcher.getUUID(result.getString("uuid"));
+							if (playerGroups.containsKey(uuid))
+								continue;
+							Group grupo = Group.valueOf(result.getString("rank").toUpperCase());
+							setPlayerGroup(uuid, grupo);
+						} catch (Exception e) {
+							System.out.println("Ranks " + result.getString("id") + " esta bugado");
+							e.printStackTrace();
+						}
 					}
 					result.close();
 					stmt.close();
 				} catch (Exception e) {
 					getLogger().info("Nao foi possivel carregar grupos");
+					e.printStackTrace();
 				}
 			}
 		}.runTaskTimerAsynchronously(getPlugin(), 5, 20 * 60 * 3);
@@ -151,10 +162,6 @@ public class PermissionManager extends Management {
 		playerGroups.put(uuid, group);
 	}
 
-	/*
-	 * public void removePlayerGroup(Player player) {
-	 * playerGroups.remove(player.getUniqueId()); }
-	 */
 	public void removePlayerGroup(UUID uuid) {
 		playerGroups.remove(uuid);
 	}

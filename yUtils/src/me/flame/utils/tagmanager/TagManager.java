@@ -33,6 +33,12 @@ public class TagManager extends Management {
 		getServer().getPluginManager().registerEvents(new QuitListener(this), getPlugin());
 	}
 
+	private String getName(String kit) {
+		char[] stringArray = kit.toLowerCase().toCharArray();
+		stringArray[0] = Character.toUpperCase(stringArray[0]);
+		return new String(stringArray);
+	}
+
 	public void addPlayerTag(Player player, Tag tag) {
 		removePlayerTag(player);
 		player.setDisplayName(tag.getPrefix() + player.getName() + ChatColor.RESET);
@@ -45,6 +51,8 @@ public class TagManager extends Management {
 			team = board.registerNewTeam(teamTag.getTeamName());
 			team.setPrefix(teamTag.getPrefix());
 			team.setSuffix(ChatColor.RESET + "");
+			team.setCanSeeFriendlyInvisibles(false);
+			team.setDisplayName(getName(teamTag.getTeamName().substring(1, team.getName().length())));
 		}
 		List<Player> playerList = tags.get(tag);
 		playerList.add(player);
@@ -65,28 +73,18 @@ public class TagManager extends Management {
 	}
 
 	public void removePlayerTag(Player player) {
-		Tag tag = getPlayerTag(player);
-		if (tag == null)
-			return;
-		for (Entry<Tag, List<Player>> entry : tags.entrySet()) {
-			for (Player participante : entry.getValue()) {
-				Scoreboard playerBoard = getPlugin().getScoreboardManager().getPlayerScoreboard(participante);
-				Team playerTeam = playerBoard.getTeam(tag.getTeamName());
-				if (playerTeam != null)
-					playerTeam.removePlayer(player);
-				participante.setScoreboard(playerBoard);
-			}
+		for (Player participante : getServer().getOnlinePlayers()) {
+			Scoreboard playerBoard = getPlugin().getScoreboardManager().getPlayerScoreboard(participante);
+			Team playerTeam = playerBoard.getPlayerTeam(player);
+			if (playerTeam != null)
+				playerTeam.removePlayer(player);
+			participante.setScoreboard(playerBoard);
 		}
-		List<Player> playerList = tags.get(tag);
-		playerList.remove(player);
-		tags.put(tag, playerList);
-	}
-
-	public Tag getPlayerTag(Player player) {
-		if (getPlugin().getPermissionManager().getPlayerGroup(player) == null)
-			return null;
-		Tag tag = Tag.valueOf(getPlugin().getPermissionManager().getPlayerGroup(player).toString());
-		return tag;
+		for (Entry<Tag, List<Player>> entry : tags.entrySet()) {
+			List<Player> players = entry.getValue();
+			players.remove(player);
+			tags.put(entry.getKey(), players);
+		}
 	}
 
 	@Override
