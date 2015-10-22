@@ -1,16 +1,19 @@
 package me.flame.utils.permissions.listeners;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import me.flame.utils.Main;
 import me.flame.utils.permissions.enums.Group;
+import net.md_5.bungee.api.ChatColor;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
@@ -38,17 +41,28 @@ public class LoginListener implements Listener {
 		}.runTaskLater(main, 10);
 	}
 
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onAsyng(AsyncPlayerPreLoginEvent event) {
+		try {
+			main.getPermissionManager().loadPlayerGroup(event.getUniqueId());
+		} catch (SQLException e) {
+			event.disallow(org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result.KICK_OTHER, ChatColor.RED + "Nao foi possivel carregar seu grupo, tente novamente em breve");
+		}
+	}
+
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onLogin(PlayerLoginEvent event) {
-		Player player = event.getPlayer();
-		Group group = main.getPermissionManager().getPlayerGroup(player);
+		final Player player = event.getPlayer();
+		final Group group = main.getPermissionManager().getPlayerGroup(player);
 		updateAttachment(player, group);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onMonitorLogin(PlayerLoginEvent event) {
-		if (event.getResult() != Result.ALLOWED)
+		if (event.getResult() != Result.ALLOWED) {
 			removeAttachment(event.getPlayer());
+			main.getPermissionManager().removePlayerGroup(event.getPlayer().getUniqueId());
+		}
 	}
 
 	protected void updateAttachment(Player player, Group group) {

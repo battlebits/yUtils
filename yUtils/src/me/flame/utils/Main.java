@@ -5,6 +5,7 @@ import java.sql.Connection;
 import me.flame.utils.banmanager.BanManagement;
 import me.flame.utils.commands.Account;
 import me.flame.utils.commands.Fake;
+import me.flame.utils.commands.Givekit;
 import me.flame.utils.commands.Rank;
 import me.flame.utils.commands.TagCommand;
 import me.flame.utils.injector.Injector;
@@ -22,6 +23,9 @@ import me.flame.utils.utils.PluginUpdater;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.renatojunior.dev.iw3.classes.Application;
+import com.renatojunior.dev.iw3.controller.CommandController;
 
 public class Main extends JavaPlugin {
 
@@ -50,7 +54,8 @@ public class Main extends JavaPlugin {
 	private BuyManager buyManager;
 	private TagManager tagManager;
 	private RankingManager rankingManager;
-
+	private Application app;
+	
 	private static Main instance;
 
 	@Override
@@ -97,23 +102,36 @@ public class Main extends JavaPlugin {
 		torneioManager.onEnable();
 		rankingManager = new RankingManager(this);
 		rankingManager.onEnable();
+		app = new Application(this);
+		app.run();
 		getPlugin().getCommand("fake").setExecutor(new Fake(type));
+		getPlugin().getCommand("givekit").setExecutor(new Givekit(this));
 		getPlugin().getCommand("tag").setExecutor(new TagCommand(this));
 		getPlugin().getCommand("account").setExecutor(new Account(this));
 		getPlugin().getCommand("rank").setExecutor(new Rank());
+		getCommand("iw3").setExecutor(new CommandController(app));
+		getCommand("compras").setExecutor(new CommandController(app));
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 		getServer().getScheduler().runTaskTimerAsynchronously(this, new PluginUpdater(this), 2L, 108000L);
 	}
 
 	@Override
 	public void onDisable() {
-		permissionManager.onDisable();
-		banManager.onDisable();
-		scoreboardManager.onDisable();
-		tagManager.onDisable();
-		buyManager.onDisable();
-		torneioManager.onDisable();
-		rankingManager.onDisable();
+		if (permissionManager != null)
+			permissionManager.onDisable();
+		if (banManager != null)
+			banManager.onDisable();
+		if (scoreboardManager != null)
+			scoreboardManager.onDisable();
+		if (tagManager != null)
+			tagManager.onDisable();
+		if (buyManager != null)
+			buyManager.onDisable();
+		if (torneioManager != null)
+			torneioManager.onDisable();
+		if (rankingManager != null)
+			rankingManager.onDisable();
+		app.stop();
 		Connect.SQLdisconnect(mainConnection);
 	}
 

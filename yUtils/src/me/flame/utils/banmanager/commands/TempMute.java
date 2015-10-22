@@ -1,5 +1,6 @@
 package me.flame.utils.banmanager.commands;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 import me.flame.utils.banmanager.BanManagement;
@@ -98,7 +99,11 @@ public class TempMute implements CommandExecutor {
 					if (target != null) {
 						target.sendMessage(ChatColor.YELLOW + "Voce foi temporariamente mutado por " + tempo + " pelo player " + senderr.getName() + "! Motivo: " + ChatColor.AQUA + builder.toString());
 					}
-					manager.mute(new me.flame.utils.banmanager.constructors.Mute(uuid, senderr.getName(), builder.toString(), System.currentTimeMillis(), expiresCheck));
+					try {
+						manager.mute(new me.flame.utils.banmanager.constructors.Mute(uuid, senderr.getName(), builder.toString(), System.currentTimeMillis(), expiresCheck));
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				}
 			}).start();
 		}

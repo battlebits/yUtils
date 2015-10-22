@@ -1,5 +1,6 @@
 package me.flame.utils.banmanager.commands;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 import me.flame.utils.banmanager.BanManagement;
@@ -67,7 +68,11 @@ public class Unmute implements CommandExecutor {
 					if (target != null) {
 						target.sendMessage(ChatColor.YELLOW + "Voce foi desmutado do servidor por " + senderr.getName() + "! Agora voce ja pode falar");
 					}
-					manager.unmute(uuid);
+					try {
+						manager.unmute(uuid);
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				}
 			}).start();
 		}

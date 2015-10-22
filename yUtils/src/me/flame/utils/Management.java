@@ -31,7 +31,7 @@ public abstract class Management {
 
 	public Connection getMySQL() {
 		try {
-			if (main.mainConnection.isClosed())
+			if (main.mainConnection == null || main.mainConnection.isClosed())
 				main.mainConnection = main.connect.trySQLConnection();
 		} catch (SQLException e) {
 			e.printStackTrace();

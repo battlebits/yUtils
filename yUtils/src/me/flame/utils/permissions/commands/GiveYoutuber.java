@@ -1,5 +1,6 @@
 package me.flame.utils.permissions.commands;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 import me.flame.utils.permissions.PermissionManager;
@@ -54,7 +55,11 @@ public class GiveYoutuber implements CommandExecutor {
 						return;
 					}
 					manager.setPlayerGroup(uuid, Group.YOUTUBER);
-					manager.savePlayerGroup(uuid, Group.YOUTUBER);
+					try {
+						manager.savePlayerGroup(uuid, Group.YOUTUBER);
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 					player.sendMessage(ChatColor.YELLOW + "Player " + argss[0] + "(" + uuid.toString().replace("-", "") + ") foi setado como Youtuber com sucesso!");
 				}
 			}.runTaskAsynchronously(manager.getPlugin());

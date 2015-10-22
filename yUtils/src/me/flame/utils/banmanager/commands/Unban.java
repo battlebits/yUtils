@@ -1,5 +1,6 @@
 package me.flame.utils.banmanager.commands;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 import me.flame.utils.banmanager.BanManagement;
@@ -62,7 +63,11 @@ public class Unban implements CommandExecutor {
 							continue;
 						player.sendMessage(ChatColor.YELLOW + argss[0] + "(" + uuid.toString().replace("-", "") + ") foi desbanido do servidor por " + senderr.getName() + "!");
 					}
-					manager.unban(uuid);
+					try {
+						manager.unban(uuid);
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				}
 			}).start();
 		}

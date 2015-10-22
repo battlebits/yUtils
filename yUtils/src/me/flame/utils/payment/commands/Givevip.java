@@ -1,10 +1,12 @@
 package me.flame.utils.payment.commands;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 import me.flame.utils.payment.BuyManager;
 import me.flame.utils.permissions.PermissionManager;
 import me.flame.utils.permissions.enums.Group;
+import me.flame.utils.tagmanager.enums.Tag;
 import me.flame.utils.utils.DateUtils;
 import me.flame.utils.utils.UUIDFetcher;
 
@@ -43,7 +45,7 @@ public class Givevip implements CommandExecutor {
 				@SuppressWarnings("deprecation")
 				@Override
 				public void run() {
-					Player target = manager.getServer().getPlayer(argss[0]);
+					final Player target = manager.getServer().getPlayer(argss[0]);
 					PermissionManager permManager = manager.getPlugin().getPermissionManager();
 					UUID uuid = null;
 					if (target != null) {
@@ -76,8 +78,16 @@ public class Givevip implements CommandExecutor {
 						return;
 					}
 					permManager.setPlayerGroup(uuid, grupo);
-					permManager.savePlayerGroup(uuid, grupo);
-					manager.addExpire(uuid, grupo, expiresCheck);
+					try {
+						permManager.savePlayerGroup(uuid, grupo);
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+					try {
+						manager.addExpire(uuid, grupo, expiresCheck);
+					} catch (Exception e) {
+						senderr.sendMessage(ChatColor.RED + "Erro ao tentar adicionar VIP : " + e.getCause().toString());
+					}
 					senderr.sendMessage(ChatColor.YELLOW + "O player " + argss[0] + "(" + uuid.toString() + ") teve vip setado por " + tempo);
 					if (target != null) {
 						target.sendMessage(ChatColor.YELLOW + "---------------------------BATTLEBITS------------------------------");
@@ -85,10 +95,23 @@ public class Givevip implements CommandExecutor {
 						target.sendMessage(ChatColor.YELLOW + "Seu pagamento foi detectado e voce ja recebeu seu " + grupo.toString() + "!");
 						target.sendMessage("");
 						target.sendMessage(ChatColor.YELLOW + "-------------------------------------------------------------------");
+						new BukkitRunnable() {
+							@Override
+							public void run() {
+								manager.getPlugin().getTagManager().addPlayerTag(target, getPlayerDefaultTag(target));
+							}
+						}.runTask(manager.getPlugin());
 					}
 				}
 			}.runTaskAsynchronously(manager.getPlugin());
 		}
 		return false;
+	}
+	
+	private Tag getPlayerDefaultTag(Player p) {
+		PermissionManager man = manager.getPlugin().getPermissionManager();
+		if (manager.getPlugin().getTorneioManager().isParticipante(p.getUniqueId()))
+			return Tag.TORNEIO;
+		return Tag.valueOf(man.getPlayerGroup(p).toString());
 	}
 }

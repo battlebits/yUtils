@@ -1,5 +1,6 @@
 package me.flame.utils.banmanager.commands;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 import me.flame.utils.banmanager.BanManagement;
@@ -102,7 +103,11 @@ public class TempBan implements CommandExecutor {
 						String kickMessage = ChatColor.YELLOW + "Voce foi temporariamente banido do servidor por " + senderr.getName() + ".\nBanimendo durara " + tempo + "!\nMotivo: " + ChatColor.AQUA + builder.toString();
 						kickPlayer(target, kickMessage);
 					}
-					manager.ban(new me.flame.utils.banmanager.constructors.Ban(uuid, senderr.getName(), builder.toString(), System.currentTimeMillis(), expiresCheck, false));
+					try {
+						manager.ban(new me.flame.utils.banmanager.constructors.Ban(uuid, senderr.getName(), builder.toString(), System.currentTimeMillis(), expiresCheck, false));
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				}
 			}.runTaskAsynchronously(manager.getPlugin());
 		}

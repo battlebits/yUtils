@@ -45,7 +45,7 @@ public class TorneioManager extends Management {
 				}
 			}
 		}.runTaskTimerAsynchronously(getPlugin(), 5, 20 * 60 * 10);
-		for(UUID uuid : participantes) {
+		for (UUID uuid : participantes) {
 			System.out.println(uuid.toString().replace("-", ""));
 		}
 	}
@@ -57,6 +57,14 @@ public class TorneioManager extends Management {
 
 	public boolean isParticipante(UUID uuid) {
 		return participantes.contains(uuid);
+	}
+
+	public boolean addParticipante(UUID uuid) {
+		return participantes.add(uuid);
+	}
+
+	public boolean removeParticipante(UUID uuid) {
+		return participantes.remove(uuid);
 	}
 
 	public void addPlayerOnTorneio(final UUID uuid) {

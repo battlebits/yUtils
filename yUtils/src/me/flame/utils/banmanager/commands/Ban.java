@@ -1,5 +1,6 @@
 package me.flame.utils.banmanager.commands;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 import me.flame.utils.banmanager.BanManagement;
@@ -64,6 +65,11 @@ public class Ban implements CommandExecutor {
 							return;
 						}
 					}
+					try {
+						manager.loadBanAndMute(uuid);
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
 					if (manager.isBanned(uuid)) {
 						if (!manager.getBan(uuid).isUnbanned()) {
 							senderr.sendMessage(ChatColor.RED + "O player ja esta banido");
@@ -93,7 +99,11 @@ public class Ban implements CommandExecutor {
 						String kickMessage = ChatColor.YELLOW + "Voce foi banido do servidor por " + senderr.getName() + "! Motivo: " + ChatColor.AQUA + builder.toString();
 						kickPlayer(target, kickMessage);
 					}
-					manager.ban(new me.flame.utils.banmanager.constructors.Ban(uuid, senderr.getName(), builder.toString(), System.currentTimeMillis(), 0, false));
+					try {
+						manager.ban(new me.flame.utils.banmanager.constructors.Ban(uuid, senderr.getName(), builder.toString(), System.currentTimeMillis(), 0, false));
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				}
 			}.runTaskAsynchronously(manager.getPlugin());
 		}

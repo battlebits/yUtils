@@ -1,11 +1,13 @@
 package me.flame.utils.permissions.commands;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import me.flame.utils.permissions.PermissionManager;
 import me.flame.utils.permissions.enums.Group;
+import me.flame.utils.tagmanager.enums.Tag;
 import me.flame.utils.utils.UUIDFetcher;
 
 import org.bukkit.ChatColor;
@@ -120,7 +122,11 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 							return;
 						}
 						manager.removePlayerGroup(uuid);
-						manager.removePlayer(uuid);
+						try {
+							manager.removePlayer(uuid);
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
 						senderr.sendMessage(ChatColor.YELLOW + "Player " + argss[0] + "(" + uuid.toString().replace("-", "") + ") foi setado como " + group.toString() + " com sucesso!");
 					}
 				}.runTaskAsynchronously(manager.getPlugin());
@@ -154,13 +160,32 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 						return;
 					}
 					manager.setPlayerGroup(uuid, group);
-					manager.savePlayerGroup(uuid, group);
+					try {
+						manager.savePlayerGroup(uuid, group);
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 					senderr.sendMessage(ChatColor.YELLOW + "Player " + argss[0] + "(" + uuid.toString().replace("-", "") + ") foi setado como " + group.toString() + " com sucesso!");
+					if (target != null) {
+						new BukkitRunnable() {
+							@Override
+							public void run() {
+								manager.getPlugin().getTagManager().addPlayerTag(target, getPlayerDefaultTag(target));
+							}
+						}.runTask(manager.getPlugin());
+					}
 				}
 			}.runTaskAsynchronously(manager.getPlugin());
 			return true;
 		}
 		return false;
+	}
+
+	private Tag getPlayerDefaultTag(Player p) {
+		PermissionManager man = manager.getPlugin().getPermissionManager();
+		if (manager.getPlugin().getTorneioManager().isParticipante(p.getUniqueId()))
+			return Tag.TORNEIO;
+		return Tag.valueOf(man.getPlayerGroup(p).toString());
 	}
 
 }

@@ -113,8 +113,12 @@ public class Account implements CommandExecutor {
 					Mute mute = main.getBanManager().getMute(uuid);
 					senderr.sendMessage(ChatColor.YELLOW + "Informacoes sobre o Jogador " + namee + "(" + uuid.toString().replace("-", "") + ")");
 					senderr.sendMessage(ChatColor.YELLOW + "---------------------------------------------");
-					if (main.getRankingManager().getAccount(uuid) == null)
-						main.getRankingManager().loadAccountNoRunnable(uuid);
+					if (!main.getRankingManager().containsAccount(uuid))
+						try {
+							main.getRankingManager().loadAccountNoRunnable(uuid);
+						} catch (Exception e) {
+							senderr.sendMessage(ChatColor.RED + "Nao foi possivel carregar algumas informacoes");
+						}
 					me.flame.utils.ranking.constructors.Account account = main.getRankingManager().getAccount(uuid);
 					senderr.sendMessage(ChatColor.YELLOW + "Liga atual: " + account.getLiga().getSymbol() + " " + account.getLiga().toString());
 					senderr.sendMessage(ChatColor.YELLOW + "XP: " + account.getXp());

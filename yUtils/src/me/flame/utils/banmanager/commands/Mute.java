@@ -1,5 +1,6 @@
 package me.flame.utils.banmanager.commands;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 import me.flame.utils.banmanager.BanManagement;
@@ -63,6 +64,11 @@ public class Mute implements CommandExecutor {
 							return;
 						}
 					}
+					try {
+						manager.loadBanAndMute(uuid);
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
 					if (manager.isMuted(uuid)) {
 						senderr.sendMessage(ChatColor.RED + "O player ja esta mutado");
 						return;
@@ -89,7 +95,11 @@ public class Mute implements CommandExecutor {
 					if (target != null) {
 						target.sendMessage(ChatColor.YELLOW + "Voce foi mutado por " + senderr.getName() + "! Motivo: " + ChatColor.AQUA + builder.toString());
 					}
-					manager.mute(new me.flame.utils.banmanager.constructors.Mute(uuid, senderr.getName(), builder.toString(), System.currentTimeMillis(), 0));
+					try {
+						manager.mute(new me.flame.utils.banmanager.constructors.Mute(uuid, senderr.getName(), builder.toString(), System.currentTimeMillis(), 0));
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				}
 			}).start();
 		}

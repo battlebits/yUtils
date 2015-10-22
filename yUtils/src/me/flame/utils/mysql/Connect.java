@@ -29,6 +29,7 @@ public class Connect {
 			m.sql = false;
 		} catch (SQLException ex) {
 			m.getLogger().warning("Erro enquanto tentava conectar ao Mysql!");
+			ex.printStackTrace();
 			m.sql = false;
 		} catch (Exception ex) {
 			m.getLogger().warning("Erro desconhecido enquanto tentava conectar ao MySQL.");
