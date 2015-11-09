@@ -15,7 +15,7 @@ public class MysqlAPI {
 	public Connection connect() throws SQLException, ClassNotFoundException {
 		String sql_host = this.app.getPlugin().host;
 		String sql_port = this.app.getPlugin().port;
-		String sql_name = "IW3";
+		String sql_name = "iw3";
 		String sql_user = this.app.getPlugin().user;
 		String sql_pass = this.app.getPlugin().password;
 		MySQL mysql = new MySQL(this.app.getPlugin(), sql_host, sql_port, sql_name, sql_user, sql_pass);
@@ -24,27 +24,27 @@ public class MysqlAPI {
 
 	public void close() throws SQLException, ClassNotFoundException {
 		if (is_connected()) {
-			this.app.getConnection(new Connection[0]).close();
+			this.app.getConnection().close();
 		}
 	}
 
 	public boolean is_connected() throws SQLException {
-		return this.app.getConnection(new Connection[0]).isClosed();
+		return !this.app.getConnection().isClosed();
 	}
 
 	public ResultSet query(String code) throws SQLException, ClassNotFoundException {
 		if (!is_connected()) {
-			this.app.getConnection(new Connection[] { connect() });
+			connect();
 		}
-		Statement statement = this.app.getConnection(new Connection[0]).createStatement();
+		Statement statement = this.app.getConnection().createStatement();
 		return statement.executeQuery(code);
 	}
 
 	public int update(String code) throws SQLException, ClassNotFoundException {
 		if (!is_connected()) {
-			this.app.getConnection(new Connection[] { connect() });
+			connect();
 		}
-		Statement statement = this.app.getConnection(new Connection[0]).createStatement();
+		Statement statement = this.app.getConnection().createStatement();
 		return statement.executeUpdate(code);
 	}
 

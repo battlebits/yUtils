@@ -47,12 +47,17 @@ public class Unban implements CommandExecutor {
 						senderr.sendMessage(ChatColor.RED + "O player nao existe");
 						return;
 					}
-					if (!manager.isBanned(uuid)) {
-						senderr.sendMessage(ChatColor.RED + "O player nao esta banido");
-						return;
-					}
-					if (manager.getBan(uuid).isUnbanned()) {
-						senderr.sendMessage(ChatColor.RED + "O player nao esta banido");
+					try {
+						if (!manager.isBanned(uuid)) {
+							senderr.sendMessage(ChatColor.RED + "O player nao esta banido");
+							return;
+						}
+						if (manager.getBan(uuid).isUnbanned()) {
+							senderr.sendMessage(ChatColor.RED + "O player nao esta banido");
+							return;
+						}
+					} catch (Exception e) {
+						senderr.sendMessage(ChatColor.RED + "Erro ao conectar ao banco de dados");
 						return;
 					}
 					senderr.sendMessage(ChatColor.YELLOW + "O player " + argss[0] + "(" + uuid.toString().replace("-", "") + ") foi desbanido");

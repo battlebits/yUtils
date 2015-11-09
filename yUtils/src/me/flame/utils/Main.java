@@ -1,6 +1,7 @@
 package me.flame.utils;
 
 import java.sql.Connection;
+import java.util.Arrays;
 
 import me.flame.utils.banmanager.BanManagement;
 import me.flame.utils.commands.Account;
@@ -55,7 +56,7 @@ public class Main extends JavaPlugin {
 	private TagManager tagManager;
 	private RankingManager rankingManager;
 	private Application app;
-	
+
 	private static Main instance;
 
 	@Override
@@ -63,6 +64,11 @@ public class Main extends JavaPlugin {
 		if (Utils.version.startsWith("v1_7"))
 			Injector.createTinyProtocol(this);
 		saveDefaultConfig();
+		System.out.println(getConfig().getStringList("servers").size());
+		if (getConfig().getStringList("servers").size() == 0) {
+			getConfig().set("servers", Arrays.asList("network"));
+			saveConfig();
+		}
 		instance = this;
 		prepareConfig();
 		connect = new Connect(this);
@@ -71,9 +77,16 @@ public class Main extends JavaPlugin {
 		switch (getConfig().getString("serverType")) {
 		case "hungergames":
 			type = ServerType.HUNGERGAMES;
+			if (getConfig().getStringList("servers").size() == 1) {
+				getConfig().set("servers", Arrays.asList("network", "hungergames"));
+				saveConfig();
+			}
 			break;
 		case "battlecraft":
 			type = ServerType.BATTLECRAFT;
+			break;
+		case "garticcraft":
+			type = ServerType.GARTICCRAFT;
 			break;
 		case "lobby":
 			type = ServerType.LOBBY;

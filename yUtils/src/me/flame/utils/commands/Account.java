@@ -2,6 +2,7 @@ package me.flame.utils.commands;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -109,7 +110,12 @@ public class Account implements CommandExecutor {
 						e.printStackTrace();
 					}
 					Expire vipExpire = main.getBuyManager().getExpire(uuid);
-					Ban ban = main.getBanManager().getBan(uuid);
+					Ban ban = null;
+					try {
+						ban = main.getBanManager().getBan(uuid);
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
 					Mute mute = main.getBanManager().getMute(uuid);
 					senderr.sendMessage(ChatColor.YELLOW + "Informacoes sobre o Jogador " + namee + "(" + uuid.toString().replace("-", "") + ")");
 					senderr.sendMessage(ChatColor.YELLOW + "---------------------------------------------");

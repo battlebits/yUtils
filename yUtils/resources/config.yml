@@ -4,7 +4,9 @@ serverType: lobby
 
 sql: true
 
-sql-user: hungergames
-sql-pass: pass321
-sql-host: 177.54.146.67
-sql-db: HungerGames
+sql-user: root
+sql-pass: saobestanime
+sql-host: localhost
+
+servers:
+    - network

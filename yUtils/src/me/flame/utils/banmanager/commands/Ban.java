@@ -70,11 +70,16 @@ public class Ban implements CommandExecutor {
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
-					if (manager.isBanned(uuid)) {
-						if (!manager.getBan(uuid).isUnbanned()) {
-							senderr.sendMessage(ChatColor.RED + "O player ja esta banido");
-							return;
+					try {
+						if (manager.isBanned(uuid)) {
+							if (!manager.getBan(uuid).isUnbanned()) {
+								senderr.sendMessage(ChatColor.RED + "O player ja esta banido");
+								return;
+							}
 						}
+					} catch (SQLException e1) {
+						senderr.sendMessage(ChatColor.RED + "Erro ao conectar ao banco de dados");
+						return;
 					}
 					if (permManager.getPlayerGroup(uuid).ordinal() >= 5 && senderr instanceof Player && permManager.getPlayerGroup((Player) senderr) != Group.DONO && permManager.getPlayerGroup((Player) senderr) != Group.ADMIN) {
 						senderr.sendMessage(ChatColor.RED + "Voce nao pode banir uma staff");

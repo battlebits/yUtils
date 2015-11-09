@@ -123,10 +123,7 @@ public class Application {
 		return mysql;
 	}
 
-	public Connection getConnection(Connection... con) {
-		for (Connection c : con) {
-			connection = c;
-		}
+	public Connection getConnection() {
 		return connection;
 	}
 }

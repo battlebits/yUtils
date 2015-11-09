@@ -72,9 +72,9 @@ public class BanManagement extends Management {
 		}
 		result.close();
 		stmt.close();
-		if (!isBanned(uuid))
+		if (!banimentos.containsKey(uuid))
 			return;
-		final Ban ban = getBan(uuid);
+		final Ban ban = banimentos.get(uuid);
 		if (ban.isUnbanned())
 			return;
 		if (ban.hasExpired()) {
@@ -83,25 +83,23 @@ public class BanManagement extends Management {
 		}
 	}
 
-	public boolean isBanned(Player player) {
-		UUID uuid = player.getUniqueId();
+	public boolean isBanned(Player player) throws SQLException {
+		return isBanned(player.getUniqueId());
+	}
+
+	public boolean isBanned(UUID uuid) throws SQLException {
+		loadBanAndMute(uuid);
 		return banimentos.containsKey(uuid);
 	}
 
-	public boolean isBanned(UUID uuid) {
-		return banimentos.containsKey(uuid);
-	}
-
-	public Ban getBan(Player player) {
+	public Ban getBan(Player player) throws SQLException {
 		if (!isBanned(player))
 			return null;
-		UUID uuid = player.getUniqueId();
-		return banimentos.get(uuid);
+		return getBan(player.getUniqueId());
 	}
 
-	public Ban getBan(UUID uuid) {
-		if (!isBanned(uuid))
-			return null;
+	public Ban getBan(UUID uuid) throws SQLException {
+		loadBanAndMute(uuid);
 		return banimentos.get(uuid);
 	}
 
@@ -163,9 +161,9 @@ public class BanManagement extends Management {
 	}
 
 	public boolean removeTempban(final UUID uuid) throws SQLException {
-		if (!isBanned(uuid))
+		if (!banimentos.containsKey(uuid))
 			return false;
-		Ban ban = getBan(uuid);
+		Ban ban = banimentos.get(uuid);
 		ban.unban();
 		Statement stmt = getMySQL().createStatement();
 		stmt.executeUpdate("DELETE FROM `Banimentos` WHERE `uuid`='" + uuid.toString().replace("-", "") + "' and `expire`!=0;");

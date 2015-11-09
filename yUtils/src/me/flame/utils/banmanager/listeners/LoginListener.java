@@ -61,9 +61,15 @@ public class LoginListener implements Listener {
 		final Player p = event.getPlayer();
 		if (event.getResult() != Result.ALLOWED)
 			return;
-		if (!manager.isBanned(p))
+		Ban ban;
+		try {
+			if (!manager.isBanned(p))
+				return;
+			ban = manager.getBan(p);
+		} catch (SQLException e1) {
+			event.disallow(Result.KICK_OTHER, ChatColor.RED + "Nao foi possivel carregar banimento, tente novamente em breve");
 			return;
-		Ban ban = manager.getBan(p);
+		}
 		if (ban.isUnbanned())
 			return;
 		if (ban.hasExpired()) {

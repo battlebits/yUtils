@@ -1,5 +1,7 @@
 package me.flame.utils.ranking.listeners;
 
+import java.util.UUID;
+
 import me.flame.utils.ranking.RankingManager;
 import net.md_5.bungee.api.ChatColor;
 
@@ -9,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class RankingListener implements Listener {
 
@@ -29,10 +32,17 @@ public class RankingListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onQuit(PlayerQuitEvent event) {
-		try {
-			manager.removeAccount(event.getPlayer().getUniqueId());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		final UUID uuid = event.getPlayer().getUniqueId();
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				try {
+					manager.removeAccount(uuid);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}.runTaskAsynchronously(manager.getPlugin());
 	}
+
 }

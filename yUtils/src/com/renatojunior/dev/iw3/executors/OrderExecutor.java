@@ -34,6 +34,7 @@ public class OrderExecutor {
 		if ((query == null) || (query.toArray().length == 0)) {
 			return false;
 		}
+		this.app.getChat().consoleMessage("&e[IW3] Possui itens para dar para: &f" + this.playername + "&e / &f" + this.uuid.toString());
 		for (String[] item : query) {
 			Integer item_id = Integer.valueOf(item[0]);
 
