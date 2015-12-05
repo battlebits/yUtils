@@ -33,14 +33,15 @@ public abstract class Database {
 		return true;
 	}
 
-	public ResultSet querySQL(String query) throws SQLException, ClassNotFoundException {
+	public ResultSet qduerySQL(String query) throws SQLException, ClassNotFoundException {
 		if (!checkConnection()) {
 			openConnection();
 		}
 		Statement statement = this.connection.createStatement();
 
 		ResultSet result = statement.executeQuery(query);
-
+		result.close();
+		statement.close();
 		return result;
 	}
 
@@ -51,7 +52,8 @@ public abstract class Database {
 		Statement statement = this.connection.createStatement();
 
 		int result = statement.executeUpdate(query);
-
+		
+		statement.close();
 		return result;
 	}
 }

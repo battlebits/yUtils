@@ -2,7 +2,6 @@ package me.flame.utils.commands;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -92,6 +91,10 @@ public class Account implements CommandExecutor {
 								}
 							}
 						}
+						if (result != null)
+							result.close();
+						if (stmt != null)
+							stmt.close();
 						stmt = main.mainConnection.prepareStatement("SELECT * FROM `Ranks` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
 						result = stmt.executeQuery();
 						if (result.next()) {
@@ -113,7 +116,7 @@ public class Account implements CommandExecutor {
 					Ban ban = null;
 					try {
 						ban = main.getBanManager().getBan(uuid);
-					} catch (SQLException e1) {
+					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
 					Mute mute = main.getBanManager().getMute(uuid);

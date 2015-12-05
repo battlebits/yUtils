@@ -70,6 +70,7 @@ public class RegExpMatcher implements PermissionMatcher {
 		return clasee;
 	}
 
+	@SuppressWarnings("static-method")
 	private boolean hasNetUtil() {
 		try {
 			Class.forName("net.minecraft.util.com.google.common.cache.LoadingCache");

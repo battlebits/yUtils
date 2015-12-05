@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.renatojunior.dev.iw3.constructor.ResultMap;
+
 public class MysqlAPI {
 	private final Application app;
 
@@ -32,12 +34,16 @@ public class MysqlAPI {
 		return !this.app.getConnection().isClosed();
 	}
 
-	public ResultSet query(String code) throws SQLException, ClassNotFoundException {
+	public ResultMap query(String code) throws SQLException, ClassNotFoundException {
 		if (!is_connected()) {
 			connect();
 		}
 		Statement statement = this.app.getConnection().createStatement();
-		return statement.executeQuery(code);
+		ResultSet set = statement.executeQuery(code);
+		ResultMap map = new ResultMap(set);
+		set.close();
+		statement.close();
+		return map;
 	}
 
 	public int update(String code) throws SQLException, ClassNotFoundException {
@@ -45,10 +51,14 @@ public class MysqlAPI {
 			connect();
 		}
 		Statement statement = this.app.getConnection().createStatement();
-		return statement.executeUpdate(code);
+		int ret = statement.executeUpdate(code);
+		
+		statement.close();
+		
+		return ret;
 	}
 
-	public String string(String string) {
+	public static String string(String string) {
 		return string.replaceAll("'", "");
 	}
 }

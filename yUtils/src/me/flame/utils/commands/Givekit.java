@@ -72,6 +72,7 @@ public class Givekit implements CommandExecutor {
 		return false;
 	}
 
+	@SuppressWarnings("static-method")
 	private synchronized Connection trySQLConnection() {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();

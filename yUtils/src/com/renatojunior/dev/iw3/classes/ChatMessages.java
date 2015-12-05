@@ -28,6 +28,7 @@ public class ChatMessages {
 		return false;
 	}
 
+	@SuppressWarnings("static-method")
 	public String getMessageColor(String msg) {
 		return ChatColor.translateAlternateColorCodes('&', msg);
 	}

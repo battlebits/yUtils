@@ -39,6 +39,8 @@ public class TagCommand implements CommandExecutor {
 			message = message + " | YOUTUBER";
 		if (manager.hasGroupPermission(p, Group.DEV))
 			message = message + " | DEV";
+		if (manager.hasGroupPermission(p, Group.BUILDER))
+			message = message + " | BUILDER";
 		if (manager.hasGroupPermission(p, Group.HELPER))
 			message = message + " | HELPER";
 		if (manager.hasGroupPermission(p, Group.STAFF))
@@ -88,6 +90,12 @@ public class TagCommand implements CommandExecutor {
 					if (manager.hasGroupPermission(p, Group.HELPER)) {
 						tagManager.addPlayerTag(p, Tag.HELPER);
 						p.sendMessage(ChatColor.GOLD + "Voce esta usando sua tag HELPER");
+						return true;
+					}
+				} else if (args[0].equalsIgnoreCase("BUILDER")) {
+					if (manager.hasGroupPermission(p, Group.BUILDER)) {
+						tagManager.addPlayerTag(p, Tag.BUILDER);
+						p.sendMessage(ChatColor.GOLD + "Voce esta usando sua tag BUILDER");
 						return true;
 					}
 				} else if (args[0].equalsIgnoreCase("DEV")) {

@@ -1,6 +1,5 @@
 package me.flame.utils.banmanager.commands;
 
-import java.sql.SQLException;
 import java.util.UUID;
 
 import me.flame.utils.banmanager.BanManagement;
@@ -101,7 +100,7 @@ public class TempMute implements CommandExecutor {
 					}
 					try {
 						manager.mute(new me.flame.utils.banmanager.constructors.Mute(uuid, senderr.getName(), builder.toString(), System.currentTimeMillis(), expiresCheck));
-					} catch (SQLException e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}

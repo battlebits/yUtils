@@ -97,13 +97,13 @@ public class Fake implements CommandExecutor {
 		return false;
 	}
 
-	public boolean validate(String username) {
+	public static boolean validate(String username) {
 		Pattern pattern = Pattern.compile("[a-zA-Z0-9_]{1,16}");
 		Matcher matcher = pattern.matcher(username);
 		return matcher.matches();
 	}
 
-	private Tag getPlayerDefaultTag(Player p) {
+	private static Tag getPlayerDefaultTag(Player p) {
 		PermissionManager man = Main.getPlugin().getPermissionManager();
 		if (Main.getPlugin().getTorneioManager().isParticipante(p.getUniqueId()))
 			return Tag.TORNEIO;
@@ -136,7 +136,7 @@ public class Fake implements CommandExecutor {
 				e.printStackTrace();
 			}
 			player.getClass().getDeclaredField("displayName").set(player, nick);
-			;
+			@SuppressWarnings("boxing")
 			int i = (int) Utils.getMethod(player.getClass(), "getId").invoke(player);
 			Object destroy = Utils.newPacketPlayOutEntityDestroy(i);
 			Object spawn = Utils.newPacketPlayOutNamedEntitySpawn(player);

@@ -49,7 +49,11 @@ public class PermissionManager extends Management {
 				if (result.next()) {
 					Group grupo = Group.valueOf(result.getString("rank").toUpperCase());
 					setPlayerGroup(uuid, grupo);
+					result.close();
+					stmt.close();
 				} else {
+					result.close();
+					stmt.close();
 					stmt = getMySQL().prepareStatement("SELECT * FROM `Ranks` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
 					result = stmt.executeQuery();
 					if (result.next()) {
@@ -110,15 +114,17 @@ public class PermissionManager extends Management {
 			result.close();
 			stmt.close();
 		} else {
-			PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Ranks` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
-			ResultSet result = stmt.executeQuery();
-			if (result.next()) {
-				stmt.execute("UPDATE `Ranks` SET `rank`='" + group.toString().toLowerCase() + "' WHERE uuid='" + uuid.toString().replace("-", "") + "';");
-			} else {
-				stmt.execute("INSERT INTO `Ranks`(`uuid`, `rank`) VALUES ('" + uuid.toString().replace("-", "") + "', '" + group.toString().toLowerCase() + "');");
+			if (getPlugin().getServerType() != ServerType.TESTSERVER) {
+				PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Ranks` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
+				ResultSet result = stmt.executeQuery();
+				if (result.next()) {
+					stmt.execute("UPDATE `Ranks` SET `rank`='" + group.toString().toLowerCase() + "' WHERE uuid='" + uuid.toString().replace("-", "") + "';");
+				} else {
+					stmt.execute("INSERT INTO `Ranks`(`uuid`, `rank`) VALUES ('" + uuid.toString().replace("-", "") + "', '" + group.toString().toLowerCase() + "');");
+				}
+				result.close();
+				stmt.close();
 			}
-			result.close();
-			stmt.close();
 		}
 	}
 
@@ -128,10 +134,14 @@ public class PermissionManager extends Management {
 		if (result.next()) {
 			stmt.execute("DELETE FROM `Staff-" + getServerType().toString() + "` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
 		}
-		stmt = getMySQL().prepareStatement("SELECT * FROM `Ranks` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
-		result = stmt.executeQuery();
-		if (result.next()) {
-			stmt.execute("DELETE FROM `Ranks` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
+		result.close();
+		stmt.close();
+		if (getPlugin().getServerType() != ServerType.TESTSERVER) {
+			stmt = getMySQL().prepareStatement("SELECT * FROM `Ranks` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
+			result = stmt.executeQuery();
+			if (result.next()) {
+				stmt.execute("DELETE FROM `Ranks` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
+			}
 		}
 		result.close();
 		stmt.close();
@@ -163,16 +173,20 @@ public class PermissionManager extends Management {
 		if (result.next()) {
 			Group grupo = Group.valueOf(result.getString("rank").toUpperCase());
 			setPlayerGroup(uuid, grupo);
+			result.close();
+			stmt.close();
 		} else {
+			result.close();
+			stmt.close();
 			stmt = getMySQL().prepareStatement("SELECT * FROM `Ranks` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
 			result = stmt.executeQuery();
 			if (result.next()) {
 				Group grupo = Group.valueOf(result.getString("rank").toUpperCase());
 				setPlayerGroup(uuid, grupo);
 			}
+			result.close();
+			stmt.close();
 		}
-		result.close();
-		stmt.close();
 	}
 
 	@Override

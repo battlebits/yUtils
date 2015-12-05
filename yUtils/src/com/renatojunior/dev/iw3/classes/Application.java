@@ -14,6 +14,7 @@ import org.bukkit.plugin.Plugin;
 import com.renatojunior.dev.iw3.controller.CommandController;
 import com.renatojunior.dev.iw3.controller.EventsController;
 
+@SuppressWarnings("static-method")
 public class Application {
 	private static Main plugin;
 	private static ChatMessages chat;

@@ -33,6 +33,7 @@ public class TagManager extends Management {
 		getServer().getPluginManager().registerEvents(new QuitListener(this), getPlugin());
 	}
 
+	@SuppressWarnings("static-method")
 	private String getName(String kit) {
 		char[] stringArray = kit.toLowerCase().toCharArray();
 		stringArray[0] = Character.toUpperCase(stringArray[0]);

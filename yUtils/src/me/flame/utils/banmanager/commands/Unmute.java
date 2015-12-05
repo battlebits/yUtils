@@ -1,6 +1,5 @@
 package me.flame.utils.banmanager.commands;
 
-import java.sql.SQLException;
 import java.util.UUID;
 
 import me.flame.utils.banmanager.BanManagement;
@@ -70,7 +69,7 @@ public class Unmute implements CommandExecutor {
 					}
 					try {
 						manager.unmute(uuid);
-					} catch (SQLException e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}

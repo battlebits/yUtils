@@ -9,13 +9,14 @@ public enum Tag {
 	TRIAL("dtrial", ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "TRIAL " + ChatColor.DARK_PURPLE), 
 	HELPER("ehelper", ChatColor.BLUE + "" + ChatColor.BOLD + "HELPER " + ChatColor.BLUE),
 	STAFF("fstaff", ChatColor.YELLOW + "" + ChatColor.BOLD + "STAFF " + ChatColor.YELLOW), 
-	DEV("gdev", ChatColor.DARK_AQUA.toString() + ChatColor.BOLD + "DEV " + ChatColor.DARK_AQUA), 
-	YOUTUBER("hyoutuber", ChatColor.AQUA + "" + ChatColor.BOLD + "YOUTUBER " + ChatColor.AQUA), 
-	ULTIMATE("iultimate", ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "ULTIMATE " + ChatColor.LIGHT_PURPLE), 
-	PREMIUM("jpremium", ChatColor.GOLD + "" + ChatColor.BOLD + "PREMIUM " + ChatColor.GOLD), 
-	LIGHT("klight", ChatColor.GREEN + "" + ChatColor.BOLD + "LIGHT " + ChatColor.GREEN), 
-	TORNEIO("ltorneio", ChatColor.DARK_BLUE + "" + ChatColor.BOLD + "TORNEIO " + ChatColor.DARK_BLUE),
-	WINNER("mtorneio", ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "WINNER " + ChatColor.DARK_GREEN),
+	BUILDER("gstaff", ChatColor.YELLOW + "" + ChatColor.BOLD + "BUILDER " + ChatColor.YELLOW), 
+	DEV("hdev", ChatColor.DARK_AQUA.toString() + ChatColor.BOLD + "DEV " + ChatColor.DARK_AQUA), 
+	YOUTUBER("iyoutuber", ChatColor.AQUA + "" + ChatColor.BOLD + "YOUTUBER " + ChatColor.AQUA), 
+	ULTIMATE("jultimate", ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "ULTIMATE " + ChatColor.LIGHT_PURPLE), 
+	PREMIUM("kpremium", ChatColor.GOLD + "" + ChatColor.BOLD + "PREMIUM " + ChatColor.GOLD), 
+	LIGHT("llight", ChatColor.GREEN + "" + ChatColor.BOLD + "LIGHT " + ChatColor.GREEN), 
+	TORNEIO("mtorneio", ChatColor.DARK_BLUE + "" + ChatColor.BOLD + "TORNEIO " + ChatColor.DARK_BLUE),
+	WINNER("nwinner", ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "WINNER " + ChatColor.DARK_GREEN),
 	NORMAL("znormal", ChatColor.GRAY + "");
 
 	private String teamName;

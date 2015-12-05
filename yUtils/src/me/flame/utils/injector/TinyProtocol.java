@@ -37,6 +37,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
@@ -49,6 +50,7 @@ import com.google.common.collect.MapMaker;
  * 
  * @author Kristian
  */
+@SuppressWarnings("static-method")
 public abstract class TinyProtocol {
 	private static final AtomicInteger ID = new AtomicInteger(0);
 
@@ -69,7 +71,7 @@ public abstract class TinyProtocol {
 	protected volatile boolean closed;
 	protected Plugin plugin;
 
-	public TinyProtocol(Plugin plugin) {
+	public TinyProtocol(final Plugin plugin) {
 		this.plugin = plugin;
 
 		// Compute handler name
@@ -77,8 +79,24 @@ public abstract class TinyProtocol {
 
 		// Prepare existing players
 		registerBukkitEvents();
-		registerChannelHandler();
-		registerPlayers(plugin);
+
+		try {
+			registerChannelHandler();
+			registerPlayers(plugin);
+		} catch (IllegalArgumentException ex) {
+			// Damn you, late bind
+			plugin.getLogger().info("[TinyProtocol] Delaying server channel injection due to late bind.");
+			
+			// Damn you, late bind
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					registerChannelHandler();
+					registerPlayers(plugin);
+					plugin.getLogger().info("[TinyProtocol] Late bind injection successful.");
+				}
+			}.runTask(plugin);
+		}
 	}
 
 	private void createServerChannelHandler() {
@@ -146,15 +164,9 @@ public abstract class TinyProtocol {
 
 	@SuppressWarnings("unchecked")
 	private void registerChannelHandler() {
-		MinecraftServer mcServer = null;
-		ServerConnection serverConnection = null;
+		MinecraftServer mcServer = ((CraftServer)Bukkit.getServer()).getServer();
+		ServerConnection serverConnection = mcServer.ai();
 		try {
-			Field field = CraftServer.class.getDeclaredField("console");
-			field.setAccessible(true);
-			mcServer = (MinecraftServer) field.get(Bukkit.getServer());
-			Field con = MinecraftServer.class.getDeclaredField("p");
-			con.setAccessible(true);
-			serverConnection = (ServerConnection) con.get(mcServer);
 			Field listF = ServerConnection.class.getDeclaredField("f");
 			listF.setAccessible(true);
 			networkManagers = (List<NetworkManager>) listF.get(serverConnection);
@@ -163,8 +175,7 @@ public abstract class TinyProtocol {
 		}
 		// We need to synchronize against this list
 		createServerChannelHandler();
-
-		// Find the correct list, or implicitly throw an exception
+		
 		List<Object> list = null;
 		try {
 			Field field = serverConnection.getClass().getDeclaredField("e");

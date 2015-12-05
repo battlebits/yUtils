@@ -28,6 +28,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.renatojunior.dev.iw3.classes.Application;
 import com.renatojunior.dev.iw3.controller.CommandController;
 
+import de.inventivegames.holograms.HologramListeners;
+
 public class Main extends JavaPlugin {
 
 	/**
@@ -57,6 +59,9 @@ public class Main extends JavaPlugin {
 	private RankingManager rankingManager;
 	private Application app;
 
+	
+	private ServerType serverType;
+	
 	private static Main instance;
 
 	@Override
@@ -73,35 +78,37 @@ public class Main extends JavaPlugin {
 		prepareConfig();
 		connect = new Connect(this);
 		mainConnection = connect.trySQLConnection();
-		ServerType type = null;
 		switch (getConfig().getString("serverType")) {
 		case "hungergames":
-			type = ServerType.HUNGERGAMES;
+			serverType = ServerType.HUNGERGAMES;
 			if (getConfig().getStringList("servers").size() == 1) {
 				getConfig().set("servers", Arrays.asList("network", "hungergames"));
 				saveConfig();
 			}
 			break;
 		case "battlecraft":
-			type = ServerType.BATTLECRAFT;
+			serverType = ServerType.BATTLECRAFT;
 			break;
 		case "garticcraft":
-			type = ServerType.GARTICCRAFT;
+			serverType = ServerType.GARTICCRAFT;
 			break;
 		case "lobby":
-			type = ServerType.LOBBY;
+			serverType = ServerType.LOBBY;
 			break;
 		case "skywars":
-			type = ServerType.SKYWARS;
+			serverType = ServerType.SKYWARS;
 			break;
 		case "raid":
-			type = ServerType.RAID;
+			serverType = ServerType.RAID;
+			break;
+		case "testserver":
+			serverType = ServerType.TESTSERVER;
 			break;
 		default:
-			type = ServerType.NONE;
+			serverType = ServerType.NONE;
 		}
 		getLogger().info("Carregando Config!");
-		permissionManager = new PermissionManager(this, type);
+		permissionManager = new PermissionManager(this, serverType);
 		permissionManager.onEnable();
 		banManager = new BanManagement(this);
 		banManager.onEnable();
@@ -117,7 +124,7 @@ public class Main extends JavaPlugin {
 		rankingManager.onEnable();
 		app = new Application(this);
 		app.run();
-		getPlugin().getCommand("fake").setExecutor(new Fake(type));
+		getPlugin().getCommand("fake").setExecutor(new Fake(serverType));
 		getPlugin().getCommand("givekit").setExecutor(new Givekit(this));
 		getPlugin().getCommand("tag").setExecutor(new TagCommand(this));
 		getPlugin().getCommand("account").setExecutor(new Account(this));
@@ -125,6 +132,7 @@ public class Main extends JavaPlugin {
 		getCommand("iw3").setExecutor(new CommandController(app));
 		getCommand("compras").setExecutor(new CommandController(app));
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+		getServer().getPluginManager().registerEvents(new HologramListeners(), this);
 		getServer().getScheduler().runTaskTimerAsynchronously(this, new PluginUpdater(this), 2L, 108000L);
 	}
 
@@ -182,6 +190,10 @@ public class Main extends JavaPlugin {
 
 	public PermissionManager getPermissionManager() {
 		return permissionManager;
+	}
+	
+	public ServerType getServerType() {
+		return serverType;
 	}
 
 	public static Main getPlugin() {

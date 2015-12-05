@@ -35,6 +35,7 @@ public class PermissionList extends HashMap<String, Permission> {
 		super(existing);
 	}
 
+	@SuppressWarnings("static-method")
 	private FieldReplacer<Permission, Map> getFieldReplacer(Permission perm) {
 		FieldReplacer<Permission, Map> ret = CHILDREN_MAPS.get(perm.getClass());
 		if (ret == null) {

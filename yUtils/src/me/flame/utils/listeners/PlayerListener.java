@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
 
+@SuppressWarnings("static-method")
 public class PlayerListener implements Listener {
 	private static boolean torneio = false;
 

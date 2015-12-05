@@ -1,6 +1,5 @@
 package com.renatojunior.dev.iw3.model;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,6 +8,8 @@ import java.util.List;
 import java.util.UUID;
 
 import com.renatojunior.dev.iw3.classes.Application;
+import com.renatojunior.dev.iw3.classes.MysqlAPI;
+import com.renatojunior.dev.iw3.constructor.ResultMap;
 
 public class OrdersModel {
 	private final Application app;
@@ -19,9 +20,9 @@ public class OrdersModel {
 
 	public List<String[]> getPlayerOrdersByUUID(UUID player) {
 		List<String[]> query = new ArrayList<>();
-		String uuid = this.app.getMysql().string(player.toString().replace("-", ""));
+		String uuid = MysqlAPI.string(player.toString().replace("-", ""));
 		try {
-			ResultSet _query = this.app.getMysql().query("SELECT ws_compras.id, ws_compras.uuid, ws_compras.giftuuid, ws_compras.product_list, ws_compras.time, ws_compras.status, ws_compras.dispatch FROM ws_compras WHERE ((ws_compras.uuid = '" + uuid + "' AND ws_compras.giftuuid = '') OR (ws_compras.giftuuid = '" + uuid + "')) " + "AND ws_compras.dispatch = 1 " + "AND ws_compras.product_list != 'dispatched' " + "AND ws_compras.product_list != 'chargeback' " + "AND ws_compras.active = 1 " + "ORDER BY " + "ws_compras.id DESC");
+			ResultMap _query = this.app.getMysql().query("SELECT ws_compras.id, ws_compras.uuid, ws_compras.giftuuid, ws_compras.product_list, ws_compras.time, ws_compras.status, ws_compras.dispatch FROM ws_compras WHERE ((ws_compras.uuid = '" + uuid + "' AND ws_compras.giftuuid = '') OR (ws_compras.giftuuid = '" + uuid + "')) " + "AND ws_compras.dispatch = 1 " + "AND ws_compras.product_list != 'dispatched' " + "AND ws_compras.product_list != 'chargeback' " + "AND ws_compras.active = 1 " + "ORDER BY " + "ws_compras.id DESC");
 			while (_query.next()) {
 				String[] result = { "", "", "", "", "", "", "" };
 				result[0] = _query.getString("id");
@@ -42,9 +43,9 @@ public class OrdersModel {
 
 	public String[] getOrderByID(Integer id) {
 		String[] query = null;
-		String _id = this.app.getMysql().string(id.toString());
+		String _id = MysqlAPI.string(id.toString());
 		try {
-			ResultSet _query = this.app.getMysql().query("SELECT ws_compras.id, ws_compras.uuid, ws_compras.giftuuid, ws_compras.product_list, ws_compras.time, ws_compras.status, ws_compras.dispatch FROM ws_compras WHERE ws_compras.id = " + _id + " " + "AND ws_compras.active = 1 " + "LIMIT 1");
+			ResultMap _query = this.app.getMysql().query("SELECT ws_compras.id, ws_compras.uuid, ws_compras.giftuuid, ws_compras.product_list, ws_compras.time, ws_compras.status, ws_compras.dispatch FROM ws_compras WHERE ws_compras.id = " + _id + " " + "AND ws_compras.active = 1 " + "LIMIT 1");
 			while (_query.next()) {
 				String[] pre_query = { "", "", "", "", "", "", "" };
 				pre_query[0] = _query.getString("id");
@@ -64,8 +65,8 @@ public class OrdersModel {
 	}
 
 	public Integer updateProductListByID(Integer id, String products) {
-		String _id = this.app.getMysql().string(String.valueOf(id));
-		String _products = this.app.getMysql().string(products);
+		String _id = MysqlAPI.string(String.valueOf(id));
+		String _products = MysqlAPI.string(products);
 
 		Integer _query = Integer.valueOf(0);
 		try {
@@ -78,7 +79,7 @@ public class OrdersModel {
 	}
 
 	public Integer chargeBackOrder(Integer orderid) {
-		String _id = this.app.getMysql().string(String.valueOf(orderid));
+		String _id = MysqlAPI.string(String.valueOf(orderid));
 
 		Integer _query = Integer.valueOf(0);
 		try {
@@ -92,10 +93,10 @@ public class OrdersModel {
 
 	public String[] getOrderActiveByItemID(UUID uuid, Integer itemid) {
 		String[] query = null;
-		String _uuid = this.app.getMysql().string(uuid.toString().replace("-", ""));
-		String _itemid = this.app.getMysql().string(String.valueOf(itemid));
+		String _uuid = MysqlAPI.string(uuid.toString().replace("-", ""));
+		String _itemid = MysqlAPI.string(String.valueOf(itemid));
 		try {
-			ResultSet _query = this.app.getMysql().query("SELECT ws_compras_active.id, ws_compras_active.order, ws_compras_active.lastupdate, ws_compras_active.item_id, ws_compras_active.item_name, ws_compras_active.item_groupname, ws_compras_active.type, ws_compras_active.days FROM ws_compras_active WHERE ws_compras_active.uuid = '" + _uuid + "' " + "AND ws_compras_active.item_id = " + _itemid + " " + "ORDER BY " + "ws_compras_active.id DESC " + "LIMIT 1");
+			ResultMap _query = this.app.getMysql().query("SELECT ws_compras_active.id, ws_compras_active.order, ws_compras_active.lastupdate, ws_compras_active.item_id, ws_compras_active.item_name, ws_compras_active.item_groupname, ws_compras_active.type, ws_compras_active.days FROM ws_compras_active WHERE ws_compras_active.uuid = '" + _uuid + "' " + "AND ws_compras_active.item_id = " + _itemid + " " + "ORDER BY " + "ws_compras_active.id DESC " + "LIMIT 1");
 			while (_query.next()) {
 				String[] pre_query = { "", "", "", "", "", "", "", "" };
 				pre_query[0] = _query.getString("id");
@@ -117,9 +118,9 @@ public class OrdersModel {
 
 	public List<String[]> getOrderActiveByOrderID(Integer orderid) {
 		List<String[]> query = new ArrayList<>();
-		String _orderid = this.app.getMysql().string(String.valueOf(orderid));
+		String _orderid = MysqlAPI.string(String.valueOf(orderid));
 		try {
-			ResultSet _query = this.app.getMysql().query("SELECT ws_compras_active.id, ws_compras_active.order, ws_compras_active.lastupdate, ws_compras_active.item_id, ws_compras_active.item_name, ws_compras_active.item_groupname, ws_compras_active.type, ws_compras_active.days FROM ws_compras_active WHERE ws_compras_active.order = " + _orderid + " " + "ORDER BY " + "ws_compras_active.id ASC");
+			ResultMap _query = this.app.getMysql().query("SELECT ws_compras_active.id, ws_compras_active.order, ws_compras_active.lastupdate, ws_compras_active.item_id, ws_compras_active.item_name, ws_compras_active.item_groupname, ws_compras_active.type, ws_compras_active.days FROM ws_compras_active WHERE ws_compras_active.order = " + _orderid + " " + "ORDER BY " + "ws_compras_active.id ASC");
 			while (_query.next()) {
 				String[] pre_query = { "", "", "", "", "", "", "", "" };
 				pre_query[0] = _query.getString("id");
@@ -141,10 +142,10 @@ public class OrdersModel {
 
 	public String[] getOrderActiveByItemGroupName(UUID uuid, String groupname) {
 		String[] query = null;
-		String _uuid = this.app.getMysql().string(uuid.toString().replace("-", ""));
-		String _groupname = this.app.getMysql().string(String.valueOf(groupname));
+		String _uuid = MysqlAPI.string(uuid.toString().replace("-", ""));
+		String _groupname = MysqlAPI.string(String.valueOf(groupname));
 		try {
-			ResultSet _query = this.app.getMysql().query("SELECT ws_compras_active.id, ws_compras_active.order, ws_compras_active.lastupdate, ws_compras_active.item_id, ws_compras_active.item_name, ws_compras_active.item_groupname, ws_compras_active.type, ws_compras_active.days FROM ws_compras_active WHERE ws_compras_active.item_groupname = '" + _groupname + "' " + "AND ws_compras_active.uuid = '" + _uuid + "' " + "ORDER BY " + "ws_compras_active.id DESC " + "LIMIT 1");
+			ResultMap _query = this.app.getMysql().query("SELECT ws_compras_active.id, ws_compras_active.order, ws_compras_active.lastupdate, ws_compras_active.item_id, ws_compras_active.item_name, ws_compras_active.item_groupname, ws_compras_active.type, ws_compras_active.days FROM ws_compras_active WHERE ws_compras_active.item_groupname = '" + _groupname + "' " + "AND ws_compras_active.uuid = '" + _uuid + "' " + "ORDER BY " + "ws_compras_active.id DESC " + "LIMIT 1");
 			while (_query.next()) {
 				String[] pre_query = { "", "", "", "", "", "", "", "" };
 				pre_query[0] = _query.getString("id");
@@ -166,9 +167,9 @@ public class OrdersModel {
 
 	public List<String[]> getActiveByUUID(UUID player) {
 		List<String[]> query = new ArrayList<>();
-		String uuid = this.app.getMysql().string(player.toString().replace("-", ""));
+		String uuid = MysqlAPI.string(player.toString().replace("-", ""));
 		try {
-			ResultSet _query = this.app.getMysql().query("SELECT ws_compras_active.id, ws_compras_active.order, ws_compras_active.lastupdate, ws_compras_active.item_id, ws_compras_active.item_name, ws_compras_active.item_groupname, ws_compras_active.type, ws_compras_active.days FROM ws_compras_active WHERE ws_compras_active.uuid = '" + uuid + "' " + "ORDER BY " + "ws_compras_active.id DESC");
+			ResultMap _query = this.app.getMysql().query("SELECT ws_compras_active.id, ws_compras_active.order, ws_compras_active.lastupdate, ws_compras_active.item_id, ws_compras_active.item_name, ws_compras_active.item_groupname, ws_compras_active.type, ws_compras_active.days FROM ws_compras_active WHERE ws_compras_active.uuid = '" + uuid + "' " + "ORDER BY " + "ws_compras_active.id DESC");
 			while (_query.next()) {
 				String[] pre_query = { "", "", "", "", "", "", "", "" };
 				pre_query[0] = _query.getString("id");
@@ -189,8 +190,8 @@ public class OrdersModel {
 	}
 
 	public int updateActiveDays(Integer activeid, Integer newdays) {
-		String _id = this.app.getMysql().string(String.valueOf(activeid));
-		String _newdays = this.app.getMysql().string(String.valueOf(newdays));
+		String _id = MysqlAPI.string(String.valueOf(activeid));
+		String _newdays = MysqlAPI.string(String.valueOf(newdays));
 
 		Integer _query = Integer.valueOf(0);
 		try {
@@ -203,8 +204,8 @@ public class OrdersModel {
 	}
 
 	public int updateActiveLastUpdate(Integer activeid, String date) {
-		String _id = this.app.getMysql().string(String.valueOf(activeid));
-		String _date = this.app.getMysql().string(date);
+		String _id = MysqlAPI.string(String.valueOf(activeid));
+		String _date = MysqlAPI.string(date);
 
 		Integer _query = Integer.valueOf(0);
 		try {
@@ -217,7 +218,7 @@ public class OrdersModel {
 	}
 
 	public int updateActiveDaysItemToLifetime(Integer activeid) {
-		String _id = this.app.getMysql().string(String.valueOf(activeid));
+		String _id = MysqlAPI.string(String.valueOf(activeid));
 
 		Integer _query = Integer.valueOf(0);
 		try {
@@ -230,13 +231,13 @@ public class OrdersModel {
 	}
 
 	public int createActive(UUID uuid, Integer itemid, String itemname, String groupname, Integer days, Integer quant, Integer order) {
-		String _uuid = this.app.getMysql().string(String.valueOf(uuid).replace("-", ""));
-		String _itemid = this.app.getMysql().string(String.valueOf(itemid));
-		String _itemname = this.app.getMysql().string(String.valueOf(itemname));
-		String _groupname = this.app.getMysql().string(String.valueOf(groupname));
-		String _days = this.app.getMysql().string(String.valueOf(days));
-		String _quant = this.app.getMysql().string(String.valueOf(quant));
-		String _order = this.app.getMysql().string(String.valueOf(order));
+		String _uuid = MysqlAPI.string(String.valueOf(uuid).replace("-", ""));
+		String _itemid = MysqlAPI.string(String.valueOf(itemid));
+		String _itemname = MysqlAPI.string(String.valueOf(itemname));
+		String _groupname = MysqlAPI.string(String.valueOf(groupname));
+		String _days = MysqlAPI.string(String.valueOf(days));
+		String _quant = MysqlAPI.string(String.valueOf(quant));
+		String _order = MysqlAPI.string(String.valueOf(order));
 
 		Integer _query = Integer.valueOf(0);
 
@@ -257,7 +258,7 @@ public class OrdersModel {
 	}
 
 	public int deleteActiveByID(Integer activeid) {
-		String _id = this.app.getMysql().string(String.valueOf(activeid));
+		String _id = MysqlAPI.string(String.valueOf(activeid));
 
 		Integer _query = Integer.valueOf(0);
 		try {
@@ -271,9 +272,9 @@ public class OrdersModel {
 
 	public Integer getGroupLength(String groupname) {
 		int query = 0;
-		String _groupname = this.app.getMysql().string(groupname);
+		String _groupname = MysqlAPI.string(groupname);
 		try {
-			ResultSet _query = this.app.getMysql().query("SELECT ws_compras_active.id FROM ws_compras_active WHERE ws_compras_active.item_groupname = '" + _groupname + "' " + "ORDER BY " + "ws_compras_active.id ASC ");
+			ResultMap _query = this.app.getMysql().query("SELECT ws_compras_active.id FROM ws_compras_active WHERE ws_compras_active.item_groupname = '" + _groupname + "' " + "ORDER BY " + "ws_compras_active.id ASC ");
 			query = _query.getFetchSize();
 		} catch (SQLException | ClassNotFoundException err) {
 			this.app.getChat().consoleMessage("&4[IW3][Error] &fQuery error: getGroupLength (OrdersModel.java)");

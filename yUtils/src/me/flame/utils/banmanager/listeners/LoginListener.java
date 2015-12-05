@@ -1,6 +1,6 @@
 package me.flame.utils.banmanager.listeners;
 
-import java.sql.SQLException;
+import java.util.UUID;
 
 import me.flame.utils.banmanager.BanManagement;
 import me.flame.utils.banmanager.constructors.Ban;
@@ -14,8 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerLoginEvent.Result;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 
 public class LoginListener implements Listener {
 	private BanManagement manager;
@@ -33,7 +32,7 @@ public class LoginListener implements Listener {
 		if (mute.hasExpired()) {
 			try {
 				manager.unmute(mute.getMutedUuid());
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			return;
@@ -51,22 +50,19 @@ public class LoginListener implements Listener {
 	public void onAsync(AsyncPlayerPreLoginEvent event) {
 		try {
 			manager.loadBanAndMute(event.getUniqueId());
-		} catch (SQLException e) {
-			event.disallow(org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result.KICK_OTHER, ChatColor.RED + "Nao foi possivel carregar banimento, tente novamente em breve");
+		} catch (Exception e) {
+			event.disallow(Result.KICK_OTHER, ChatColor.RED + "Nao foi possivel carregar banimento, tente novamente em breve");
 		}
-	}
-
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onLogin(PlayerLoginEvent event) {
-		final Player p = event.getPlayer();
-		if (event.getResult() != Result.ALLOWED)
+		
+		final UUID uuid = event.getUniqueId();
+		if (event.getLoginResult() != Result.ALLOWED)
 			return;
 		Ban ban;
 		try {
-			if (!manager.isBanned(p))
+			if (!manager.isBanned(uuid))
 				return;
-			ban = manager.getBan(p);
-		} catch (SQLException e1) {
+			ban = manager.getBan(uuid);
+		} catch (Exception e1) {
 			event.disallow(Result.KICK_OTHER, ChatColor.RED + "Nao foi possivel carregar banimento, tente novamente em breve");
 			return;
 		}
@@ -75,11 +71,12 @@ public class LoginListener implements Listener {
 		if (ban.hasExpired()) {
 			try {
 				manager.removeTempban(ban.getBannedUuid());
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			return;
 		}
-		event.disallow(Result.KICK_BANNED, manager.getBanMessage(ban));
+		event.disallow(Result.KICK_BANNED, BanManagement.getBanMessage(ban));
 	}
+
 }

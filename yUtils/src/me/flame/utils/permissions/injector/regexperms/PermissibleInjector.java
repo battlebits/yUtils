@@ -61,7 +61,7 @@ public abstract class PermissibleInjector {
 		return permField;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "static-method" })
 	private void copyValues(PermissibleBase old, PermissibleBase newPerm) throws NoSuchFieldException, IllegalAccessException {
 		// Attachments
 		Field attachmentField = PermissibleBase.class.getDeclaredField("attachments");

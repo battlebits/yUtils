@@ -1,6 +1,5 @@
 package me.flame.utils.banmanager.commands;
 
-import java.sql.SQLException;
 import java.util.UUID;
 
 import me.flame.utils.banmanager.BanManagement;
@@ -67,7 +66,7 @@ public class Ban implements CommandExecutor {
 					}
 					try {
 						manager.loadBanAndMute(uuid);
-					} catch (SQLException e1) {
+					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
 					try {
@@ -77,7 +76,7 @@ public class Ban implements CommandExecutor {
 								return;
 							}
 						}
-					} catch (SQLException e1) {
+					} catch (Exception e1) {
 						senderr.sendMessage(ChatColor.RED + "Erro ao conectar ao banco de dados");
 						return;
 					}
@@ -106,7 +105,7 @@ public class Ban implements CommandExecutor {
 					}
 					try {
 						manager.ban(new me.flame.utils.banmanager.constructors.Ban(uuid, senderr.getName(), builder.toString(), System.currentTimeMillis(), 0, false));
-					} catch (SQLException e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
