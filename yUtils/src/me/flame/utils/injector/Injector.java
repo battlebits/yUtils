@@ -38,7 +38,6 @@ import de.inventivegames.holograms.reflection.NMSClass;
 import de.inventivegames.holograms.reflection.NMUClass;
 
 public class Injector {
-	@SuppressWarnings("unused")
 	public static void createTinyProtocol(final Plugin plugin) {
 		new TinyProtocol(plugin) {
 			@Override
