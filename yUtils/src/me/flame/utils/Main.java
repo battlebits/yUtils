@@ -49,6 +49,7 @@ public class Main extends JavaPlugin {
 	public Connect connect;
 	public Connection mainConnection;
 
+	
 	/**
 	 * 
 	 * Managers

@@ -1,15 +1,15 @@
 package br.com.iwnetwork.app.iw4;
 
-import me.flame.utils.Main;
-
 import org.bukkit.plugin.PluginManager;
 
+import br.com.iwnetwork.app.iw4.IW4Handler;
 import br.com.iwnetwork.app.iw4.command.AbstractCommand;
 import br.com.iwnetwork.app.iw4.command.IW4Command;
 import br.com.iwnetwork.app.iw4.command.PackagesCommand;
 import br.com.iwnetwork.app.iw4.controller.ControllerStartup;
 import br.com.iwnetwork.app.iw4.engine.Registry;
 import br.com.iwnetwork.app.iw4.util.Config;
+import me.flame.utils.Main;
 
 /**
  *
@@ -23,6 +23,8 @@ public final class IW4 {
     private static IW4Handler handler;
 
     public void onEnable(Main main) {
+    	
+    	
         plugin = main;
         registry = new Registry();
         handler = new IW4Handler();
