@@ -26,12 +26,6 @@ public class Trial extends MainGroup {
 			permissions.add("flame.mod");
 			break;
 		case RAID:
-			permissions.add("inception.mod");
-			permissions.add("inception.youtuber");
-			permissions.add("inception.ultimate");
-			permissions.add("inception.premium");
-			permissions.add("inception.light");
-			permissions.add("inception.normal");
 			break;
 		default:
 			break;

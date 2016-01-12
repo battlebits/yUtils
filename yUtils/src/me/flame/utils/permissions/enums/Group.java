@@ -3,7 +3,7 @@ package me.flame.utils.permissions.enums;
 import me.flame.utils.permissions.groups.*;
 
 public enum Group {
-	NORMAL(new Normal()), LIGHT(new Light()), PREMIUM(new Premium()), ULTIMATE(new Ultimate()), YOUTUBER(new Youtuber()), DEV(new Developer()), BUILDER(new Builder()), HELPER(new Helper()), STAFF(new Staff()), TRIAL(new Trial()), MOD(new Moderator()), ADMIN(new Administrator()), DONO(new Dono());
+	NORMAL(new Normal()), LIGHT(new Light()), PREMIUM(new Premium()), ULTIMATE(new Ultimate()), YOUTUBER(new Youtuber()), DEV(new Developer()), BUILDER(new Builder()), HELPER(new Helper()), STAFF(new Staff()), TRIAL(new Trial()), MOD(new Moderator()), STREAMER(new Streamer()), ADMIN(new Administrator()), DONO(new Dono());
 
 	private MainGroup group;
 

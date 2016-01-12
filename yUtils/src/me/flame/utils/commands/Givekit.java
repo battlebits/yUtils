@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.util.UUID;
 
 import me.flame.utils.Main;
+import me.flame.utils.permissions.enums.Group;
 import me.flame.utils.utils.UUIDFetcher;
 
 import org.bukkit.ChatColor;
@@ -17,21 +18,18 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class Givekit implements CommandExecutor {
 	// givekit {name} {kit}
-	
+
 	private Main main;
-	
+
 	public Givekit(Main main) {
 		this.main = main;
 	}
-	
+
 	@Override
 	public boolean onCommand(final CommandSender sender, Command cmd, String label, final String[] args) {
-		if(sender instanceof Player)
-			return false;
 		if (cmd.getName().equalsIgnoreCase("givekit")) {
-			if (!sender.hasPermission("darvip.darvip")) {
+			if (sender instanceof Player && !main.getPermissionManager().hasGroupPermission((Player) sender, Group.STREAMER))
 				return true;
-			}
 			if (args.length != 2) {
 				sender.sendMessage(ChatColor.RED + "Uso correto: /givekit <player> <kit>");
 				return true;

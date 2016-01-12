@@ -124,7 +124,7 @@ public class Account implements CommandExecutor {
 					senderr.sendMessage(ChatColor.YELLOW + "---------------------------------------------");
 					if (!main.getRankingManager().containsAccount(uuid))
 						try {
-							main.getRankingManager().loadAccountNoRunnable(uuid);
+							main.getRankingManager().loadAccount(uuid);
 						} catch (Exception e) {
 							senderr.sendMessage(ChatColor.RED + "Nao foi possivel carregar algumas informacoes");
 						}

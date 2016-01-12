@@ -6,9 +6,11 @@ import java.util.Arrays;
 import me.flame.utils.banmanager.BanManagement;
 import me.flame.utils.commands.Account;
 import me.flame.utils.commands.Fake;
+import me.flame.utils.commands.GiveEventVip;
 import me.flame.utils.commands.Givekit;
 import me.flame.utils.commands.Rank;
 import me.flame.utils.commands.TagCommand;
+import me.flame.utils.event.UpdateScheduler;
 import me.flame.utils.injector.Injector;
 import me.flame.utils.listeners.PlayerListener;
 import me.flame.utils.mysql.Connect;
@@ -24,6 +26,8 @@ import me.flame.utils.utils.PluginUpdater;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import br.com.iwnetwork.app.iw4.IW4;
 
 import com.renatojunior.dev.iw3.classes.Application;
 import com.renatojunior.dev.iw3.controller.CommandController;
@@ -58,10 +62,10 @@ public class Main extends JavaPlugin {
 	private TagManager tagManager;
 	private RankingManager rankingManager;
 	private Application app;
-
+	private IW4 iw4;
 	
 	private ServerType serverType;
-	
+
 	private static Main instance;
 
 	@Override
@@ -69,7 +73,6 @@ public class Main extends JavaPlugin {
 		if (Utils.version.startsWith("v1_7"))
 			Injector.createTinyProtocol(this);
 		saveDefaultConfig();
-		System.out.println(getConfig().getStringList("servers").size());
 		if (getConfig().getStringList("servers").size() == 0) {
 			getConfig().set("servers", Arrays.asList("network"));
 			saveConfig();
@@ -124,16 +127,20 @@ public class Main extends JavaPlugin {
 		rankingManager.onEnable();
 		app = new Application(this);
 		app.run();
+		iw4 = new IW4();
+		iw4.onEnable(this);
 		getPlugin().getCommand("fake").setExecutor(new Fake(serverType));
 		getPlugin().getCommand("givekit").setExecutor(new Givekit(this));
 		getPlugin().getCommand("tag").setExecutor(new TagCommand(this));
 		getPlugin().getCommand("account").setExecutor(new Account(this));
+		getPlugin().getCommand("giveeventvip").setExecutor(new GiveEventVip(this));
 		getPlugin().getCommand("rank").setExecutor(new Rank());
 		getCommand("iw3").setExecutor(new CommandController(app));
 		getCommand("compras").setExecutor(new CommandController(app));
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 		getServer().getPluginManager().registerEvents(new HologramListeners(), this);
 		getServer().getScheduler().runTaskTimerAsynchronously(this, new PluginUpdater(this), 2L, 108000L);
+		getServer().getScheduler().runTaskTimer(this, new UpdateScheduler(), 1, 1);
 	}
 
 	@Override
@@ -153,6 +160,7 @@ public class Main extends JavaPlugin {
 		if (rankingManager != null)
 			rankingManager.onDisable();
 		app.stop();
+		iw4.onDisable();
 		Connect.SQLdisconnect(mainConnection);
 	}
 
@@ -191,7 +199,7 @@ public class Main extends JavaPlugin {
 	public PermissionManager getPermissionManager() {
 		return permissionManager;
 	}
-	
+
 	public ServerType getServerType() {
 		return serverType;
 	}

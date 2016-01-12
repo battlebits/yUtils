@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import me.flame.utils.Main;
 import me.flame.utils.Management;
+import me.flame.utils.mysql.Connect;
 import me.flame.utils.payment.commands.Givevip;
 import me.flame.utils.payment.constructors.Expire;
 import me.flame.utils.payment.listeners.JoinListener;
@@ -33,6 +34,7 @@ public class BuyManager extends Management {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
+				Connect.lock.lock();
 				try {
 					PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Expires`;");
 					ResultSet result = stmt.executeQuery();
@@ -47,11 +49,13 @@ public class BuyManager extends Management {
 				} catch (Exception e) {
 					getLogger().info("Erro ao carregar o expire dos players");
 				}
+				Connect.lock.unlock();
 			}
 		}.runTaskAsynchronously(getPlugin());
 		new BukkitRunnable() {
 			@Override
 			public void run() {
+				Connect.lock.lock();
 				try {
 					PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Expires`;");
 					ResultSet result = stmt.executeQuery();
@@ -67,6 +71,7 @@ public class BuyManager extends Management {
 				} catch (Exception e) {
 					getLogger().info("Erro ao carregar o expire dos players");
 				}
+				Connect.lock.unlock();
 				Iterator<Expire> iterator = expires.values().iterator();
 				while (iterator.hasNext()) {
 					Expire expire = iterator.next();
@@ -89,6 +94,7 @@ public class BuyManager extends Management {
 	}
 
 	public void loadExpire(UUID uuid) throws SQLException {
+		Connect.lock.lock();
 		PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Expires` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
 		ResultSet result = stmt.executeQuery();
 		if (result.next()) {
@@ -98,6 +104,7 @@ public class BuyManager extends Management {
 		}
 		result.close();
 		stmt.close();
+		Connect.lock.unlock();
 	}
 
 	public Expire getExpire(UUID uuid) {
@@ -105,6 +112,7 @@ public class BuyManager extends Management {
 	}
 
 	public void removeExpire(UUID uuid) throws SQLException {
+		Connect.lock.lock();
 		PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Expires` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
 		ResultSet result = stmt.executeQuery();
 		if (result.next()) {
@@ -112,6 +120,7 @@ public class BuyManager extends Management {
 		}
 		result.close();
 		stmt.close();
+		Connect.lock.unlock();
 	}
 
 	public void addExpire(UUID uuid, Group grupo, long expireLong) throws SQLException {
@@ -123,6 +132,7 @@ public class BuyManager extends Management {
 		} else
 			expire = new Expire(uuid, expireLong, grupo);
 		expires.put(uuid, expire);
+		Connect.lock.lock();
 		PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Expires` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
 		ResultSet result = stmt.executeQuery();
 		if (result.next()) {
@@ -132,6 +142,7 @@ public class BuyManager extends Management {
 		}
 		result.close();
 		stmt.close();
+		Connect.lock.unlock();
 	}
 
 	@Override

@@ -6,8 +6,6 @@ import net.minecraft.server.v1_7_R4.World;
 
 public class HologramEntityHorse extends EntityHorse {
 
-	private boolean lockTick;
-
 	public HologramEntityHorse(World world) {
 		super(world);
 		super.ageLocked = true;
@@ -21,7 +19,6 @@ public class HologramEntityHorse extends EntityHorse {
 		a(0.0F, 0.0F);
 		setAge(-1700000); // This is a magic value. No one will see the real
 							// horse.
-		setLockTick(true);
 	}
 
 	@Override
@@ -32,10 +29,6 @@ public class HologramEntityHorse extends EntityHorse {
 			if (this.vehicle == null) {
 				die();
 			}
-		}
-
-		if (!lockTick) {
-			super.h();
 		}
 	}
 
@@ -71,13 +64,8 @@ public class HologramEntityHorse extends EntityHorse {
 		// Remove sounds.
 	}
 
-	public void setLockTick(boolean lock) {
-		lockTick = lock;
-	}
-
 	@Override
 	public void die() {
-		setLockTick(false);
 		super.die();
 	}
 }

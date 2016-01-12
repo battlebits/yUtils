@@ -28,13 +28,6 @@ public class Moderator extends MainGroup {
 			permissions.add("flame.evento");
 			break;
 		case RAID:
-			permissions.add("inception.mod+");
-			permissions.add("inception.mod");
-			permissions.add("inception.youtuber");
-			permissions.add("inception.ultimate");
-			permissions.add("inception.premium");
-			permissions.add("inception.light");
-			permissions.add("inception.normal");
 			break;
 		default:
 			break;

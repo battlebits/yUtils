@@ -2,19 +2,24 @@ package de.inventivegames.holograms;
 
 import net.minecraft.server.v1_7_R4.EntityHorse;
 import net.minecraft.server.v1_7_R4.EntityWitherSkull;
+import net.minecraft.server.v1_7_R4.PacketPlayOutSpawnEntityLiving;
 import net.minecraft.server.v1_7_R4.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 import de.inventivegames.holograms.customEntities.HologramEntityHorse;
 import de.inventivegames.holograms.customEntities.HologramEntitySkull;
+import de.inventivegames.holograms.reflection.AccessUtil;
+import de.inventivegames.holograms.reflection.ClassBuilder;
+import de.inventivegames.holograms.reflection.NMSClass;
 
 public class WorldHologram extends DefaultHologram {
 
-	private WorldServer world;
+	protected WorldServer world;
 
 	protected WorldHologram(Location loc, String text) {
 		super(loc, text);
@@ -30,10 +35,18 @@ public class WorldHologram extends DefaultHologram {
 		((EntityHorse) horse_1_7).setAge(-1700000);
 		witherSkull_1_7 = new HologramEntitySkull(world);
 		((EntityWitherSkull) witherSkull_1_7).setLocation(getLocation().getX(), getLocation().getY() + HologramOffsets.WITHER_SKULL_HORSE, getLocation().getZ(), 0, 0);
-
+		this.spawnPacketWitherSkull = ClassBuilder.buildWitherSkullSpawnPacket(witherSkull_1_7);
+		this.spawnPacketHorse_1_7 = new PacketPlayOutSpawnEntityLiving((EntityHorse) horse_1_7);
+		
 		this.hologramIDs = new int[] { ((EntityWitherSkull) witherSkull_1_7).getId(),
 				//
 				((EntityHorse) horse_1_7).getId() };
+		
+		this.teleportPacketSkull = ClassBuilder.buildTeleportPacket(this.hologramIDs[0], this.getLocation().add(0, HologramOffsets.WITHER_SKULL_HORSE, 0), true, false);
+		this.teleportPacketHorse_1_7 = ClassBuilder.buildTeleportPacket(this.hologramIDs[1], this.getLocation().add(0, HologramOffsets.WITHER_SKULL_HORSE, 0), true, false);
+		this.attachPacket = NMSClass.PacketPlayOutAttachEntity.getConstructor(int.class, NMSClass.Entity, NMSClass.Entity).newInstance(0, horse_1_7, witherSkull_1_7);
+		AccessUtil.setAccessible(NMSClass.PacketPlayOutAttachEntity.getDeclaredField("b")).set(this.attachPacket, this.hologramIDs[1]);
+		AccessUtil.setAccessible(NMSClass.PacketPlayOutAttachEntity.getDeclaredField("c")).set(this.attachPacket, this.hologramIDs[0]);
 	}
 
 	@Override
@@ -81,8 +94,18 @@ public class WorldHologram extends DefaultHologram {
 		}
 		this.location = loc;
 		if (this.isSpawned()) {
+			try {
+				this.teleportPacketSkull = ClassBuilder.buildTeleportPacket(this.hologramIDs[0], getLocation().add(0, HologramOffsets.WITHER_SKULL_HORSE, 0), true, false);
+				this.teleportPacketHorse_1_7 = ClassBuilder.buildTeleportPacket(this.hologramIDs[1], getLocation().add(0, HologramOffsets.WITHER_SKULL_HORSE, 0), true, false);
+			} catch (Exception e) {
+
+			}
 			((net.minecraft.server.v1_7_R4.Entity) horse_1_7).setLocation(loc.getX(), loc.getY() + HologramOffsets.WITHER_SKULL_HORSE, loc.getZ(), 0, 0);
 			((net.minecraft.server.v1_7_R4.Entity) witherSkull_1_7).setLocation(loc.getX(), loc.getY() + HologramOffsets.WITHER_SKULL_HORSE, loc.getZ(), 0, 0);
+			for (Player p : this.getLocation().getWorld().getPlayers()) {
+				HologramAPI.sendPacket(p, this.teleportPacketHorse_1_7);
+				HologramAPI.sendPacket(p, this.teleportPacketSkull);
+			}
 		}
 
 	}
@@ -130,7 +153,6 @@ public class WorldHologram extends DefaultHologram {
 		net.minecraft.server.v1_7_R4.Entity skull = (net.minecraft.server.v1_7_R4.Entity) this.witherSkull_1_7;
 		world.addEntity(skull);
 		world.addEntity(horse);
-		horse.setPassengerOf(skull);
 	}
 
 }

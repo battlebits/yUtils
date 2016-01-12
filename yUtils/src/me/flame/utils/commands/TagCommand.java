@@ -49,6 +49,8 @@ public class TagCommand implements CommandExecutor {
 			message = message + " | TRIAL";
 		if (manager.hasGroupPermission(p, Group.MOD))
 			message = message + " | MOD";
+		if (manager.hasGroupPermission(p, Group.STREAMER))
+			message = message + " | STREAMER";
 		if (manager.hasGroupPermission(p, Group.ADMIN))
 			message = message + " | ADMIN";
 		if (manager.hasGroupPermission(p, Group.DONO))
@@ -66,6 +68,12 @@ public class TagCommand implements CommandExecutor {
 					if (manager.hasGroupPermission(p, Group.ADMIN)) {
 						tagManager.addPlayerTag(p, Tag.ADMIN);
 						p.sendMessage(ChatColor.GOLD + "Voce esta usando sua tag ADMIN");
+						return true;
+					}
+				} else if (args[0].equalsIgnoreCase("STREAMER")) {
+					if (manager.hasGroupPermission(p, Group.STREAMER)) {
+						tagManager.addPlayerTag(p, Tag.STREAMER);
+						p.sendMessage(ChatColor.GOLD + "Voce esta usando sua tag STREAMER");
 						return true;
 					}
 				} else if (args[0].equalsIgnoreCase("MOD")) {

@@ -5,6 +5,7 @@ import org.bukkit.ChatColor;
 public enum Tag {
 	DONO("adono", ChatColor.DARK_RED.toString() + ChatColor.BOLD + "DONO " + ChatColor.DARK_RED), 
 	ADMIN("badmin", ChatColor.RED.toString() + ChatColor.BOLD + "ADMIN " + ChatColor.RED), 
+	STREAMER("bstreamer", ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "STREAMER " + ChatColor.DARK_PURPLE), 
 	MOD("cmod", ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "MOD " + ChatColor.DARK_PURPLE), 
 	TRIAL("dtrial", ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "TRIAL " + ChatColor.DARK_PURPLE), 
 	HELPER("ehelper", ChatColor.BLUE + "" + ChatColor.BOLD + "HELPER " + ChatColor.BLUE),

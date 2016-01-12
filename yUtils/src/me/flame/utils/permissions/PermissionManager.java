@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import me.flame.utils.Main;
 import me.flame.utils.Management;
+import me.flame.utils.mysql.Connect;
 import me.flame.utils.permissions.commands.GiveYoutuber;
 import me.flame.utils.permissions.commands.GroupSet;
 import me.flame.utils.permissions.enums.Group;
@@ -40,6 +41,7 @@ public class PermissionManager extends Management {
 		regexPerms = new RegexPermissions(this);
 		playerGroups = new HashMap<>();
 		try {
+			Connect.lock.lock();
 			PreparedStatement stmt = null;
 			ResultSet result = null;
 			for (Player p : getServer().getOnlinePlayers()) {
@@ -66,6 +68,7 @@ public class PermissionManager extends Management {
 				result.close();
 			if (stmt != null)
 				stmt.close();
+			Connect.lock.unlock();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -79,9 +82,13 @@ public class PermissionManager extends Management {
 	}
 
 	public boolean hasGroupPermission(Player player, Group group) {
-		if (!playerGroups.containsKey(player.getUniqueId()))
+		return hasGroupPermission(player.getUniqueId(), group);
+	}
+
+	public boolean hasGroupPermission(UUID uuid, Group group) {
+		if (!playerGroups.containsKey(uuid))
 			return false;
-		Group playerGroup = playerGroups.get(player.getUniqueId());
+		Group playerGroup = playerGroups.get(uuid);
 		return playerGroup.ordinal() >= group.ordinal();
 	}
 
@@ -103,6 +110,7 @@ public class PermissionManager extends Management {
 	}
 
 	public void savePlayerGroup(UUID uuid, Group group) throws SQLException {
+		Connect.lock.lock();
 		if (group.ordinal() >= Group.HELPER.ordinal()) {
 			PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Staff-" + getServerType().toString() + "` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
 			ResultSet result = stmt.executeQuery();
@@ -126,9 +134,11 @@ public class PermissionManager extends Management {
 				stmt.close();
 			}
 		}
+		Connect.lock.unlock();
 	}
 
 	public void removePlayer(UUID uuid) throws SQLException {
+		Connect.lock.lock();
 		PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Staff-" + getServerType().toString() + "` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
 		ResultSet result = stmt.executeQuery();
 		if (result.next()) {
@@ -145,6 +155,7 @@ public class PermissionManager extends Management {
 		}
 		result.close();
 		stmt.close();
+		Connect.lock.unlock();
 	}
 
 	public void setPlayerGroup(UUID uuid, Group group) {
@@ -168,6 +179,7 @@ public class PermissionManager extends Management {
 	}
 
 	public void loadPlayerGroup(UUID uuid) throws SQLException {
+		Connect.lock.lock();
 		PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Staff-" + getServerType().toString() + "` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
 		ResultSet result = stmt.executeQuery();
 		if (result.next()) {
@@ -187,6 +199,7 @@ public class PermissionManager extends Management {
 			result.close();
 			stmt.close();
 		}
+		Connect.lock.unlock();
 	}
 
 	@Override

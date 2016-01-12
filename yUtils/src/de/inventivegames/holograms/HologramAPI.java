@@ -32,7 +32,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -41,8 +40,10 @@ import net.minecraft.server.v1_7_R4.EntityTypes;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import de.inventivegames.holograms.customEntities.HologramEntityHorse;
+import de.inventivegames.holograms.customEntities.HologramEntityItem;
 import de.inventivegames.holograms.customEntities.HologramEntitySkull;
 import de.inventivegames.holograms.reflection.AccessUtil;
 import de.inventivegames.holograms.reflection.NMUClass;
@@ -54,7 +55,7 @@ public abstract class HologramAPI {
 	protected static boolean packetsEnabled = false;
 	protected static boolean useProtocolSupport = false;
 
-	protected static final List<Hologram> holograms = new ArrayList<>();
+	protected static final ArrayList<Hologram> holograms = new ArrayList<>();
 	// Protocol Support
 	static Class<?> ProtocolSupportAPI;
 	static Class<?> ProtocolVersion;
@@ -68,6 +69,7 @@ public abstract class HologramAPI {
 		try {
 			registerCustomEntity(HologramEntityHorse.class, "EntityHorse", 100);
 			registerCustomEntity(HologramEntitySkull.class, "WitherSkull", 19);
+			registerCustomEntity(HologramEntityItem.class, "Item", 2);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -75,6 +77,31 @@ public abstract class HologramAPI {
 
 	public static Hologram createHologram(Location loc, String text) {
 		Hologram hologram = new DefaultHologram(loc, text);
+		holograms.add(hologram);
+		return hologram;
+	}
+
+	public static Hologram createRunningHologram(Player player, String text, double addOffSet) {
+		Hologram hologram = new RunningHologram(player, text, addOffSet);
+		holograms.add(hologram);
+
+		return hologram;
+	}
+
+	public static Hologram createWorldItemHologram(Location loc, ItemStack item) {
+		Hologram hologram = new ItemHologram(loc, item);
+		holograms.add(hologram);
+		return hologram;
+	}
+
+	public static Hologram createPlayerItemHologram(Player p, Location loc, ItemStack item) {
+		Hologram hologram = new ItemPlayerHologram(p, loc, item);
+		holograms.add(hologram);
+		return hologram;
+	}
+
+	public static Hologram createPlayerHologram(Player p, Location loc, String text) {
+		Hologram hologram = new PlayerHologram(p, loc, text);
 		holograms.add(hologram);
 		return hologram;
 	}
@@ -220,11 +247,12 @@ public abstract class HologramAPI {
 			e.printStackTrace();
 		}
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	public static boolean isHologramEntity(int entityId) {
-		for(Hologram holo : holograms) {
-			if(holo instanceof CraftHologram){
-				if(((WorldHologram)holo).matchesHologramID(entityId)){
+		for (Hologram holo : (ArrayList<Hologram>) holograms.clone()) {
+			if (holo instanceof CraftHologram) {
+				if (((CraftHologram) holo).matchesHologramID(entityId)) {
 					return true;
 				}
 			}
@@ -238,7 +266,7 @@ public abstract class HologramAPI {
 		putInPrivateStaticMap(EntityTypes.class, "d", entityClass, name);
 		putInPrivateStaticMap(EntityTypes.class, "f", entityClass, Integer.valueOf(id));
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void putInPrivateStaticMap(Class<?> clazz, String fieldName, Object key, Object value) throws Exception {
 		Field field = clazz.getDeclaredField(fieldName);

@@ -17,6 +17,7 @@ import me.flame.utils.banmanager.commands.Unmute;
 import me.flame.utils.banmanager.constructors.Ban;
 import me.flame.utils.banmanager.constructors.Mute;
 import me.flame.utils.banmanager.listeners.LoginListener;
+import me.flame.utils.mysql.Connect;
 import me.flame.utils.permissions.enums.ServerType;
 import me.flame.utils.utils.DateUtils;
 
@@ -46,6 +47,7 @@ public class BanManagement extends Management {
 	}
 
 	public void loadBanAndMute(UUID uuid) throws Exception {
+		Connect.lock.lock();
 		PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Banimentos` WHERE uuid='" + uuid.toString().replace("-", "") + "';");
 		ResultSet result = stmt.executeQuery();
 		while (result.next()) {
@@ -75,6 +77,7 @@ public class BanManagement extends Management {
 		}
 		result.close();
 		stmt.close();
+		Connect.lock.unlock();
 		if (!banimentos.containsKey(uuid))
 			return;
 		final Ban ban = banimentos.get(uuid);
@@ -137,9 +140,11 @@ public class BanManagement extends Management {
 			throw new Exception("Servidor de Teste");
 		}
 		banimentos.put(ban.getBannedUuid(), ban);
+		Connect.lock.lock();
 		Statement stmt = getMySQL().createStatement();
 		stmt.executeUpdate("INSERT INTO `Banimentos`(`uuid`, `banned_By`, `reason`, `expire`, `ban_time`, `unbanned`) " + "VALUES ('" + ban.getBannedUuid().toString().replace("-", "") + "' , '" + ban.getBannedBy() + "' , '" + ban.getReason() + "' , '" + ban.getDuration() + "', '" + ban.getBanTime() + "', 0);");
 		stmt.close();
+		Connect.lock.unlock();
 	}
 
 	public void mute(final Mute mute) throws Exception {
@@ -147,9 +152,11 @@ public class BanManagement extends Management {
 			throw new Exception("Servidor de Teste");
 		}
 		mutados.put(mute.getMutedUuid(), mute);
+		Connect.lock.lock();
 		Statement stmt = getMySQL().createStatement();
 		stmt.executeUpdate("INSERT INTO `Mutes`(`uuid`, `muted_By`, `reason`, `expire`, `mute_time`) VALUES ('" + mute.getMutedUuid().toString().replace("-", "") + "', '" + mute.getMutedBy() + "', '" + mute.getReason() + "' , '" + mute.getDuration() + "', '" + mute.getMuteTime() + "');");
 		stmt.close();
+		Connect.lock.unlock();
 	}
 
 	public boolean unmute(final UUID uuid) throws Exception {
@@ -159,9 +166,11 @@ public class BanManagement extends Management {
 		if (!isMuted(uuid))
 			return false;
 		mutados.remove(uuid);
+		Connect.lock.lock();
 		Statement stmt = getMySQL().createStatement();
 		stmt.executeUpdate("DELETE FROM `Mutes` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
 		stmt.close();
+		Connect.lock.unlock();
 		return true;
 	}
 
@@ -173,9 +182,11 @@ public class BanManagement extends Management {
 			return false;
 		Ban ban = getBan(uuid);
 		ban.unban();
+		Connect.lock.lock();
 		Statement stmt = getMySQL().createStatement();
 		stmt.executeUpdate("UPDATE `Banimentos` SET `unbanned`=1 WHERE `uuid`='" + uuid.toString().replace("-", "") + "' and `unbanned`=0;");
 		stmt.close();
+		Connect.lock.unlock();
 		return true;
 	}
 
@@ -187,9 +198,11 @@ public class BanManagement extends Management {
 			return false;
 		Ban ban = banimentos.get(uuid);
 		ban.unban();
+		Connect.lock.lock();
 		Statement stmt = getMySQL().createStatement();
 		stmt.executeUpdate("DELETE FROM `Banimentos` WHERE `uuid`='" + uuid.toString().replace("-", "") + "' and `expire`!=0;");
 		stmt.close();
+		Connect.lock.unlock();
 		return true;
 	}
 

@@ -20,8 +20,13 @@ public class ResultMap {
 			ResultSetMetaData data = set.getMetaData();
 			while (set.next()) {
 				Map<String, String> map = new HashMap<>();
-				for (int i = 0; i < data.getColumnCount(); i++) {
-					map.put(data.getColumnName(i), set.getString(i));
+				for (int i = 1; i <= data.getColumnCount(); i++) {
+					try {
+						String key = data.getColumnName(i);
+						String value = set.getString(key);
+						map.put(key, value);
+					} catch (Exception e) {
+					}
 				}
 				list.add(map);
 			}

@@ -5,7 +5,6 @@ import net.minecraft.server.v1_7_R4.NBTTagCompound;
 import net.minecraft.server.v1_7_R4.World;
 
 public class HologramEntitySkull extends EntityWitherSkull {
-	private boolean lockTick;
 
 	public HologramEntitySkull(World world) {
 		super(world);
@@ -71,9 +70,6 @@ public class HologramEntitySkull extends EntityWitherSkull {
 
 	@Override
 	public void h() {
-		if (!lockTick) {
-			super.h();
-		}
 	}
 
 	@Override
@@ -81,13 +77,8 @@ public class HologramEntitySkull extends EntityWitherSkull {
 		// Remove sounds.
 	}
 
-	public void setLockTick(boolean lock) {
-		lockTick = lock;
-	}
-
 	@Override
 	public void die() {
-		setLockTick(false);
 		super.die();
 	}
 }

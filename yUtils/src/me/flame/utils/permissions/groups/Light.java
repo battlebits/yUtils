@@ -21,8 +21,6 @@ public class Light extends MainGroup {
 		case BATTLECRAFT:
 			break;
 		case RAID:
-			permissions.add("inception.light");
-			permissions.add("inception.normal");
 			break;
 		default:
 			break;

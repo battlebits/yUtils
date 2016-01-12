@@ -1,7 +1,7 @@
 name: yUtils
-version: 2.3
+version: 2.4.4
 main: me.flame.utils.Main
-author: flame_tuner
+author: GustavoInacio
 description: Plugin feito para gerenciar Permissions, Compras, Banimentos, Tags e Scoreboards
 commands:
   groupset:
@@ -36,10 +36,15 @@ commands:
     description: Comando utilizado para saber informacoes sobre ligas
   givekit:
     description: Comando utilizado para dar kits de HG aos players
+  giveeventvip:
+    description: Comando utilizado para dar kits de HG aos players
   iw3:
     description: IW3 Webstore Plugin Commands
     default: op
     permission: iw3.commands
+  iw4:
+    description: IW4 e-Commerce Plugin commands
+    default: op
   compras:
     description: IW3 Player Command
     default: true

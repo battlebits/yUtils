@@ -12,7 +12,6 @@ public class Normal extends MainGroup {
 		List<String> permissions = new ArrayList<>();
 		switch (PermissionManager.getServerType()) {
 		case RAID:
-			permissions.add("inception.player");
 			break;
 		default:
 			break;

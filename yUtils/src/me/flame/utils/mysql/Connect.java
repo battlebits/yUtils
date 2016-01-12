@@ -4,11 +4,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.concurrent.locks.ReentrantLock;
 
 import me.flame.utils.Main;
 
 public class Connect {
 	private Main m;
+	public static ReentrantLock lock = new ReentrantLock(true);
 
 	public Connect(Main m) {
 		this.m = m;
@@ -19,10 +21,12 @@ public class Connect {
 			m.getLogger().info("MySQL Desativado!");
 			return null;
 		}
+		lock.lock();
 		try {
 			m.getLogger().info("Conectando ao MySQL");
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			String conn = "jdbc:mysql://" + m.host + ":" + m.port + "/utils";
+			lock.unlock();
 			return DriverManager.getConnection(conn, m.user, m.password);
 		} catch (ClassNotFoundException ex) {
 			m.getLogger().warning("MySQL Driver nao encontrado!");
@@ -35,6 +39,7 @@ public class Connect {
 			m.getLogger().warning("Erro desconhecido enquanto tentava conectar ao MySQL.");
 			m.sql = false;
 		}
+		lock.unlock();
 		return null;
 	}
 
@@ -50,6 +55,7 @@ public class Connect {
 	}
 
 	public static void SQLdisconnect(Connection con) {
+		lock.lock();
 		try {
 			if (con != null && !con.isClosed()) {
 				con.close();
@@ -57,11 +63,13 @@ public class Connect {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		lock.unlock();
 	}
 
-	public synchronized void SQLQuery(String sql, Connection con) {
+	public void SQLQuery(String sql, Connection con) {
 		if (!m.sql)
 			return;
+		lock.lock();
 		try {
 			Statement stmt = con.createStatement();
 			stmt.executeUpdate(sql);
@@ -70,5 +78,6 @@ public class Connect {
 			m.getLogger().info("Erro ao tentar executar Query");
 			m.getLogger().info(e.getMessage());
 		}
+		lock.unlock();
 	}
 }

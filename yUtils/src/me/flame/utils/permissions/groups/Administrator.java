@@ -11,8 +11,10 @@ public class Administrator extends MainGroup {
 	public List<String> getPermissions() {
 		List<String> permissions = new ArrayList<>();
 		permissions.add("minecraft.command.tp");
+		permissions.add("minecraft.command.stop");
 		permissions.add("bukkit.command.teleport");
 		permissions.add("knohax.forcecheck");
+		permissions.add("bukkit.command.tps");
 		permissions.add("nohax.viewalerts");
 		switch (PermissionManager.getServerType()) {
 		case HUNGERGAMES:
@@ -29,14 +31,6 @@ public class Administrator extends MainGroup {
 			permissions.add("flame.evento");
 			break;
 		case RAID:
-			permissions.add("inception.admin");
-			permissions.add("inception.mod+");
-			permissions.add("inception.mod");
-			permissions.add("inception.youtuber");
-			permissions.add("inception.ultimate");
-			permissions.add("inception.premium");
-			permissions.add("inception.light");
-			permissions.add("inception.normal");
 			break;
 		default:
 			break;

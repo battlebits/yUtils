@@ -21,9 +21,6 @@ public class Premium extends MainGroup{
 		case BATTLECRAFT:
 			break;
 		case RAID:
-			permissions.add("inception.premium");
-			permissions.add("inception.light");
-			permissions.add("inception.normal");
 			break;
 		default:
 			break;

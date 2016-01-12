@@ -28,7 +28,11 @@
 
 package de.inventivegames.holograms;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+
+import me.flame.utils.event.UpdateEvent;
+import me.flame.utils.event.UpdateEvent.UpdateType;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -45,7 +49,7 @@ public class HologramListeners implements Listener {
 	public void onTeleport(PlayerTeleportEvent e) {
 		Player p = e.getPlayer();
 		for (Hologram h : HologramAPI.getHolograms()) {
-			if(h instanceof WorldHologram)
+			if (!(h.getClass().getSimpleName().equals("DefaultHologram")))
 				continue;
 			if ((h.isSpawned()) && (h.getLocation().getWorld().getName().equals(e.getTo().getWorld().getName()))) {
 				try {
@@ -61,7 +65,7 @@ public class HologramListeners implements Listener {
 	public void onWorldChange(PlayerChangedWorldEvent e) {
 		Player p = e.getPlayer();
 		for (Hologram h : HologramAPI.getHolograms()) {
-			if(h instanceof WorldHologram)
+			if (!(h.getClass().getSimpleName().equals("DefaultHologram")))
 				continue;
 			if ((h.isSpawned()) && (h.getLocation().getWorld().getName().equals(p.getWorld().getName()))) {
 				try {
@@ -76,7 +80,7 @@ public class HologramListeners implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onChunkLoad(ChunkLoadEvent e) {
 		for (Hologram h : HologramAPI.getHolograms()) {
-			if(h instanceof WorldHologram)
+			if (!(h instanceof DefaultHologram))
 				continue;
 			if ((h.isSpawned()) && (h.getLocation().getChunk().equals(e.getChunk()))) {
 				try {
@@ -84,6 +88,20 @@ public class HologramListeners implements Listener {
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@EventHandler
+	public void onUpdate(UpdateEvent event) {
+		if (event.getType() != UpdateType.TICK)
+			return;
+		for (Hologram hologram : (ArrayList<Hologram>) HologramAPI.holograms.clone()) {
+			if (hologram == null)
+				continue;
+			if (hologram instanceof RunningHologram) {
+				((RunningHologram) hologram).run();
 			}
 		}
 	}
