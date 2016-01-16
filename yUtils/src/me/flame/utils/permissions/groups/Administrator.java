@@ -10,11 +10,9 @@ public class Administrator extends MainGroup {
 	@Override
 	public List<String> getPermissions() {
 		List<String> permissions = new ArrayList<>();
-		permissions.add("minecraft.command.tp");
-		permissions.add("minecraft.command.stop");
-		permissions.add("bukkit.command.teleport");
+		permissions.add("minecraft.command.*");
+		permissions.add("bukkit.command.*");
 		permissions.add("knohax.forcecheck");
-		permissions.add("bukkit.command.tps");
 		permissions.add("nohax.viewalerts");
 		switch (PermissionManager.getServerType()) {
 		case HUNGERGAMES:
