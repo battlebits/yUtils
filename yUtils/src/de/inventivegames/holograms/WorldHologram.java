@@ -1,10 +1,5 @@
 package de.inventivegames.holograms;
 
-import net.minecraft.server.v1_7_R4.EntityHorse;
-import net.minecraft.server.v1_7_R4.EntityWitherSkull;
-import net.minecraft.server.v1_7_R4.PacketPlayOutSpawnEntityLiving;
-import net.minecraft.server.v1_7_R4.WorldServer;
-
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
@@ -16,6 +11,10 @@ import de.inventivegames.holograms.customEntities.HologramEntitySkull;
 import de.inventivegames.holograms.reflection.AccessUtil;
 import de.inventivegames.holograms.reflection.ClassBuilder;
 import de.inventivegames.holograms.reflection.NMSClass;
+import net.minecraft.server.v1_7_R4.EntityHorse;
+import net.minecraft.server.v1_7_R4.EntityWitherSkull;
+import net.minecraft.server.v1_7_R4.PacketPlayOutSpawnEntityLiving;
+import net.minecraft.server.v1_7_R4.WorldServer;
 
 public class WorldHologram extends DefaultHologram {
 
@@ -153,6 +152,7 @@ public class WorldHologram extends DefaultHologram {
 		net.minecraft.server.v1_7_R4.Entity skull = (net.minecraft.server.v1_7_R4.Entity) this.witherSkull_1_7;
 		world.addEntity(skull);
 		world.addEntity(horse);
+		horse.setPassengerOf(skull);
 	}
 
 }
