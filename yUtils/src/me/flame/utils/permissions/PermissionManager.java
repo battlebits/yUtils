@@ -110,6 +110,8 @@ public class PermissionManager extends Management {
 	}
 
 	public void savePlayerGroup(UUID uuid, Group group) throws SQLException {
+		if(uuid == null)
+			throw new SQLException("UUID nulo");
 		Connect.lock.lock();
 		if (group.ordinal() >= Group.HELPER.ordinal()) {
 			PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Staff-" + getServerType().toString() + "` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");

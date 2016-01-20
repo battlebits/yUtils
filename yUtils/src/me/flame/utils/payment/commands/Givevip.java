@@ -58,6 +58,10 @@ public class Givevip implements CommandExecutor {
 							return;
 						}
 					}
+					if(uuid == null) {
+						senderr.sendMessage(ChatColor.RED + "O player nao existe");
+						return;
+					}
 					long expiresCheck;
 					try {
 						expiresCheck = DateUtils.parseDateDiff(argss[1], true);
