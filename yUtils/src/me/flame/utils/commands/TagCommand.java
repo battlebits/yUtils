@@ -1,16 +1,16 @@
 package me.flame.utils.commands;
 
-import me.flame.utils.Main;
-import me.flame.utils.permissions.PermissionManager;
-import me.flame.utils.permissions.enums.Group;
-import me.flame.utils.tagmanager.TagManager;
-import me.flame.utils.tagmanager.enums.Tag;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import me.flame.utils.Main;
+import me.flame.utils.permissions.PermissionManager;
+import me.flame.utils.permissions.enums.Group;
+import me.flame.utils.tagmanager.TagManager;
+import me.flame.utils.tagmanager.enums.Tag;
 
 public class TagCommand implements CommandExecutor {
 	private PermissionManager manager;
@@ -147,7 +147,7 @@ public class TagCommand implements CommandExecutor {
 					p.sendMessage(ChatColor.GOLD + "Voce esta usando sua tag Normal");
 					return true;
 				} else if (args[0].equalsIgnoreCase("default")) {
-					tagManager.addPlayerTag(p, getPlayerDefaultTag(p));
+					tagManager.addPlayerTag(p, TagManager.getPlayerDefaultTag(p));
 					p.sendMessage(ChatColor.GOLD + "Voce esta usando sua tag Default");
 					return true;
 				}
@@ -156,12 +156,5 @@ public class TagCommand implements CommandExecutor {
 			return true;
 		}
 		return false;
-	}
-
-	private Tag getPlayerDefaultTag(Player p) {
-		PermissionManager man = manager.getPlugin().getPermissionManager();
-		if (manager.getPlugin().getTorneioManager().isParticipante(p.getUniqueId()))
-			return Tag.TORNEIO;
-		return Tag.valueOf(man.getPlayerGroup(p).toString());
 	}
 }

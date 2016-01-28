@@ -5,11 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import me.flame.utils.permissions.PermissionManager;
-import me.flame.utils.permissions.enums.Group;
-import me.flame.utils.tagmanager.enums.Tag;
-import me.flame.utils.utils.UUIDFetcher;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -17,6 +12,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import me.flame.utils.permissions.PermissionManager;
+import me.flame.utils.permissions.enums.Group;
+import me.flame.utils.tagmanager.TagManager;
+import me.flame.utils.utils.UUIDFetcher;
 
 public class GroupSet implements CommandExecutor, TabCompleter {
 	private PermissionManager manager;
@@ -170,7 +170,7 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 						new BukkitRunnable() {
 							@Override
 							public void run() {
-								manager.getPlugin().getTagManager().addPlayerTag(target, getPlayerDefaultTag(target));
+								manager.getPlugin().getTagManager().addPlayerTag(target, TagManager.getPlayerDefaultTag(target));
 							}
 						}.runTask(manager.getPlugin());
 					}
@@ -179,13 +179,6 @@ public class GroupSet implements CommandExecutor, TabCompleter {
 			return true;
 		}
 		return false;
-	}
-
-	private Tag getPlayerDefaultTag(Player p) {
-		PermissionManager man = manager.getPlugin().getPermissionManager();
-		if (manager.getPlugin().getTorneioManager().isParticipante(p.getUniqueId()))
-			return Tag.TORNEIO;
-		return Tag.valueOf(man.getPlayerGroup(p).toString());
 	}
 
 }

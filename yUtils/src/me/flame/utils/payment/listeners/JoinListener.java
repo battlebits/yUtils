@@ -3,12 +3,6 @@ package me.flame.utils.payment.listeners;
 import java.sql.SQLException;
 import java.util.UUID;
 
-import me.flame.utils.payment.BuyManager;
-import me.flame.utils.payment.constructors.Expire;
-import me.flame.utils.permissions.PermissionManager;
-import me.flame.utils.permissions.enums.Group;
-import me.flame.utils.tagmanager.enums.Tag;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -18,6 +12,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import me.flame.utils.payment.BuyManager;
+import me.flame.utils.payment.constructors.Expire;
+import me.flame.utils.permissions.enums.Group;
+import me.flame.utils.tagmanager.TagManager;
 
 public class JoinListener implements Listener {
 	private BuyManager manager;
@@ -66,17 +65,12 @@ public class JoinListener implements Listener {
 								target.sendMessage(ChatColor.RED + "Seu vip expirou! Para comprar novamente entre no site http://loja.battlecraft.com.br");
 								target.sendMessage("");
 								target.sendMessage(ChatColor.RED + "-------------------------------------------------------------------");
-								manager.getPlugin().getTagManager().addPlayerTag(target, getPlayerDefaultTag(target));
+								manager.getPlugin().getTagManager().addPlayerTag(target, TagManager.getPlayerDefaultTag(target));
 							}
 						}
 					}.runTaskLater(manager.getPlugin(), 5);
 				}
 			}.runTaskLaterAsynchronously(manager.getPlugin(), 40);
 		}
-	}
-
-	private Tag getPlayerDefaultTag(Player p) {
-		PermissionManager man = manager.getPlugin().getPermissionManager();
-		return Tag.valueOf(man.getPlayerGroup(p).toString());
 	}
 }

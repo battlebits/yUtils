@@ -3,19 +3,19 @@ package me.flame.utils.commands;
 import java.sql.SQLException;
 import java.util.UUID;
 
-import me.flame.utils.Main;
-import me.flame.utils.permissions.PermissionManager;
-import me.flame.utils.permissions.enums.Group;
-import me.flame.utils.tagmanager.enums.Tag;
-import me.flame.utils.utils.DateUtils;
-import me.flame.utils.utils.UUIDFetcher;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import me.flame.utils.Main;
+import me.flame.utils.permissions.PermissionManager;
+import me.flame.utils.permissions.enums.Group;
+import me.flame.utils.tagmanager.TagManager;
+import me.flame.utils.utils.DateUtils;
+import me.flame.utils.utils.UUIDFetcher;
 
 public class GiveEventVip implements CommandExecutor {
 
@@ -83,7 +83,7 @@ public class GiveEventVip implements CommandExecutor {
 						new BukkitRunnable() {
 							@Override
 							public void run() {
-								main.getTagManager().addPlayerTag(target, getPlayerDefaultTag(target));
+								main.getTagManager().addPlayerTag(target, TagManager.getPlayerDefaultTag(target));
 							}
 						}.runTask(main);
 					}
@@ -91,12 +91,5 @@ public class GiveEventVip implements CommandExecutor {
 			}.runTaskAsynchronously(main);
 		}
 		return false;
-	}
-
-	private Tag getPlayerDefaultTag(Player p) {
-		PermissionManager man = main.getPermissionManager();
-		if (main.getTorneioManager().isParticipante(p.getUniqueId()))
-			return Tag.TORNEIO;
-		return Tag.valueOf(man.getPlayerGroup(p).toString());
 	}
 }

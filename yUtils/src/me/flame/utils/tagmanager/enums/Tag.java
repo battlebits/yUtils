@@ -3,6 +3,7 @@ package me.flame.utils.tagmanager.enums;
 import org.bukkit.ChatColor;
 
 public enum Tag {
+	ESTRELA("aaestrela", ChatColor.DARK_BLUE.toString() + ChatColor.BOLD + "ESTRELA " + ChatColor.DARK_BLUE), 
 	DONO("adono", ChatColor.DARK_RED.toString() + ChatColor.BOLD + "DONO " + ChatColor.DARK_RED), 
 	ADMIN("badmin", ChatColor.RED.toString() + ChatColor.BOLD + "ADMIN " + ChatColor.RED), 
 	STREAMER("bstreamer", ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "STREAMER " + ChatColor.DARK_PURPLE), 

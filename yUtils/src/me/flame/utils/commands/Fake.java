@@ -8,17 +8,6 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import me.flame.utils.Main;
-import me.flame.utils.nms.Utils;
-import me.flame.utils.nms.Utils.PlayerInfoAction;
-import me.flame.utils.permissions.PermissionManager;
-import me.flame.utils.permissions.enums.Group;
-import me.flame.utils.permissions.enums.ServerType;
-import me.flame.utils.tagmanager.enums.Tag;
-import me.flame.utils.utils.UUIDFetcher;
-import net.minecraft.util.com.mojang.authlib.GameProfile;
-import net.minecraft.util.com.mojang.authlib.properties.PropertyMap;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,6 +15,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import me.flame.utils.Main;
+import me.flame.utils.nms.Utils;
+import me.flame.utils.nms.Utils.PlayerInfoAction;
+import me.flame.utils.permissions.enums.Group;
+import me.flame.utils.permissions.enums.ServerType;
+import me.flame.utils.tagmanager.TagManager;
+import me.flame.utils.tagmanager.enums.Tag;
+import me.flame.utils.utils.UUIDFetcher;
+import net.minecraft.util.com.mojang.authlib.GameProfile;
+import net.minecraft.util.com.mojang.authlib.properties.PropertyMap;
 
 public class Fake implements CommandExecutor {
 	private Map<UUID, String> names;
@@ -66,7 +66,7 @@ public class Fake implements CommandExecutor {
 						if (argss[0].equalsIgnoreCase(names.get(player.getUniqueId()))) {
 							Main.getPlugin().getTagManager().removePlayerTag(player);
 							changeNick(player, argss[0]);
-							Main.getPlugin().getTagManager().addPlayerTag(player, getPlayerDefaultTag(player));
+							Main.getPlugin().getTagManager().addPlayerTag(player, TagManager.getPlayerDefaultTag(player));
 							player.sendMessage(ChatColor.YELLOW + "Seu nick voltou ao normal e voce recebeu novamente sua tag!");
 							return;
 						}
@@ -101,13 +101,6 @@ public class Fake implements CommandExecutor {
 		Pattern pattern = Pattern.compile("[a-zA-Z0-9_]{1,16}");
 		Matcher matcher = pattern.matcher(username);
 		return matcher.matches();
-	}
-
-	private static Tag getPlayerDefaultTag(Player p) {
-		PermissionManager man = Main.getPlugin().getPermissionManager();
-		if (Main.getPlugin().getTorneioManager().isParticipante(p.getUniqueId()))
-			return Tag.TORNEIO;
-		return Tag.valueOf(man.getPlayerGroup(p).toString());
 	}
 
 	public void changeNick(final Player p, String nick) {
