@@ -63,7 +63,7 @@ public class Main extends JavaPlugin {
 	private TagManager tagManager;
 	private RankingManager rankingManager;
 	private Application app;
-	private IW4 iw4;
+//	private IW4 iw4;
 	
 	private ServerType serverType;
 
@@ -128,8 +128,8 @@ public class Main extends JavaPlugin {
 		rankingManager.onEnable();
 		app = new Application(this);
 		app.run();
-		iw4 = new IW4();
-		iw4.onEnable(this);
+//		iw4 = new IW4();
+//		iw4.onEnable(this);
 		getPlugin().getCommand("fake").setExecutor(new Fake(serverType));
 		getPlugin().getCommand("givekit").setExecutor(new Givekit(this));
 		getPlugin().getCommand("tag").setExecutor(new TagCommand(this));
@@ -161,7 +161,7 @@ public class Main extends JavaPlugin {
 		if (rankingManager != null)
 			rankingManager.onDisable();
 		app.stop();
-		iw4.onDisable();
+//		iw4.onDisable();
 		Connect.SQLdisconnect(mainConnection);
 	}
 

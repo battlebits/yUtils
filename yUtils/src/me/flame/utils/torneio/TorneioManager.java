@@ -35,7 +35,7 @@ public class TorneioManager extends Management {
 					ResultSet result = stmt.executeQuery();
 					participantes.clear();
 					while (result.next()) {
-						UUID uuid = UUIDFetcher.getUUID(result.getString("uuid"));
+						UUID uuid = UUIDFetcher.getUUIDFromString(result.getString("uuid"));
 						participantes.add(uuid);
 					}
 					result.close();

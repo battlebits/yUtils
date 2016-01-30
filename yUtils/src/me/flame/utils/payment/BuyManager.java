@@ -39,7 +39,7 @@ public class BuyManager extends Management {
 					PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Expires`;");
 					ResultSet result = stmt.executeQuery();
 					while (result.next()) {
-						UUID uuid = UUIDFetcher.getUUID(result.getString("uuid"));
+						UUID uuid = UUIDFetcher.getUUIDFromString(result.getString("uuid"));
 						Group group = Group.valueOf(result.getString("group").toUpperCase());
 						long expire = result.getLong("expire");
 						expires.put(uuid, new Expire(uuid, expire, group));
@@ -61,7 +61,7 @@ public class BuyManager extends Management {
 					ResultSet result = stmt.executeQuery();
 					expires.clear();
 					while (result.next()) {
-						UUID uuid = UUIDFetcher.getUUID(result.getString("uuid"));
+						UUID uuid = UUIDFetcher.getUUIDFromString(result.getString("uuid"));
 						Group group = Group.valueOf(result.getString("group").toUpperCase());
 						long expire = result.getLong("expire");
 						expires.put(uuid, new Expire(uuid, expire, group));
