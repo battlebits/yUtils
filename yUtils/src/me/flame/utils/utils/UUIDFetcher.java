@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonObject;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonParser;
 
@@ -14,10 +15,15 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 
+import me.flame.utils.Main;
+
 public class UUIDFetcher {
 
 	private static JsonParser parser = new JsonParser();
-	private static final String profileURL = "https://api.mojang.com/users/profiles/minecraft";
+	private static String mojangURL = "https://api.mojang.com/users/profiles/minecraft";
+	private static String craftApiURL = "https://craftapi.com/api/user/uuid";
+	// private static String mcApiNetURL = "http://us.mc-api.net/v3/uuid";
+	static int server = 0;
 	private static Cache<String, UUID> nameUUID = CacheBuilder.newBuilder().expireAfterWrite(1L, TimeUnit.DAYS)
 			.build(new CacheLoader<String, UUID>() {
 				@Override
@@ -26,17 +32,41 @@ public class UUIDFetcher {
 				}
 			});
 
-	private static UUID loadFromMojang(String name) throws Exception {
+	private static UUID loadFromMojang(String name) {
 		UUID id = null;
-		URL url = new URL(profileURL + "/" + name);
-		InputStream is = url.openStream();
-		InputStreamReader streamReader = new InputStreamReader(is, Charset.forName("UTF-8"));
-		JsonObject object = parser.parse(streamReader).getAsJsonObject();
-		if (object.get("name").getAsString().equalsIgnoreCase(name)) {
-			id = getUUIDFromString(object.get("id").getAsString());
+		try {
+			URL url = new URL(mojangURL + "/" + name);
+			InputStream is = url.openStream();
+			InputStreamReader streamReader = new InputStreamReader(is, Charset.forName("UTF-8"));
+			JsonObject object = parser.parse(streamReader).getAsJsonObject();
+			if (object.get("name").getAsString().equalsIgnoreCase(name)) {
+				id = (getUUIDFromString(object.get("id").getAsString()));
+			}
+			streamReader.close();
+			is.close();
+		} catch (Exception e) {
+			Main.getPlugin().getLogger()
+					.warning("Erro ao tentar obter UUID do jogador " + name + " utilizando a API da Mojang! Tentando com a CraftAPI!");
+			id = loadFromCraftAPI(name);
 		}
-		streamReader.close();
-		is.close();
+		return id;
+	}
+
+	private static UUID loadFromCraftAPI(String name) {
+		UUID id = null;
+		try {
+			URL url = new URL(craftApiURL + "/" + name);
+			InputStream is = url.openStream();
+			InputStreamReader streamReader = new InputStreamReader(is, Charset.forName("UTF-8"));
+			JsonObject object = parser.parse(streamReader).getAsJsonObject();
+			if (object.get("username").getAsString().equalsIgnoreCase(name)) {
+				id = (getUUIDFromString(object.get("uuid").getAsString()));
+			}
+			streamReader.close();
+			is.close();
+		} catch (Exception e) {
+			Main.getPlugin().getLogger().warning("Erro ao tentar obter UUID do jogador " + name + " utilizando a CraftAPI!");
+		}
 		return id;
 	}
 
