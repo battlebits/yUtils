@@ -23,6 +23,7 @@ import me.flame.utils.permissions.enums.Group;
 import me.flame.utils.permissions.enums.ServerType;
 import me.flame.utils.tagmanager.TagManager;
 import me.flame.utils.tagmanager.enums.Tag;
+import me.flame.utils.utils.PremiumChecker;
 import me.flame.utils.utils.UUIDFetcher;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.minecraft.util.com.mojang.authlib.properties.PropertyMap;
@@ -47,7 +48,8 @@ public class Fake implements CommandExecutor {
 				return true;
 			}
 			if (type == ServerType.RAID) {
-				player.sendMessage(ChatColor.RED + "Desculpe mas voce nao pode utilizar esse comando no servidor de Raid");
+				player.sendMessage(
+						ChatColor.RED + "Desculpe mas voce nao pode utilizar esse comando no servidor de Raid");
 				return true;
 			}
 			if (args.length != 1) {
@@ -56,7 +58,8 @@ public class Fake implements CommandExecutor {
 			}
 			final String[] argss = args;
 			if (!validate(args[0])) {
-				player.sendMessage(ChatColor.RED + "Parece que o nick escolhido possui caracteres inapropriados ou e muito grande");
+				player.sendMessage(ChatColor.RED
+						+ "Parece que o nick escolhido possui caracteres inapropriados ou e muito grande");
 				return true;
 			}
 			new BukkitRunnable() {
@@ -66,30 +69,22 @@ public class Fake implements CommandExecutor {
 						if (argss[0].equalsIgnoreCase(names.get(player.getUniqueId()))) {
 							Main.getPlugin().getTagManager().removePlayerTag(player);
 							changeNick(player, argss[0]);
-							Main.getPlugin().getTagManager().addPlayerTag(player, TagManager.getPlayerDefaultTag(player));
-							player.sendMessage(ChatColor.YELLOW + "Seu nick voltou ao normal e voce recebeu novamente sua tag!");
+							Main.getPlugin().getTagManager().addPlayerTag(player,
+									TagManager.getPlayerDefaultTag(player));
+							player.sendMessage(
+									ChatColor.YELLOW + "Seu nick voltou ao normal e voce recebeu novamente sua tag!");
 							return;
 						}
 					}
-					@SuppressWarnings("deprecation")
-					Player target = Main.getPlugin().getServer().getPlayer(argss[0]);
-					UUID uuid = null;
-					if (target != null) {
-						uuid = target.getUniqueId();
-					} else {
-						try {
-							uuid = UUIDFetcher.getUUIDOf(argss[0]);
-						} catch (Exception e) {
-						}
-					}
-					if (uuid != null) {
+					if (PremiumChecker.isPremium(argss[0])) {
 						player.sendMessage(ChatColor.RED + "Parece que o nick escolhido ja existe, use outro!");
 						return;
 					}
 					Main.getPlugin().getTagManager().removePlayerTag(player);
 					changeNick(player, argss[0]);
 					Main.getPlugin().getTagManager().addPlayerTag(player, Tag.NORMAL);
-					player.sendMessage(ChatColor.YELLOW + "Voce agora esta disfarcado como '" + argss[0] + "' e sua tag foi setada para NORMAL!");
+					player.sendMessage(ChatColor.YELLOW + "Voce agora esta disfarcado como '" + argss[0]
+							+ "' e sua tag foi setada para NORMAL!");
 				}
 			}.runTaskAsynchronously(Main.getPlugin());
 			return true;
