@@ -24,7 +24,6 @@ import me.flame.utils.permissions.enums.ServerType;
 import me.flame.utils.tagmanager.TagManager;
 import me.flame.utils.tagmanager.enums.Tag;
 import me.flame.utils.utils.PremiumChecker;
-import me.flame.utils.utils.UUIDFetcher;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.minecraft.util.com.mojang.authlib.properties.PropertyMap;
 
