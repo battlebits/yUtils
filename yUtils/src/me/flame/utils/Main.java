@@ -3,6 +3,13 @@ package me.flame.utils;
 import java.sql.Connection;
 import java.util.Arrays;
 
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import com.renatojunior.dev.iw3.classes.Application;
+import com.renatojunior.dev.iw3.controller.CommandController;
+
+import de.inventivegames.holograms.HologramListeners;
 import me.flame.utils.banmanager.BanManagement;
 import me.flame.utils.commands.Account;
 import me.flame.utils.commands.Fake;
@@ -23,16 +30,6 @@ import me.flame.utils.scoreboard.ScoreboardManager;
 import me.flame.utils.tagmanager.TagManager;
 import me.flame.utils.torneio.TorneioManager;
 import me.flame.utils.utils.PluginUpdater;
-
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import br.com.iwnetwork.app.iw4.IW4;
-
-import com.renatojunior.dev.iw3.classes.Application;
-import com.renatojunior.dev.iw3.controller.CommandController;
-
-import de.inventivegames.holograms.HologramListeners;
 
 public class Main extends JavaPlugin {
 
