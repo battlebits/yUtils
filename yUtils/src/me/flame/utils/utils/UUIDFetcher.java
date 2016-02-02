@@ -7,7 +7,6 @@ import java.nio.charset.Charset;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonObject;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonParser;
 
@@ -22,8 +21,7 @@ public class UUIDFetcher {
 	private static JsonParser parser = new JsonParser();
 	private static String mojangURL = "https://api.mojang.com/users/profiles/minecraft";
 	private static String craftApiURL = "https://craftapi.com/api/user/uuid";
-	// private static String mcApiNetURL = "http://us.mc-api.net/v3/uuid";
-	static int server = 0;
+	
 	private static Cache<String, UUID> nameUUID = CacheBuilder.newBuilder().expireAfterWrite(1L, TimeUnit.DAYS)
 			.build(new CacheLoader<String, UUID>() {
 				@Override
