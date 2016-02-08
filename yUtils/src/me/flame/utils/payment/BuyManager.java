@@ -128,7 +128,7 @@ public class BuyManager extends Management {
 		if (expires.containsKey(uuid) && expires.get(uuid).getGroup() == grupo) {
 			expire = expires.get(uuid);
 			expire.setGroup(grupo);
-			expire.addLong(expireLong);
+			expire.addLong(System.currentTimeMillis() - expireLong);
 		} else
 			expire = new Expire(uuid, expireLong, grupo);
 		expires.put(uuid, expire);
@@ -136,7 +136,7 @@ public class BuyManager extends Management {
 		PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Expires` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
 		ResultSet result = stmt.executeQuery();
 		if (result.next()) {
-			stmt.execute("UPDATE `Expires` SET `group`='" + expire.getGroup().toString().toLowerCase() + "', `expire`=" + expireLong + "  WHERE uuid='" + uuid.toString().replace("-", "") + "';");
+			stmt.execute("UPDATE `Expires` SET `group`='" + expire.getGroup().toString().toLowerCase() + "', `expire`=" + expire.getExpire() + "  WHERE uuid='" + uuid.toString().replace("-", "") + "';");
 		} else {
 			stmt.execute("INSERT INTO `Expires`(`uuid`, `expire`, `group`) VALUES ('" + uuid.toString().replace("-", "") + "'," + expire.getExpire() + " ,'" + expire.getGroup().toString().toLowerCase() + "');");
 		}
