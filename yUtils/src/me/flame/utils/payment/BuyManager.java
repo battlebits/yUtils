@@ -128,7 +128,7 @@ public class BuyManager extends Management {
 		if (expires.containsKey(uuid) && expires.get(uuid).getGroup() == grupo) {
 			expire = expires.get(uuid);
 			expire.setGroup(grupo);
-			expire.addLong(System.currentTimeMillis() - expireLong);
+			expire.addLong(expireLong - System.currentTimeMillis());
 		} else
 			expire = new Expire(uuid, expireLong, grupo);
 		expires.put(uuid, expire);
