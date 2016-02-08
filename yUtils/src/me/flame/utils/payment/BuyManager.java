@@ -125,7 +125,7 @@ public class BuyManager extends Management {
 
 	public void addExpire(UUID uuid, Group grupo, long expireLong) throws SQLException {
 		Expire expire;
-		if (expires.containsKey(uuid)) {
+		if (expires.containsKey(uuid) && expires.get(uuid).getGroup() == grupo) {
 			expire = expires.get(uuid);
 			expire.setGroup(grupo);
 			expire.addLong(expireLong);

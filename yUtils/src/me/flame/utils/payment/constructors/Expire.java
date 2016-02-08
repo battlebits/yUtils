@@ -32,7 +32,7 @@ public class Expire {
 	}
 
 	public void addLong(long l) {
-		this.expire = l;
+		this.expire += l;
 	}
 
 }
