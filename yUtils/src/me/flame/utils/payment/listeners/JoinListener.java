@@ -42,9 +42,10 @@ public class JoinListener implements Listener {
 			new BukkitRunnable() {
 				@Override
 				public void run() {
-					manager.getPlugin().getPermissionManager().setPlayerGroup(expire.getUuid(), Group.NORMAL);
+					if (manager.getPlugin().getPermissionManager().getPlayerGroup(expire.getUuid()) == expire.getGroup())
+						manager.getPlugin().getPermissionManager().setPlayerGroup(expire.getUuid(), Group.NORMAL);
 					try {
-						manager.getPlugin().getPermissionManager().removePlayer(expire.getUuid());
+						manager.getPlugin().getPermissionManager().removeRank(expire.getUuid());
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
@@ -62,7 +63,7 @@ public class JoinListener implements Listener {
 							if (target != null) {
 								target.sendMessage(ChatColor.RED + "---------------------------BATTLEBITS------------------------------");
 								target.sendMessage("");
-								target.sendMessage(ChatColor.RED + "Seu vip expirou! Para comprar novamente entre no site http://loja.battlecraft.com.br");
+								target.sendMessage(ChatColor.RED + "Seu vip expirou! Para comprar novamente entre no site http://loja.battlebits.com.br");
 								target.sendMessage("");
 								target.sendMessage(ChatColor.RED + "-------------------------------------------------------------------");
 								manager.getPlugin().getTagManager().addPlayerTag(target, TagManager.getPlayerDefaultTag(target));

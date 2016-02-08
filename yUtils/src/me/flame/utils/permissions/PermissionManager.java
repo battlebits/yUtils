@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.bukkit.entity.Player;
+
 import me.flame.utils.Main;
 import me.flame.utils.Management;
 import me.flame.utils.mysql.Connect;
@@ -17,8 +19,6 @@ import me.flame.utils.permissions.injector.PermissionMatcher;
 import me.flame.utils.permissions.injector.RegExpMatcher;
 import me.flame.utils.permissions.injector.regexperms.RegexPermissions;
 import me.flame.utils.permissions.listeners.LoginListener;
-
-import org.bukkit.entity.Player;
 
 public class PermissionManager extends Management {
 	private HashMap<UUID, Group> playerGroups;
@@ -110,7 +110,7 @@ public class PermissionManager extends Management {
 	}
 
 	public void savePlayerGroup(UUID uuid, Group group) throws SQLException {
-		if(uuid == null)
+		if (uuid == null)
 			throw new SQLException("UUID nulo");
 		Connect.lock.lock();
 		if (group.ordinal() >= Group.HELPER.ordinal()) {
@@ -154,6 +154,20 @@ public class PermissionManager extends Management {
 			if (result.next()) {
 				stmt.execute("DELETE FROM `Ranks` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
 			}
+		}
+		result.close();
+		stmt.close();
+		Connect.lock.unlock();
+	}
+
+	public void removeRank(UUID uuid) throws SQLException {
+		if (getPlugin().getServerType() == ServerType.TESTSERVER)
+			return;
+		Connect.lock.lock();
+		PreparedStatement stmt = getMySQL().prepareStatement("SELECT * FROM `Ranks` WHERE `uuid` = '" + uuid.toString().replace("-", "") + "';");
+		ResultSet result = stmt.executeQuery();
+		if (result.next()) {
+			stmt.execute("DELETE FROM `Ranks` WHERE `uuid`='" + uuid.toString().replace("-", "") + "';");
 		}
 		result.close();
 		stmt.close();

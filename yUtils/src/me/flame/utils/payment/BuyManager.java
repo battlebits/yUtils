@@ -77,7 +77,7 @@ public class BuyManager extends Management {
 					Expire expire = iterator.next();
 					if (expire.getExpire() < System.currentTimeMillis()) {
 						try {
-							getPlugin().getPermissionManager().removePlayer(expire.getUuid());
+							getPlugin().getPermissionManager().removeRank(expire.getUuid());
 						} catch (SQLException e1) {
 							e1.printStackTrace();
 						}
