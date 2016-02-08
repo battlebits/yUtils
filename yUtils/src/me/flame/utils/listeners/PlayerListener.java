@@ -37,7 +37,7 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onPreProcessCommand(PlayerCommandPreprocessEvent event) {
-		if (event.getMessage().toLowerCase().contains("/me")) {
+		if (event.getMessage().toLowerCase().startsWith("/me ")) {
 			event.getPlayer().sendMessage(ChatColor.RED + "Voce nao pode utilizar o comando 'me'");
 			event.setCancelled(true);
 		}
