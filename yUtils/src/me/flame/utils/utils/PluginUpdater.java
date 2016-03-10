@@ -18,14 +18,13 @@ public class PluginUpdater implements Runnable {
 	private String pluginName;
 	private String versaoAtual;
 	private String versaoUpdate;
-	private String downloadURL;
+	private String downloadURL = "http://127.0.0.1/hkjaosdja3sd/update/";
 	private boolean needUpdate = true;
 
 	public PluginUpdater(Plugin plugin) {
 		this.plugin = plugin;
 		this.pluginName = plugin.getName();
 		versaoAtual = plugin.getDescription().getVersion();
-		downloadURL = "http://battlebits.com.br/hkjaosdja3sd/update/" + pluginName + "/" + pluginName + ".jar";
 	}
 
 	@Override
@@ -35,9 +34,8 @@ public class PluginUpdater implements Runnable {
 		if (running)
 			return;
 		running = true;
-		String urlStr = "http://battlebits.com.br/hkjaosdja3sd/update/" + pluginName + "/version.txt";
 		try {
-			URL url = new URL(urlStr);
+			URL url = new URL(downloadURL + pluginName + "/version.txt");
 			URLConnection conn = url.openConnection();
 			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			String inputLine;
@@ -55,6 +53,7 @@ public class PluginUpdater implements Runnable {
 		} catch (Exception e) {
 			System.out.println("============================");
 			System.out.println("Erro ao procurar atualização de " + pluginName);
+			System.out.println(downloadURL);
 			System.out.println("============================");
 			e.printStackTrace();
 			running = false;
@@ -69,7 +68,7 @@ public class PluginUpdater implements Runnable {
 				plugin.getServer().getUpdateFolderFile().mkdirs();
 				tmp.createNewFile();
 			}
-			URL url = new URL(downloadURL);
+			URL url = new URL(downloadURL + pluginName + "/" + pluginName + ".jar");
 			InputStream is = url.openStream();
 			OutputStream os = new FileOutputStream(tmp);
 			byte[] buffer = new byte[4096];

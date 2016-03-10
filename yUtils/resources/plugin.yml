@@ -1,5 +1,5 @@
 name: yUtils
-version: 2.4.5
+version: 2.4.6
 main: me.flame.utils.Main
 author: GustavoInacio
 description: Plugin feito para gerenciar Permissions, Compras, Banimentos, Tags e Scoreboards
