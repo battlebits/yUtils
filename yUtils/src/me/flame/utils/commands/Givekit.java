@@ -62,7 +62,8 @@ public class Givekit implements CommandExecutor {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					sender.sendMessage(ChatColor.YELLOW + "Player " + args[0] + "(" + uuid.toString().replace("-", "") + ") teve o kit do HG '" + kit + "' adicionado!");
+					sender.sendMessage(ChatColor.YELLOW + "Player " + args[0] + "(" + uuid.toString().replace("-", "") + ") teve o kit do HG '" + kit
+							+ "' adicionado!");
 				}
 			}.runTaskAsynchronously(main);
 			return true;
@@ -75,7 +76,7 @@ public class Givekit implements CommandExecutor {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			String conn = "jdbc:mysql://localhost:3306/hungergames";
-			return DriverManager.getConnection(conn, "root", "saobestanime");
+			return DriverManager.getConnection(conn, "hungergames", "fUMR8BaAWKRwevUh");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
