@@ -74,7 +74,7 @@ public class Givekit implements CommandExecutor {
 	private synchronized Connection trySQLConnection() {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			String conn = "jdbc:mysql://localhost:3306/Hungergames";
+			String conn = "jdbc:mysql://localhost:3306/hungergames";
 			return DriverManager.getConnection(conn, "root", "saobestanime");
 		} catch (Exception ex) {
 			ex.printStackTrace();
